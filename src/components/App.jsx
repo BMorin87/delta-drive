@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useGameStore } from "./gameStore";
-import GoldGame from "./GoldGame";
+import DeltaGame from "./DeltaGame";
 
-const TICK_INTERVAL = 50; // milliseconds
+const TICK_INTERVAL = 1000; // milliseconds
 
 function App() {
   const tick = useGameStore((state) => state.tick);
@@ -19,7 +19,7 @@ function App() {
     };
   }, [tick, isRunning]);
 
-  return <GoldGame />;
+  return <DeltaGame />;
 }
 
 export default App;

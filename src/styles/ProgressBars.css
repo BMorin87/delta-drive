@@ -1,0 +1,172 @@
+/* Main App Styles */
+.app-container {
+  min-height: 100vh;
+  background-color: #111827;
+  padding: 2rem;
+  color: white;
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.bars-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 3rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.demo-note {
+  text-align: center;
+  margin-top: 2rem;
+  color: #9ca3af;
+}
+
+/* Progress Bar Container */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Progress Bar Label */
+.progress-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+}
+
+/* Progress Bar Wrapper - defines the outer bounds */
+.progress-bar-wrapper {
+  display: flex;
+  align-items: flex-end;
+  width: 40px;
+  position: relative;
+}
+
+/* Progress Bar Background - the empty/unfilled area */
+.progress-bar-background {
+  width: 100%;
+  height: 100%;
+  background-color: #374151;
+  border-radius: 20px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Progress Bar Fill - the colored fill that grows */
+.progress-bar-fill {
+  width: 100%;
+  border-radius: 20px;
+  position: relative;
+  transition: height 0.3s ease-out;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Shine Effect - animated highlight overlay */
+.progress-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  border-radius: 20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Resource-specific colors */
+.thirst-bar {
+  background: linear-gradient(to top, #2563eb, #60a5fa);
+}
+
+.hunger-bar {
+  background: linear-gradient(to top, #6eff81, #008d18);
+}
+
+.fatigue-bar {
+  background: linear-gradient(to top, #d97706, #fbbf24);
+}
+
+/* Progress Values Display */
+.progress-values {
+  display: flex;
+  align-items: baseline;
+  font-weight: 600;
+  color: white;
+  font-size: 1rem;
+}
+
+.progress-current {
+  color: white;
+}
+
+.progress-max {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin-left: 2px;
+}
+
+/* Progress Percentage */
+.progress-percentage {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* Pulse animation for shine effect */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .bars-container {
+    gap: 2rem;
+    padding: 1rem;
+  }
+
+  .progress-bar-wrapper {
+    width: 35px;
+  }
+
+  .app-title {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bars-container {
+    gap: 1.5rem;
+  }
+
+  .progress-bar-wrapper {
+    width: 30px;
+  }
+}

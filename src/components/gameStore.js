@@ -3,14 +3,15 @@ import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
   // Game state.
-  gold: 0,
-  miners: 0,
+  thirst: 0,
+  hunger: 0,
+  fatigue: 0,
   isRunning: true,
 
   // Actions
   tick: () => gameEngine.tick(),
 
-  mineGold: () =>
+  /* mineGold: () =>
     set((state) => ({
       gold: state.gold + 1,
     })),
@@ -24,7 +25,7 @@ export const useGameStore = create((set, get) => ({
         miners: state.miners + 1,
       });
     }
-  },
+  }, */
 
   togglePause: () =>
     set((state) => ({
