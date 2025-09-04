@@ -3,6 +3,7 @@ import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
   // Game state.
+  volition: 0,
   thirst: 0,
   hunger: 0,
   fatigue: 0,

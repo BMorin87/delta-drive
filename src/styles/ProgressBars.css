@@ -1,4 +1,18 @@
-/* Main App Styles */
+/* Main Game Layout */
+.game-layout {
+  min-height: 100vh;
+  background-color: #111827;
+  color: white;
+  position: relative;
+}
+
+/* Main content area */
+.main-content {
+  padding: 2rem;
+  padding-left: 180px; /* Make room for the volition HUD */
+}
+
+/* App Container Styles */
 .app-container {
   min-height: 100vh;
   background-color: #111827;
@@ -105,6 +119,11 @@
 
 .fatigue-bar {
   background: linear-gradient(to top, #d97706, #fbbf24);
+}
+
+/* New Volition bar styling */
+.volition-bar {
+  background: linear-gradient(to top, #581c87, #8b5cf6);
 }
 
 /* Progress Values Display */
