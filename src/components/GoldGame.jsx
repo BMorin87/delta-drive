@@ -1,4 +1,5 @@
 import { useGameStore } from "./gameStore";
+import { gameEngine } from "./gameEngine";
 
 function GoldGame() {
   const { gold, miners, isRunning, mineGold, buyMiner, togglePause } =
@@ -47,5 +48,13 @@ function GoldGame() {
     </div>
   );
 }
+
+gameEngine.registerSystem("GoldMiner", (state) => {
+  if (!state.miners) return {};
+
+  return {
+    gold: state.gold + state.miners,
+  };
+});
 
 export default GoldGame;

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
   // Game state.
@@ -7,10 +8,7 @@ export const useGameStore = create((set, get) => ({
   isRunning: true,
 
   // Actions
-  tick: () =>
-    set((state) => ({
-      gold: state.gold + state.miners,
-    })),
+  tick: () => gameEngine.tick(),
 
   mineGold: () =>
     set((state) => ({
@@ -33,3 +31,5 @@ export const useGameStore = create((set, get) => ({
       isRunning: !state.isRunning,
     })),
 }));
+
+gameEngine.setStore(useGameStore);
