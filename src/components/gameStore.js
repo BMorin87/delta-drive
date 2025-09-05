@@ -7,26 +7,35 @@ export const useGameStore = create((set, get) => ({
   thirst: 0,
   hunger: 0,
   fatigue: 0,
+
+  volitionCapacity: 100,
+  thirstCapacity: 100,
+  hungerCapacity: 100,
+  fatigueCapacity: 100,
+
+  baseVolitionCapacity: 100,
+  baseThirstCapacity: 100,
+  baseHungerCapacity: 100,
+  baseFatigueCapacity: 100,
+
   isRunning: true,
 
   // Actions
   tick: () => gameEngine.tick(),
 
-  /* mineGold: () =>
-    set((state) => ({
-      gold: state.gold + 1,
-    })),
-
-  buyMiner: () => {
+  spendVolition: (amount) => {
     const state = get();
-    const cost = (state.miners + 1) * 10;
-    if (state.gold >= cost) {
-      set({
-        gold: state.gold - cost,
-        miners: state.miners + 1,
-      });
+    if (state.volition >= amount) {
+      set({ volition: state.volition - amount });
+      return true;
     }
-  }, */
+    return false;
+  },
+
+  setCapacity: (prop, value) => {
+    if (!prop) return;
+    set((prev) => ({ ...prev, [prop]: value }));
+  },
 
   togglePause: () =>
     set((state) => ({

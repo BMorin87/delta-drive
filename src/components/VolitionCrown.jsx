@@ -1,7 +1,9 @@
 import "../styles/VolitionCrown.css";
 
 const VolitionCrown = ({ current, max }) => {
-  const percentage = Math.min((current / max) * 100, 100);
+  const safeCurrent = Number.isFinite(current) ? current : 0;
+  const safeMax = Number.isFinite(max) && max > 0 ? max : 1;
+  const percentage = Math.min((safeCurrent / safeMax) * 100, 100);
 
   return (
     <div className="volition-crown-container">

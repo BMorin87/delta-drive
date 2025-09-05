@@ -14,10 +14,7 @@ class GameEngine {
   }
 
   tick() {
-    if (!this.store) {
-      console.warn("GameEngine: No store attached.");
-      return;
-    }
+    if (!this.store) return;
 
     const state = this.store.getState();
     const updates = {};
