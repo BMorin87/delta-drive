@@ -1,4 +1,4 @@
-import { useUpgradeStore } from "./DeltaGame";
+import { useUpgradeStore } from "../upgradeStore";
 import UpgradeItem from "./UpgradeItem";
 
 const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {

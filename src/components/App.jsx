@@ -5,8 +5,7 @@ import DeltaGame from "./DeltaGame";
 const TICK_INTERVAL = 1000; // milliseconds
 
 function App() {
-  const tick = useGameStore((state) => state.tick);
-  const isRunning = useGameStore((state) => state.isRunning);
+  const { tick, isRunning } = useGameStore();
 
   // Single game loop
   useEffect(() => {

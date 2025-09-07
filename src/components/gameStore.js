@@ -13,10 +13,10 @@ export const useGameStore = create((set, get) => ({
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
-  baseVolitionCapacity: 100,
-  baseThirstCapacity: 100,
-  baseHungerCapacity: 100,
-  baseFatigueCapacity: 100,
+  initialVolitionCapacity: 100,
+  initialThirstCapacity: 100,
+  initialHungerCapacity: 100,
+  initialFatigueCapacity: 100,
 
   isRunning: true,
 

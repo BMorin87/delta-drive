@@ -1,12 +1,6 @@
-import { useUpgradeStore } from "./DeltaGame";
+import { useUpgradeStore } from "../upgradeStore";
 
-const UpgradeItem = ({
-  upgradeId,
-  title,
-  description,
-  currentVolition,
-  onPurchase,
-}) => {
+const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
   const {
     upgrades,
     getUpgradeCost,
@@ -21,7 +15,7 @@ const UpgradeItem = ({
 
   const handlePurchase = () => {
     if (canAfford) {
-      const success = onPurchase(upgradeId);
+      onPurchase(upgradeId);
     }
   };
   return (
