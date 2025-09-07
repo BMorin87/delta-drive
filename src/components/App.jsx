@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useGameStore } from "./gameStore";
+import "../styles/App.css";
 import DeltaGame from "./DeltaGame";
 
 const TICK_INTERVAL = 1000; // milliseconds

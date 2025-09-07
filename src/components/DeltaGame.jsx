@@ -7,6 +7,7 @@ import PhysiologicalUI from "./physiological/PhysiologicalUI";
 import UpgradesPanel from "./physiological/UpgradesPanel";
 
 const DeltaGame = () => {
+  // Consume game state from the gameStore.
   const { volition, volitionCapacity, isRunning, togglePause, spendVolition } =
     useGameStore();
 
@@ -26,6 +27,7 @@ const DeltaGame = () => {
         thirst: Math.min(state.thirstCapacity, state.thirst + totalGrowth),
       };
     };
+    // gameEngine is a singleton,
     gameEngine.registerSystem("Thirst", thirstSystem);
 
     const hungerSystem = (state) => {
@@ -57,17 +59,17 @@ const DeltaGame = () => {
       const totalGrowth = baseVolitionRate + growthBonus;
       return {
         volition: Math.min(
-          state.volitionCapacity ?? 100,
-          (state.volition ?? 0) + totalGrowth
+          state.volitionCapacity,
+          state.volition + totalGrowth
         ),
       };
     };
     gameEngine.registerSystem("Volition", volitionSystem);
     return () => {
-      gameEngine.unregisterSystem?.("Thirst");
-      gameEngine.unregisterSystem?.("Hunger");
-      gameEngine.unregisterSystem?.("Fatigue");
-      gameEngine.unregisterSystem?.("Volition");
+      gameEngine.unregisterSystem("Thirst");
+      gameEngine.unregisterSystem("Hunger");
+      gameEngine.unregisterSystem("Fatigue");
+      gameEngine.unregisterSystem("Volition");
     };
   }, []);
 
@@ -79,7 +81,7 @@ const DeltaGame = () => {
           {isRunning ? "Pause Game" : "Resume Game"}
         </button>
       </div>
-      <div className="main-content">
+      <div className="tier-content">
         <PhysiologicalUI />
       </div>
       <div className="upgrades-hud">

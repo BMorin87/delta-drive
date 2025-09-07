@@ -14,8 +14,8 @@ const PhysiologicalUI = () => {
   } = useGameStore();
 
   return (
-    <div className="main-content">
-      <h1 className="app-title">Physiological Needs</h1>
+    <div className="physiological-content">
+      <h1 className="tier-title">Physiological Needs</h1>
       <div className="bars-container">
         <VerticalProgressBar
           current={thirst}
@@ -39,10 +39,8 @@ const PhysiologicalUI = () => {
           height={250}
         />
       </div>
-      <div className="demo-note">
-        <p>
-          Resources update automatically to demonstrate the vertical indicators
-        </p>
+      <div className="tier-note">
+        <p>Fulfill your physiological needs to generate Volition.</p>
       </div>
     </div>
   );

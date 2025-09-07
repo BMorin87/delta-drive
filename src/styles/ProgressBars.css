@@ -1,46 +1,10 @@
-/* Main Game Layout */
-.game-layout {
-  min-height: 100vh;
-  background-color: #111827;
-  color: white;
-  position: relative;
-}
-
-/* Main content area */
-.main-content {
-  padding: 2rem;
-}
-
-/* App Container Styles */
-.app-container {
-  min-height: 100vh;
-  background-color: #111827;
-  padding: 2rem;
-  color: white;
-}
-
-.app-title {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: white;
-}
-
+/* Bars container - specific to progress bars layout */
 .bars-container {
   display: flex;
   justify-content: center;
   align-items: flex-end;
   gap: 3rem;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.demo-note {
-  text-align: center;
-  margin-top: 2rem;
-  color: #9ca3af;
+  margin: 2rem 0;
 }
 
 /* Progress Bar Container */
