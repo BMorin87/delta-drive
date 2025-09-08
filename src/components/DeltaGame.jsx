@@ -91,20 +91,25 @@ const DeltaGame = () => {
 
   return (
     <div className="game-layout">
-      <div className="volition-hud">
-        <VolitionCrown current={volition} max={volitionCapacity} />
-        <button onClick={togglePause} className="pause-btn">
-          {isRunning ? "Pause Game" : "Resume Game"}
-        </button>
+      {/* Top row for volition and upgrades on smaller screens */}
+      <div className="top-row">
+        <div className="volition-hud">
+          <VolitionCrown current={volition} max={volitionCapacity} />
+          <button onClick={togglePause} className="pause-btn">
+            {isRunning ? "Pause Game" : "Resume Game"}
+          </button>
+        </div>
+        <div className="upgrades-hud">
+          <UpgradesPanel
+            currentVolition={volition}
+            onSpendVolition={spendVolition}
+          />
+        </div>
       </div>
+
+      {/* Main content area with progress bars */}
       <div className="tier-content">
         <PhysiologicalUI />
-      </div>
-      <div className="upgrades-hud">
-        <UpgradesPanel
-          currentVolition={volition}
-          onSpendVolition={spendVolition}
-        />
       </div>
     </div>
   );

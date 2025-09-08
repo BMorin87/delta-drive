@@ -6,21 +6,122 @@
   background: #0a1120;
 }
 
-/* Main game container - horizontal flex layout */
+/* Main game container - responsive layout */
 .game-layout {
   min-height: 100vh;
   width: 100vw;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: flex-start !important;
-  padding: 20px !important;
+  display: flex;
+  padding: 20px;
+  gap: 20px;
   box-sizing: border-box;
   background-color: #111827;
   color: white;
   margin: 0;
 }
 
-/* Left panel - Volition HUD */
+/* Desktop layout - three column layout */
+@media (min-width: 1200px) {
+  .game-layout {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .top-row {
+    display: contents; /* This makes the children behave as direct children of .game-layout */
+  }
+
+  .volition-hud {
+    flex-shrink: 0;
+    order: 1;
+  }
+
+  .tier-content {
+    flex: 1;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: center;
+    order: 2;
+  }
+
+  .upgrades-hud {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    flex-shrink: 0;
+    order: 3;
+  }
+
+  .physiological-ui-container {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .physiological-content {
+    flex: 0 0 auto; /* Don't grow or shrink, just center */
+  }
+
+  .physiological-upgrades {
+    display: none; /* Hide this on desktop since we have upgrades-hud */
+  }
+}
+
+/* Responsive layout - vertical stack with top row */
+@media (max-width: 1199px) {
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  /* Top row container for volition and upgrades */
+  .top-row {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    gap: 1.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .volition-hud {
+    flex: 0 0 auto;
+    min-width: 180px;
+  }
+
+  .upgrades-hud {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .tier-content {
+    width: 100%;
+    max-width: 1000px;
+    padding: 0;
+    order: 2;
+  }
+
+  .physiological-ui-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .physiological-content {
+    width: 100%;
+  }
+
+  .physiological-upgrades {
+    width: 100%;
+    max-width: 600px;
+  }
+}
+
+/* Volition HUD - consistent across breakpoints */
 .volition-hud {
   background: rgba(17, 24, 39, 0.9);
   backdrop-filter: blur(10px);
@@ -32,38 +133,47 @@
   flex-direction: column;
   align-items: center;
   min-width: 160px;
-  flex-shrink: 0;
+  width: 160px;
 }
 
-/* Center panel - Main content */
+@media (max-width: 1199px) {
+  .volition-hud {
+    width: auto;
+    min-width: 180px;
+  }
+}
+
+/* Upgrades HUD */
+.upgrades-hud {
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Tier content */
 .tier-content {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 2rem;
-  max-width: none;
 }
 
-/* Right panel - Upgrades */
-.upgrades-hud {
-  background: rgba(17, 24, 39, 0.9);
-  border-radius: 12px;
-  padding: 1rem;
-  width: 300px;
-  min-width: 300px;
-  max-width: 300px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  flex-shrink: 0;
-}
-
-/* Physiological content styling */
+/* Physiological content - the main content area with progress bars */
 .physiological-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+}
+
+/* Physiological upgrades panel */
+.physiological-upgrades {
+  background: rgba(17, 24, 39, 0.9);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .tier-title {
@@ -106,39 +216,51 @@
   flex-direction: column;
 }
 
-/* Legacy styles - keeping for compatibility */
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Medium screen adjustments */
+@media (max-width: 800px) {
+  .game-layout {
+    padding: 10px;
+    gap: 1rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .top-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .volition-hud,
+  .upgrades-hud {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .tier-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .physiological-upgrades {
+    padding: 0.75rem;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .tier-title {
+    font-size: 1.25rem;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .volition-hud {
+    min-width: 150px;
+  }
 
-.read-the-docs {
-  color: #888;
+  .top-row {
+    gap: 0.75rem;
+  }
+
+  .volition-hud,
+  .upgrades-hud {
+    max-width: none;
+  }
 }

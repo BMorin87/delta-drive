@@ -1,10 +1,11 @@
-/* Bars container - specific to progress bars layout */
+/* Bars container - responsive layout for progress bars */
 .bars-container {
   display: flex;
   justify-content: center;
   align-items: flex-end;
   gap: 3rem;
   margin: 2rem 0;
+  flex-wrap: wrap;
 }
 
 /* Progress Bar Container */
@@ -126,29 +127,49 @@
   }
 }
 
-/* Responsive design */
+/* Responsive design for progress bars */
+@media (max-width: 1200px) {
+  .bars-container {
+    gap: 2.5rem;
+    margin: 1.5rem 0;
+  }
+}
+
 @media (max-width: 768px) {
   .bars-container {
     gap: 2rem;
-    padding: 1rem;
+    padding: 0 1rem;
   }
 
   .progress-bar-wrapper {
     width: 35px;
   }
 
-  .app-title {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
+  .progress-label {
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .bars-container {
     gap: 1.5rem;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .progress-bar-wrapper {
     width: 30px;
+  }
+
+  .progress-label {
+    font-size: 0.9rem;
+  }
+
+  .progress-values {
+    font-size: 0.9rem;
+  }
+
+  .progress-percentage {
+    font-size: 0.7rem;
   }
 }
