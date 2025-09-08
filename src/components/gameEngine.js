@@ -1,5 +1,6 @@
 class GameEngine {
   constructor() {
+    // Use a Map to store systems by name and enforce uniqueness.
     this.systems = new Map();
     this.store = null;
   }
@@ -31,7 +32,7 @@ class GameEngine {
       }
     });
 
-    // Only update if there are changes.
+    // Only update if there are changes to the game state.
     if (Object.keys(updates).length > 0) {
       this.store.setState((prevState) => ({
         ...prevState,
@@ -49,4 +50,5 @@ class GameEngine {
   }
 }
 
+// gameEngine is a singleton.
 export const gameEngine = new GameEngine();

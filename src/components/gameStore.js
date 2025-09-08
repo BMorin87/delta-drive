@@ -13,6 +13,11 @@ export const useGameStore = create((set, get) => ({
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
+  initialVolitionRate: 4,
+  initialThirstRate: 3,
+  initialHungerRate: 2,
+  initialFatigueRate: 1,
+
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,
   initialHungerCapacity: 100,
@@ -43,4 +48,5 @@ export const useGameStore = create((set, get) => ({
     })),
 }));
 
+// gameEngine is a singleton that needs access to the store.
 gameEngine.setStore(useGameStore);

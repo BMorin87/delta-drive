@@ -8,60 +8,76 @@ import UpgradesPanel from "./physiological/UpgradesPanel";
 
 const DeltaGame = () => {
   // Consume game state from the gameStore.
-  const { volition, volitionCapacity, isRunning, togglePause, spendVolition } =
-    useGameStore();
+  const {
+    volition,
+    volitionCapacity,
+    initialVolitionRate,
+    initialThirstRate,
+    initialHungerRate,
+    initialFatigueRate,
+    isRunning,
+    togglePause,
+    spendVolition,
+  } = useGameStore();
 
   // Register global game systems.
   useEffect(() => {
-    const baseVolitionRate = 4;
-    const baseThirstRate = 3;
-    const baseHungerRate = 2;
-    const baseFatigueRate = 1;
-
     const thirstSystem = (state) => {
       if (state.thirst == null) return {};
-      const upgradeState = useUpgradeStore.getState();
-      const growthBonus = upgradeState.getUpgradeEffectAtLevel("thirstRate");
-      const totalGrowth = baseThirstRate + growthBonus;
+      const totalGrowth =
+        initialThirstRate +
+        useUpgradeStore.getState().getUpgradeEffectAtLevel("thirstRate");
+      const cappedValue = Math.min(
+        state.thirstCapacity,
+        state.thirst + totalGrowth
+      );
       return {
-        thirst: Math.min(state.thirstCapacity, state.thirst + totalGrowth),
+        thirst: cappedValue,
       };
     };
-    // gameEngine is a singleton,
     gameEngine.registerSystem("Thirst", thirstSystem);
 
     const hungerSystem = (state) => {
       if (state.hunger == null) return {};
-      const upgradeState = useUpgradeStore.getState();
-      const growthBonus = upgradeState.getUpgradeEffectAtLevel("hungerRate");
-      const totalGrowth = baseHungerRate + growthBonus;
+      const totalGrowth =
+        initialHungerRate +
+        useUpgradeStore.getState().getUpgradeEffectAtLevel("hungerRate");
+      const cappedValue = Math.min(
+        state.hungerCapacity,
+        state.hunger + totalGrowth
+      );
       return {
-        hunger: Math.min(state.hungerCapacity, state.hunger + totalGrowth),
+        hunger: cappedValue,
       };
     };
     gameEngine.registerSystem("Hunger", hungerSystem);
 
     const fatigueSystem = (state) => {
       if (state.fatigue == null) return {};
-      const upgradeState = useUpgradeStore.getState();
-      const growthBonus = upgradeState.getUpgradeEffectAtLevel("fatigueRate");
-      const totalGrowth = baseFatigueRate + growthBonus;
+      const totalGrowth =
+        initialFatigueRate +
+        useUpgradeStore.getState().getUpgradeEffectAtLevel("fatigueRate");
+      const cappedValue = Math.min(
+        state.fatigueCapacity,
+        state.fatigue + totalGrowth
+      );
       return {
-        fatigue: Math.min(state.fatigueCapacity, state.fatigue + totalGrowth),
+        fatigue: cappedValue,
       };
     };
     gameEngine.registerSystem("Fatigue", fatigueSystem);
 
     const volitionSystem = (state) => {
       if (state.volition == null) return {};
-      const upgradeState = useUpgradeStore.getState();
-      const growthBonus = upgradeState.getUpgradeEffectAtLevel("volitionRate");
-      const totalGrowth = baseVolitionRate + growthBonus;
+      const totalGrowth =
+        initialVolitionRate +
+        useUpgradeStore.getState().getUpgradeEffectAtLevel("volitionRate");
+      const cappedValue = Math.min(
+        state.volitionCapacity,
+        state.volition + totalGrowth
+      );
       return {
-        volition: Math.min(
-          state.volitionCapacity,
-          state.volition + totalGrowth
-        ),
+        volition: cappedValue,
       };
     };
     gameEngine.registerSystem("Volition", volitionSystem);
@@ -71,7 +87,7 @@ const DeltaGame = () => {
       gameEngine.unregisterSystem("Fatigue");
       gameEngine.unregisterSystem("Volition");
     };
-  }, []);
+  });
 
   return (
     <div className="game-layout">
