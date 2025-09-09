@@ -2,11 +2,15 @@ import { useUpgradeStore } from "../upgradeStore";
 import UpgradeItem from "./UpgradeItem";
 
 const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
-  const { purchaseUpgrade } = useUpgradeStore();
+  const { purchaseUpgrade, getUpgradeLevel } = useUpgradeStore();
 
   const handlePurchase = (upgradeId) => {
     return purchaseUpgrade(upgradeId, onSpendVolition);
   };
+
+  // Check if the drink button upgrade has been purchased
+  const drinkButtonLevel = getUpgradeLevel("drinkButton");
+  const isDrinkUnlocked = drinkButtonLevel > 0;
 
   return (
     <div className="upgrades-panel">
@@ -28,6 +32,17 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
           currentVolition={currentVolition}
           onPurchase={handlePurchase}
         />
+
+        {/* Only show the drink unlock upgrade if it hasn't been purchased yet */}
+        {!isDrinkUnlocked && (
+          <UpgradeItem
+            upgradeId="drinkButton"
+            title="Hydration Awareness"
+            description="Unlock the ability to actively manage your thirst"
+            currentVolition={currentVolition}
+            onPurchase={handlePurchase}
+          />
+        )}
       </div>
 
       <div className="upgrades-info">

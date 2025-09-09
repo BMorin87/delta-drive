@@ -13,15 +13,19 @@ export const useGameStore = create((set, get) => ({
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
-  initialVolitionRate: 4 / 50, // 4 per second
-  initialThirstRate: 3 / 50,
-  initialHungerRate: 2 / 50,
-  initialFatigueRate: 1 / 50,
+  initialVolitionRate: 4 / 60, // 4 per second
+  initialThirstRate: 3 / 60,
+  initialHungerRate: 2 / 60,
+  initialFatigueRate: 1 / 60,
 
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,
   initialHungerCapacity: 100,
   initialFatigueCapacity: 100,
+
+  drinkUnlocked: false,
+  eatUnlocked: false,
+  nestUnlocked: false,
 
   isRunning: true,
 

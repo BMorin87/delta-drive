@@ -10,20 +10,38 @@ const PhysiologicalUI = () => {
     thirstCapacity,
     hungerCapacity,
     fatigueCapacity,
+    drinkUnlocked,
   } = useGameStore();
+
+  const handleDrink = () => {
+    // For now, just a placeholder - you can implement the actual drink logic later
+    console.log("Drink button clicked!");
+    // Future implementation might look like:
+    // useGameStore.getState().reduceThirst(amount);
+  };
 
   return (
     <div className="physiological-ui-container">
       <div className="physiological-content">
         <h1 className="tier-title">Physiological Needs</h1>
         <div className="bars-container">
-          <VerticalProgressBar
-            current={thirst}
-            max={thirstCapacity}
-            label="Thirst"
-            colorClass="thirst-bar"
-            height={250}
-          />
+          <div className="bar-with-action">
+            <VerticalProgressBar
+              current={thirst}
+              max={thirstCapacity}
+              label="Thirst"
+              colorClass="thirst-bar"
+              height={250}
+            />
+            {drinkUnlocked && (
+              <button
+                className="action-button drink-button"
+                onClick={handleDrink}
+              >
+                Drink
+              </button>
+            )}
+          </div>
           <VerticalProgressBar
             current={hunger}
             max={hungerCapacity}

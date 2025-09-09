@@ -36,30 +36,31 @@ const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
           <div className="upgrade-title">{title}</div>
           <div className="upgrade-cost">{cost} Volition</div>
         </div>
-
-        {/* Tooltip container */}
-        <div className="upgrade-tooltip">
-          <p className="tooltip-description">{description}</p>
-          <p>
-            Current Effect: <strong>+{effect}</strong>
-          </p>
-          <p>
-            Next Level:{" "}
-            <strong>
-              +
-              {getUpgradeEffectAtLevel(upgradeId, upgrade.level) +
-                (upgradeId === "volitionRate"
-                  ? 2
-                  : upgradeId === "volitionCapacity"
-                  ? 25
-                  : upgradeId === "fatigueRate"
-                  ? 0.5
-                  : 1)}
-            </strong>
-          </p>
-          <p>Level: {upgrade.level}</p>
-        </div>
       </button>
+
+      {/* The tooltip is a sibling of the button so it doesn't inherit a greyed-out button's opacity. */}
+      <div className="upgrade-tooltip">
+        <p className="tooltip-description">{description}</p>
+        <p>
+          Current Effect: <strong>+{effect}</strong>
+        </p>
+        <p>
+          Next Level:{" "}
+          <strong>
+            +
+            {/* TODO: Use a lookup table to get upgrade effects. This is not extensible. */}
+            {getUpgradeEffectAtLevel(upgradeId, upgrade.level) +
+              (upgradeId === "volitionRate"
+                ? 2
+                : upgradeId === "volitionCapacity"
+                ? 25
+                : upgradeId === "fatigueRate"
+                ? 0.5
+                : 1)}
+          </strong>
+        </p>
+        <p>Level: {upgrade.level}</p>
+      </div>
     </div>
   );
 };

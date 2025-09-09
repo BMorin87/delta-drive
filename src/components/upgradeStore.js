@@ -5,11 +5,12 @@ import { useGameStore } from "./gameStore";
 export const useUpgradeStore = create((set, get) => ({
   // The state.
   upgrades: {
-    volitionRate: { level: 0, baseCost: 10 },
-    volitionCapacity: { level: 0, baseCost: 15 },
-    thirstRate: { level: 0, baseCost: 8 },
-    hungerRate: { level: 0, baseCost: 12 },
-    fatigueRate: { level: 0, baseCost: 6 },
+    volitionRate: { level: 0, baseCost: 10, type: "rate" },
+    volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
+    thirstRate: { level: 0, baseCost: 8, type: "rate" },
+    hungerRate: { level: 0, baseCost: 12, type: "rate" },
+    fatigueRate: { level: 0, baseCost: 6, type: "rate" },
+    drinkButton: { level: 0, baseCost: 20, type: "unlock", unlocks: "drink" },
   },
 
   // Actions
@@ -30,15 +31,15 @@ export const useUpgradeStore = create((set, get) => ({
     const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
     switch (upgradeId) {
       case "volitionRate":
-        return (level * 2) / 50; // +2 volition per second per level
+        return (level * 2) / 60; // +2 volition per second per level
       case "volitionCapacity":
         return level * 25; // +25 capacity per level
       case "thirstRate":
-        return (level * 1) / 50;
+        return (level * 1) / 60;
       case "hungerRate":
-        return (level * 1) / 50;
+        return (level * 1) / 60;
       case "fatigueRate":
-        return (level * 0.5) / 50;
+        return (level * 0.5) / 60;
       default:
         return 0;
     }
@@ -64,22 +65,31 @@ export const useUpgradeStore = create((set, get) => ({
       },
     }));
 
-    // Apply capacity upgrades immediately using base + bonus
-    if (upgradeId.toLowerCase().includes("capacity")) {
-      const baseProp = "base" + upgradeId[0].toUpperCase() + upgradeId.slice(1);
-      const baseValue = useGameStore.getState()[baseProp] ?? 100;
+    // Handle special upgrade types
+    const upgrade = get().upgrades[upgradeId];
 
-      // Use optional-level getUpgradeEffectAtLevel
-      const newLevel = upgradeStore.getUpgradeLevel(upgradeId); // current level after increment
-      const bonus = upgradeStore.getUpgradeEffectAtLevel(upgradeId, newLevel);
+    switch (upgrade.type) {
+      case "capacity": {
+        const newLevel = upgradeStore.getUpgradeLevel(upgradeId);
+        const bonus = upgradeStore.getUpgradeEffectAtLevel(upgradeId, newLevel);
 
-      useGameStore.setState((prev) => ({
-        ...prev,
-        [upgradeId]: baseValue + bonus,
-      }));
+        useGameStore.setState((prev) => ({
+          ...prev,
+          [upgradeId]: (prev[upgradeId] ?? 100) + bonus,
+        }));
+        break;
+      }
+
+      case "unlock": {
+        if (upgrade.unlocks === "drink") {
+          useGameStore.setState({ drinkUnlocked: true });
+        }
+        break;
+      }
+
+      // "rate" upgrades don’t need special handling;
+      // their effect is calculated dynamically in getUpgradeEffectAtLevel
     }
-
-    // TODO: Implement type system for upgrade effects. Implement upgrades that enable other game mechanics.
 
     return true;
   },
