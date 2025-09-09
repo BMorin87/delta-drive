@@ -1,4 +1,5 @@
 import { useUpgradeStore } from "../upgradeStore";
+import "../../styles/UpgradeItem.css";
 
 const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
   const {
@@ -13,48 +14,51 @@ const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
   const canAfford = canAffordUpgrade(upgradeId);
   const effect = getUpgradeEffectAtLevel(upgradeId, upgrade.level);
 
+  // TODO: Create lookup for upgrade costs and effects based on upgradeId.
+
   const handlePurchase = () => {
     if (canAfford) {
       onPurchase(upgradeId);
     }
   };
+
   return (
-    <div className={`upgrade-item ${canAfford ? "affordable" : "expensive"}`}>
-      <div className="upgrade-header">
-        <h3 className="upgrade-title">{title}</h3>
-        <div className="upgrade-level">Level {upgrade.level}</div>
-      </div>
-
-      <div className="upgrade-description">{description}</div>
-
-      <div className="upgrade-stats">
-        <div className="upgrade-effect">
-          Current Effect: <span className="effect-value">+{effect}</span>
-        </div>
-        <div className="upgrade-next">
-          Next Level:{" "}
-          <span className="next-effect">
-            +
-            {getUpgradeEffectAtLevel(upgradeId, upgrade.level) +
-              (upgradeId === "volitionRate"
-                ? 2
-                : upgradeId === "volitionCapacity"
-                ? 25
-                : upgradeId === "fatigueRate"
-                ? 0.5
-                : 1)}
-          </span>
-        </div>
-      </div>
-
+    <div className="upgrade-wrapper">
       <button
-        className={`upgrade-button ${
-          canAfford ? "can-afford" : "cannot-afford"
-        }`}
+        className={`upgrade-item ${canAfford ? "affordable" : "expensive"}`}
         onClick={handlePurchase}
         disabled={!canAfford}
       >
-        <span className="upgrade-cost">{cost} Volition</span>
+        {/* Placeholder icon box */}
+        <div className="upgrade-icon">🎯</div>
+
+        <div className="upgrade-main">
+          <div className="upgrade-title">{title}</div>
+          <div className="upgrade-cost">{cost} Volition</div>
+        </div>
+
+        {/* Tooltip container */}
+        <div className="upgrade-tooltip">
+          <p className="tooltip-description">{description}</p>
+          <p>
+            Current Effect: <strong>+{effect}</strong>
+          </p>
+          <p>
+            Next Level:{" "}
+            <strong>
+              +
+              {getUpgradeEffectAtLevel(upgradeId, upgrade.level) +
+                (upgradeId === "volitionRate"
+                  ? 2
+                  : upgradeId === "volitionCapacity"
+                  ? 25
+                  : upgradeId === "fatigueRate"
+                  ? 0.5
+                  : 1)}
+            </strong>
+          </p>
+          <p>Level: {upgrade.level}</p>
+        </div>
       </button>
     </div>
   );

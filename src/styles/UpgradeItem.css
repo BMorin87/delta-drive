@@ -1,0 +1,60 @@
+.upgrade-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.upgrade-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #222;
+  border: 2px solid #555;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.upgrade-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.upgrade-icon {
+  width: 32px;
+  height: 32px;
+  background: #444;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upgrade-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.upgrade-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: 220px;
+  background: #111;
+  color: #fff;
+  text-align: left;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  z-index: 10;
+  transition: opacity 0.2s ease;
+}
+
+.upgrade-wrapper:hover .upgrade-tooltip {
+  visibility: visible;
+  opacity: 1;
+}

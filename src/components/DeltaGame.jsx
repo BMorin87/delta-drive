@@ -3,7 +3,7 @@ import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import { gameEngine } from "./gameEngine";
 import VolitionCrown from "./VolitionCrown";
-import PhysiologicalUI from "./physiological/PhysiologicalUI";
+import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
 import UpgradesPanel from "./physiological/UpgradesPanel";
 
 const DeltaGame = () => {
@@ -109,7 +109,7 @@ const DeltaGame = () => {
 
       {/* Main content area with progress bars */}
       <div className="tier-content">
-        <PhysiologicalUI />
+        <PhysiologicalPanel />
       </div>
     </div>
   );

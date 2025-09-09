@@ -30,15 +30,15 @@ export const useUpgradeStore = create((set, get) => ({
     const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
     switch (upgradeId) {
       case "volitionRate":
-        return level * 2; // +2 volition per tick per level
+        return (level * 2) / 50; // +2 volition per second per level
       case "volitionCapacity":
         return level * 25; // +25 capacity per level
       case "thirstRate":
-        return level * 1;
+        return (level * 1) / 50;
       case "hungerRate":
-        return level * 1;
+        return (level * 1) / 50;
       case "fatigueRate":
-        return level * 0.5;
+        return (level * 0.5) / 50;
       default:
         return 0;
     }
@@ -78,6 +78,8 @@ export const useUpgradeStore = create((set, get) => ({
         [upgradeId]: baseValue + bonus,
       }));
     }
+
+    // TODO: Implement type system for upgrade effects. Implement upgrades that enable other game mechanics.
 
     return true;
   },

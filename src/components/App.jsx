@@ -3,12 +3,12 @@ import { useGameStore } from "./gameStore";
 import "../styles/App.css";
 import DeltaGame from "./DeltaGame";
 
-const TICK_INTERVAL = 1000; // milliseconds
+const TICK_INTERVAL = 20; // milliseconds
 
 function App() {
   const { tick, isRunning } = useGameStore();
 
-  // Single game loop
+  // The game loop.
   useEffect(() => {
     let interval;
     if (isRunning) {
