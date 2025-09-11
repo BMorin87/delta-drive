@@ -81,13 +81,19 @@ const DeltaGame = () => {
       };
     };
     gameEngine.registerSystem("Volition", volitionSystem);
+
     return () => {
       gameEngine.unregisterSystem("Thirst");
       gameEngine.unregisterSystem("Hunger");
       gameEngine.unregisterSystem("Fatigue");
       gameEngine.unregisterSystem("Volition");
     };
-  });
+  }, [
+    initialThirstRate,
+    initialHungerRate,
+    initialFatigueRate,
+    initialVolitionRate,
+  ]);
 
   return (
     <div className="game-layout">

@@ -33,7 +33,7 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
           onPurchase={handlePurchase}
         />
 
-        {/* Only show the drink unlock upgrade if it hasn't been purchased yet */}
+        {/* Only show the drink unlock upgrade if it hasn't been purchased yet. */}
         {!isDrinkUnlocked && (
           <UpgradeItem
             upgradeId="drinkButton"
@@ -43,16 +43,6 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
             onPurchase={handlePurchase}
           />
         )}
-      </div>
-
-      <div className="upgrades-info">
-        <p>
-          Spend volition to improve your physiological awareness and capacity.
-        </p>
-        <div className="current-volition">
-          Available Volition:{" "}
-          <span className="volition-amount">{Math.floor(currentVolition)}</span>
-        </div>
       </div>
     </div>
   );

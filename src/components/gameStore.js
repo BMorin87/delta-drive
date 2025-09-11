@@ -30,7 +30,13 @@ export const useGameStore = create((set, get) => ({
   isRunning: true,
 
   // Actions
-  tick: () => gameEngine.tick(),
+  tick: () => {
+    gameEngine.tick();
+
+    // Also update status cooldowns
+    const { useStatusStore } = require("./statusStore");
+    useStatusStore.getState().updateCooldowns();
+  },
 
   spendVolition: (amount) => {
     const state = get();

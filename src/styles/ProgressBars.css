@@ -124,6 +124,7 @@
   gap: 10px;
 }
 
+/* Base action button styling (existing) */
 .action-button {
   padding: 8px 16px;
   border: none;
@@ -132,19 +133,138 @@
   font-size: 14px;
   font-weight: bold;
   transition: all 0.2s ease;
+  min-width: 80px;
+  text-align: center;
 }
 
+/* Drink button styling */
 .drink-button {
   background-color: #4a90e2;
   color: white;
 }
 
-.drink-button:hover {
+.drink-button:hover:not(:disabled) {
   background-color: #357abd;
   transform: translateY(-2px);
 }
 
-.drink-button:active {
+.drink-button.active {
+  background-color: #2563eb;
+  animation: pulse-drink 1s ease-in-out infinite;
+}
+
+.drink-button.cooldown {
+  background-color: #6b7280;
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Eat button styling */
+.eat-button {
+  background-color: #22c55e;
+  color: white;
+}
+
+.eat-button:hover:not(:disabled) {
+  background-color: #16a34a;
+  transform: translateY(-2px);
+}
+
+.eat-button.active {
+  background-color: #15803d;
+  animation: pulse-eat 1s ease-in-out infinite;
+}
+
+.eat-button.cooldown {
+  background-color: #6b7280;
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Rest button styling */
+.rest-button {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.rest-button:hover:not(:disabled) {
+  background-color: #d97706;
+  transform: translateY(-2px);
+}
+
+.rest-button.active {
+  background-color: #b45309;
+  animation: pulse-rest 1s ease-in-out infinite;
+}
+
+.rest-button.cooldown {
+  background-color: #6b7280;
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Active state animations */
+@keyframes pulse-drink {
+  0%,
+  100% {
+    background-color: #2563eb;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+  }
+  50% {
+    background-color: #3b82f6;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.8);
+  }
+}
+
+@keyframes pulse-eat {
+  0%,
+  100% {
+    background-color: #15803d;
+    box-shadow: 0 0 10px rgba(21, 128, 61, 0.5);
+  }
+  50% {
+    background-color: #16a34a;
+    box-shadow: 0 0 20px rgba(21, 128, 61, 0.8);
+  }
+}
+
+@keyframes pulse-rest {
+  0%,
+  100% {
+    background-color: #b45309;
+    box-shadow: 0 0 10px rgba(180, 83, 9, 0.5);
+  }
+  50% {
+    background-color: #d97706;
+    box-shadow: 0 0 20px rgba(180, 83, 9, 0.8);
+  }
+}
+
+/* Synergy bonus indicator styling */
+.bonus-indicator {
+  color: #fbbf24;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+  }
+  to {
+    text-shadow: 0 0 16px rgba(251, 191, 36, 0.8);
+  }
+}
+
+/* Disabled state for all action buttons */
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.action-button:active:not(:disabled) {
   transform: translateY(0);
 }
 
