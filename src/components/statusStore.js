@@ -228,28 +228,41 @@ export const useStatusStore = create((set, get) => ({
     };
 
     gameEngine.registerSystem(systemName, statusSystem);
+
+    // Also register cooldown system if it doesn't exist
+    if (!gameEngine.systems.has("CooldownManager")) {
+      get().registerCooldownSystem();
+    }
   },
 
-  // Update cooldowns - needs to be called somehow
-  updateCooldowns: () => {
-    const deltaTime = 1 / 60;
-    set((prev) => {
-      const newCooldowns = { ...prev.cooldowns };
-      let hasChanges = false;
+  // Register cooldown system
+  registerCooldownSystem: () => {
+    const cooldownSystem = () => {
+      const deltaTime = 1 / 60;
+      set((prev) => {
+        const newCooldowns = { ...prev.cooldowns };
+        let hasChanges = false;
 
-      Object.keys(newCooldowns).forEach((statusType) => {
-        if (newCooldowns[statusType] > 0) {
-          newCooldowns[statusType] = Math.max(
-            0,
-            newCooldowns[statusType] - deltaTime
-          );
-          hasChanges = true;
-        }
+        Object.keys(newCooldowns).forEach((statusType) => {
+          if (newCooldowns[statusType] > 0) {
+            newCooldowns[statusType] = Math.max(
+              0,
+              newCooldowns[statusType] - deltaTime
+            );
+            hasChanges = true;
+          }
+        });
+
+        return hasChanges ? { cooldowns: newCooldowns } : prev;
       });
 
-      return hasChanges ? { cooldowns: newCooldowns } : prev;
-    });
+      return {}; // No game state updates needed
+    };
+
+    gameEngine.registerSystem("CooldownManager", cooldownSystem);
   },
+
+  // Remove the standalone updateCooldowns method since it's now handled by the system
 
   // Helper methods for UI
   isStatusActive: (statusType) => {
