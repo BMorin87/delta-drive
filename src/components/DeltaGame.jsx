@@ -76,6 +76,15 @@ const DeltaGame = () => {
         state.volitionCapacity,
         state.volition + totalGrowth
       );
+
+      // Debug logging
+      console.log("🔵 VOLITION SYSTEM:", {
+        input_volition: state.volition,
+        growth: totalGrowth,
+        output_volition: cappedValue,
+        change: cappedValue - state.volition,
+      });
+
       return {
         volition: cappedValue,
       };

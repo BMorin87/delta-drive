@@ -23,7 +23,8 @@ class GameEngine {
     // Run all registered systems.
     this.systems.forEach((updateFunction, name) => {
       try {
-        const systemUpdate = updateFunction(state);
+        const stateWithUpdates = { ...state, ...updates };
+        const systemUpdate = updateFunction(stateWithUpdates);
         if (systemUpdate && typeof systemUpdate === "object") {
           Object.assign(updates, systemUpdate);
         }

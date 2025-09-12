@@ -155,16 +155,22 @@ export const useStatusStore = create((set, get) => ({
 
       // Apply effects generically.
       return status.effects.reduce((updates, effect) => {
-        const reduction =
+        const maxReduction =
           effect.reductionMultiplier * (gameState[effect.rateKey] || 0);
-        const newValue = Math.max(0, gameState[effect.target] - reduction);
-        const satisfied = gameState[effect.target] - newValue;
+        const currentNeed = gameState[effect.target];
+
+        // Only consume what's actually available
+        const actualReduction = Math.min(maxReduction, currentNeed);
+        const newValue = Math.max(0, currentNeed - actualReduction);
+        const satisfied = actualReduction; // This is what was actually consumed
 
         // Start with resource update
-        let newUpdates = {
-          ...updates,
-          [effect.target]: newValue,
-        };
+        let newUpdates = { ...updates };
+
+        // Only update the target resource if we actually consumed something
+        if (actualReduction > 0) {
+          newUpdates[effect.target] = newValue;
+        }
 
         // Synergy multiplier
         let multiplier = 1.0;
@@ -172,7 +178,7 @@ export const useStatusStore = create((set, get) => ({
           multiplier = effect.synergy.multiplier;
         }
 
-        // Rewards (optional per effect)
+        // Rewards based on what was actually satisfied
         if (effect.rewards) {
           effect.rewards.forEach(({ resource, perUnit, capacityKey }) => {
             const gain = satisfied * perUnit * multiplier;

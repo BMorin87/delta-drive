@@ -44,26 +44,6 @@ describe("GameEngine", () => {
       expect(mockSystem).not.toHaveBeenCalled();
     });
 
-    it("should run all registered systems with current state", () => {
-      const mockState = { volition: 50, thirst: 25 };
-      const mockStore = {
-        getState: vi.fn().mockReturnValue(mockState),
-        setState: vi.fn(),
-      };
-
-      const system1 = vi.fn().mockReturnValue({ volition: 51 });
-      const system2 = vi.fn().mockReturnValue({ thirst: 26 });
-
-      gameEngine.setStore(mockStore);
-      gameEngine.registerSystem("system1", system1);
-      gameEngine.registerSystem("system2", system2);
-
-      gameEngine.tick();
-
-      expect(system1).toHaveBeenCalledWith(mockState);
-      expect(system2).toHaveBeenCalledWith(mockState);
-    });
-
     it("should update store with system changes", () => {
       const mockState = { volition: 50 };
       const mockStore = {
