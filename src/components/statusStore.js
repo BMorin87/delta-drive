@@ -142,7 +142,7 @@ export const useStatusStore = create((set, get) => ({
 
       const newDuration = status.duration - 1 / 60;
       if (newDuration <= 0) {
-        setTimeout(() => get().cancelStatus(statusType), 0);
+        get().cancelStatus(statusType);
         return {};
       }
 
@@ -153,9 +153,7 @@ export const useStatusStore = create((set, get) => ({
         },
       }));
 
-      // ========================
-      // Apply effects generically
-      // ========================
+      // Apply effects generically.
       return status.effects.reduce((updates, effect) => {
         const reduction =
           effect.reductionMultiplier * (gameState[effect.rateKey] || 0);

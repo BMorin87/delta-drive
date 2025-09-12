@@ -84,7 +84,7 @@ describe("upgradeStore", () => {
       const { getUpgradeEffectAtLevel } = useUpgradeStore.getState();
 
       expect(getUpgradeEffectAtLevel("volitionRate", 0)).toBe(0);
-      expect(getUpgradeEffectAtLevel("volitionRate", 3)).toBe(6); // 3 * 2
+      expect(getUpgradeEffectAtLevel("volitionRate", 3)).toBeCloseTo(0.1, 5); // (3 * 2) / 60
     });
 
     it("should calculate capacity effects correctly", () => {
@@ -104,7 +104,7 @@ describe("upgradeStore", () => {
 
       const { getUpgradeEffectAtLevel } = useUpgradeStore.getState();
 
-      expect(getUpgradeEffectAtLevel("volitionRate")).toBe(6); // Uses current level 3
+      expect(getUpgradeEffectAtLevel("volitionRate")).toBeCloseTo(0.1, 5); // (3 * 2) / 60 = 0.1
     });
   });
 
