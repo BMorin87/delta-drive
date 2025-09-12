@@ -20,7 +20,7 @@ const DeltaGame = () => {
     spendVolition,
   } = useGameStore();
 
-  // Register global game systems.
+  // Register global game systems on first mount.
   useEffect(() => {
     const thirstSystem = (state) => {
       if (state.thirst == null) return {};
@@ -77,14 +77,6 @@ const DeltaGame = () => {
         state.volition + totalGrowth
       );
 
-      // Debug logging
-      console.log("🔵 VOLITION SYSTEM:", {
-        input_volition: state.volition,
-        growth: totalGrowth,
-        output_volition: cappedValue,
-        change: cappedValue - state.volition,
-      });
-
       return {
         volition: cappedValue,
       };
@@ -98,6 +90,7 @@ const DeltaGame = () => {
       gameEngine.unregisterSystem("Volition");
     };
   }, [
+    // Re-register if initial rates change for some reason.
     initialThirstRate,
     initialHungerRate,
     initialFatigueRate,
