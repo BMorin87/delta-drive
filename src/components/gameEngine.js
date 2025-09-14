@@ -23,10 +23,10 @@ class GameEngine {
     // Run all registered systems.
     this.systems.forEach((updateFunction, name) => {
       try {
-        const stateWithUpdates = { ...state, ...updates };
-        const systemUpdate = updateFunction(stateWithUpdates);
-        if (systemUpdate && typeof systemUpdate === "object") {
-          Object.assign(updates, systemUpdate);
+        // Use "current" game state, including any updates from the current tick.
+        const newStateUpdate = updateFunction({ ...state, ...updates });
+        if (newStateUpdate && typeof newStateUpdate === "object") {
+          Object.assign(updates, newStateUpdate);
         }
       } catch (error) {
         console.error(`Error in system ${name}:`, error);

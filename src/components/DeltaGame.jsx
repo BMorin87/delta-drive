@@ -20,68 +20,14 @@ const DeltaGame = () => {
     spendVolition,
   } = useGameStore();
 
-  // Register global game systems on first mount.
+  // Run on first mount only.
   useEffect(() => {
-    const thirstSystem = (state) => {
-      if (state.thirst == null) return {};
-      const totalGrowth =
-        initialThirstRate +
-        useUpgradeStore.getState().getUpgradeEffectAtLevel("thirstRate");
-      const cappedValue = Math.min(
-        state.thirstCapacity,
-        state.thirst + totalGrowth
-      );
-      return {
-        thirst: cappedValue,
-      };
-    };
-    gameEngine.registerSystem("Thirst", thirstSystem);
-
-    const hungerSystem = (state) => {
-      if (state.hunger == null) return {};
-      const totalGrowth =
-        initialHungerRate +
-        useUpgradeStore.getState().getUpgradeEffectAtLevel("hungerRate");
-      const cappedValue = Math.min(
-        state.hungerCapacity,
-        state.hunger + totalGrowth
-      );
-      return {
-        hunger: cappedValue,
-      };
-    };
-    gameEngine.registerSystem("Hunger", hungerSystem);
-
-    const fatigueSystem = (state) => {
-      if (state.fatigue == null) return {};
-      const totalGrowth =
-        initialFatigueRate +
-        useUpgradeStore.getState().getUpgradeEffectAtLevel("fatigueRate");
-      const cappedValue = Math.min(
-        state.fatigueCapacity,
-        state.fatigue + totalGrowth
-      );
-      return {
-        fatigue: cappedValue,
-      };
-    };
-    gameEngine.registerSystem("Fatigue", fatigueSystem);
-
-    const volitionSystem = (state) => {
-      if (state.volition == null) return {};
-      const totalGrowth =
-        initialVolitionRate +
-        useUpgradeStore.getState().getUpgradeEffectAtLevel("volitionRate");
-      const cappedValue = Math.min(
-        state.volitionCapacity,
-        state.volition + totalGrowth
-      );
-
-      return {
-        volition: cappedValue,
-      };
-    };
-    gameEngine.registerSystem("Volition", volitionSystem);
+    registerGlobalGameSystems(
+      initialThirstRate,
+      initialHungerRate,
+      initialFatigueRate,
+      initialVolitionRate
+    );
 
     return () => {
       gameEngine.unregisterSystem("Thirst");
@@ -122,5 +68,76 @@ const DeltaGame = () => {
     </div>
   );
 };
+
+// Initial rates are passed in to allow re-registration if they ever change.
+function registerGlobalGameSystems(
+  initialThirstRate,
+  initialHungerRate,
+  initialFatigueRate,
+  initialVolitionRate
+) {
+  const keys = createUpdateFunctionKeys(
+    initialThirstRate,
+    initialHungerRate,
+    initialFatigueRate,
+    initialVolitionRate
+  );
+
+  gameEngine.registerSystem("Thirst", createUpdateFunction(keys.thirst));
+  gameEngine.registerSystem("Hunger", createUpdateFunction(keys.hunger));
+  gameEngine.registerSystem("Fatigue", createUpdateFunction(keys.fatigue));
+  gameEngine.registerSystem("Volition", createUpdateFunction(keys.volition));
+}
+
+function createUpdateFunctionKeys(
+  initialThirstRate,
+  initialHungerRate,
+  initialFatigueRate,
+  initialVolitionRate
+) {
+  // "Magic" names used to refer to state variables in the gameStore and upgradeStore.
+  return {
+    thirst: {
+      stat: "thirst",
+      capacity: "thirstCapacity",
+      upgradeRate: "thirstRate",
+      initialRate: initialThirstRate,
+    },
+    hunger: {
+      stat: "hunger",
+      capacity: "hungerCapacity",
+      upgradeRate: "hungerRate",
+      initialRate: initialHungerRate,
+    },
+    fatigue: {
+      stat: "fatigue",
+      capacity: "fatigueCapacity",
+      upgradeRate: "fatigueRate",
+      initialRate: initialFatigueRate,
+    },
+    volition: {
+      stat: "volition",
+      capacity: "volitionCapacity",
+      upgradeRate: "volitionRate",
+      initialRate: initialVolitionRate,
+    },
+  };
+}
+
+function createUpdateFunction(statKeys) {
+  const { stat, capacity, upgradeRate, initialRate } = statKeys;
+  return (state) => {
+    if (state[stat] == null) {
+      return {};
+    }
+    const totalGrowth =
+      initialRate +
+      useUpgradeStore.getState().getUpgradeEffectAtLevel(state[upgradeRate]);
+    const cappedValue = Math.min(state[capacity], state[stat] + totalGrowth);
+    return {
+      [stat]: cappedValue,
+    };
+  };
+}
 
 export default DeltaGame;

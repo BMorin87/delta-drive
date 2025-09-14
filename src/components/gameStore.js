@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
-  // Game state.
+  // Game state variables are highly fragile to update.
   volition: 0,
   thirst: 0,
   hunger: 0,
