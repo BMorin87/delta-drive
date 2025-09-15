@@ -12,6 +12,12 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
   const drinkButtonLevel = getUpgradeLevel("drinkButton");
   const isDrinkUnlocked = drinkButtonLevel > 0;
 
+  const eatButtonLevel = getUpgradeLevel("eatButton");
+  const isEatUnlocked = eatButtonLevel > 0;
+
+  const restButtonLevel = getUpgradeLevel("restButton");
+  const isRestUnlocked = restButtonLevel > 0;
+
   return (
     <div className="upgrades-panel">
       <h2 className="upgrades-title">Upgrades</h2>
@@ -33,12 +39,32 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
           onPurchase={handlePurchase}
         />
 
-        {/* Only show the drink unlock upgrade if it hasn't been purchased yet. */}
+        {/* Only show the unlock upgrade if it hasn't been purchased yet. */}
         {!isDrinkUnlocked && (
           <UpgradeItem
             upgradeId="drinkButton"
             title="Hydration Awareness"
             description="Unlock the ability to actively manage your thirst"
+            currentVolition={currentVolition}
+            onPurchase={handlePurchase}
+          />
+        )}
+
+        {!isEatUnlocked && (
+          <UpgradeItem
+            upgradeId="eatButton"
+            title="Nutritional Awareness"
+            description="Unlock the ability to actively manage your hunger"
+            currentVolition={currentVolition}
+            onPurchase={handlePurchase}
+          />
+        )}
+
+        {!isRestUnlocked && (
+          <UpgradeItem
+            upgradeId="restButton"
+            title="Restfulness Awareness"
+            description="Unlock the ability to actively manage your fatigue"
             currentVolition={currentVolition}
             onPurchase={handlePurchase}
           />

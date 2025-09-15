@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { useGameStore } from "./gameStore";
 
-// Factory function for creating the upgrade store
 export const useUpgradeStore = create((set, get) => ({
   // The state.
   upgrades: {
@@ -10,7 +9,9 @@ export const useUpgradeStore = create((set, get) => ({
     thirstRate: { level: 0, baseCost: 8, type: "rate" },
     hungerRate: { level: 0, baseCost: 12, type: "rate" },
     fatigueRate: { level: 0, baseCost: 6, type: "rate" },
-    drinkButton: { level: 0, baseCost: 20, type: "unlock", unlocks: "drink" },
+    drinkButton: { level: 0, baseCost: 10, type: "unlock", unlocks: "drink" },
+    eatButton: { level: 0, baseCost: 40, type: "unlock", unlocks: "eat" },
+    restButton: { level: 0, baseCost: 90, type: "unlock", unlocks: "rest" },
   },
 
   // Actions
@@ -29,17 +30,18 @@ export const useUpgradeStore = create((set, get) => ({
 
   getUpgradeEffectAtLevel: (upgradeId, requestedLevel) => {
     const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
+    const fps = useGameStore.getState().TICKS_PER_SECOND;
     switch (upgradeId) {
       case "volitionRate":
-        return (level * 2) / 60; // +2 volition per second per level
+        return (level * 2) / fps; // +2 volition per second per level
       case "volitionCapacity":
         return level * 25; // +25 capacity per level
       case "thirstRate":
-        return (level * 1) / 60;
+        return (level * 1) / fps;
       case "hungerRate":
-        return (level * 1) / 60;
+        return (level * 1) / fps;
       case "fatigueRate":
-        return (level * 0.5) / 60;
+        return (level * 0.5) / fps;
       default:
         return 0;
     }
@@ -83,6 +85,10 @@ export const useUpgradeStore = create((set, get) => ({
       case "unlock": {
         if (upgrade.unlocks === "drink") {
           useGameStore.setState({ drinkUnlocked: true });
+        } else if (upgrade.unlocks === "eat") {
+          useGameStore.setState({ eatUnlocked: true });
+        } else if (upgrade.unlocks === "rest") {
+          useGameStore.setState({ restUnlocked: true });
         }
         break;
       }

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { useUpgradeStore } from "../src/components/upgradeStore";
 
-// Mock the game store - define the mock object directly in the factory function
+// Mock the gameStore.
 vi.mock("../src/components/gameStore", () => ({
   useGameStore: {
     getState: vi.fn(),
@@ -27,6 +27,8 @@ describe("upgradeStore", () => {
 
     // Reset mocks
     vi.clearAllMocks();
+
+    useGameStore.getState.mockReturnValue({ TICKS_PER_SECOND: 60 });
   });
 
   describe("cost calculation", () => {

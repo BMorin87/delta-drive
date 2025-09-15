@@ -93,7 +93,8 @@ export const useStatusStore = create((set, get) => ({
       const status = statusStoreState.activeStatuses[statusType];
       if (!status) return {};
 
-      const newDuration = status.duration - 1 / 60;
+      const deltaTime = 1 / 60;
+      const newDuration = status.duration - deltaTime;
 
       if (newDuration <= 0) {
         gameEngine.unregisterSystem(`Status_${statusType}`);
@@ -158,14 +159,14 @@ export const useStatusStore = create((set, get) => ({
 
   registerCooldownSystem: () => {
     const cooldownSystem = () => {
-      const delta = 1 / 60;
+      const deltaTime = 1 / 60;
       set((prev) => {
         const updated = {};
         let changed = false;
 
         Object.entries(prev.cooldowns).forEach(([statusType, value]) => {
           if (value > 0) {
-            updated[statusType] = Math.max(0, value - delta);
+            updated[statusType] = Math.max(0, value - deltaTime);
             changed = true;
           }
         });

@@ -20,7 +20,7 @@ const DeltaGame = () => {
     spendVolition,
   } = useGameStore();
 
-  // Run on first mount only.
+  // Register base systems on first mount.
   useEffect(() => {
     registerGlobalGameSystems(
       initialThirstRate,

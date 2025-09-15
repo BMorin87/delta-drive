@@ -3,21 +3,20 @@ import { useGameStore } from "./gameStore";
 import "../styles/App.css";
 import DeltaGame from "./DeltaGame";
 
-const TICK_INTERVAL = 1000 / 60; // 60 fps
-
 function App() {
-  const { tick, isRunning } = useGameStore();
+  const { TICKS_PER_SECOND, isRunning, tick } = useGameStore();
 
   // The game loop.
   useEffect(() => {
     let interval;
     if (isRunning) {
-      interval = setInterval(tick, TICK_INTERVAL);
+      const tickInterval = 1000 / TICKS_PER_SECOND; // in milliseconds.
+      interval = setInterval(tick, tickInterval);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [tick, isRunning]);
+  }, [TICKS_PER_SECOND, isRunning, tick]);
 
   return <DeltaGame />;
 }

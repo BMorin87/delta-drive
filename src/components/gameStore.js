@@ -2,11 +2,14 @@ import { create } from "zustand";
 import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
-  // Game state variables are highly fragile to updates and refactoring!
-  volition: 0,
-  thirst: 0,
-  hunger: 0,
-  fatigue: 0,
+  // Game state variables are highly fragile to refactoring and prototyping!
+  TICKS_PER_SECOND: 60,
+  isRunning: true,
+
+  volition: 1,
+  thirst: 1,
+  hunger: 1,
+  fatigue: 1,
 
   volitionCapacity: 100,
   thirstCapacity: 100,
@@ -26,8 +29,6 @@ export const useGameStore = create((set, get) => ({
   drinkUnlocked: false,
   eatUnlocked: false,
   restUnlocked: false,
-
-  isRunning: true,
 
   // Actions
   tick: () => gameEngine.tick(),
