@@ -13,25 +13,26 @@ const PhysiologicalUI = () => {
     fatigueCapacity,
     drinkUnlocked,
     eatUnlocked,
-    nestUnlocked,
+    restUnlocked,
   } = useGameStore();
 
-  // Subscribe to statusStore state to trigger re-renders
   const {
+    calculateVolitionCost,
+    activeStatuses,
+    cooldowns,
     startStatus,
     cancelStatus,
-    calculateVolitionCost,
-    isStatusActive,
-    getStatusDuration,
-    getCooldownRemaining,
   } = useStatusStore();
+
+  // Consume the subscribed state variables to ensure re-renders on change.
+  const isStatusActive = (type) => !!activeStatuses[type];
+  const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
+  const getCooldownRemaining = (type) => cooldowns[type] || 0;
 
   const handleDrink = () => {
     if (isStatusActive("drink")) {
-      // Cancel if active
       cancelStatus("drink");
     } else {
-      // Start drinking
       startStatus("drink");
     }
   };
@@ -52,7 +53,6 @@ const PhysiologicalUI = () => {
     }
   };
 
-  // Helper function to get button text and state
   const getButtonState = (actionType) => {
     const isActive = isStatusActive(actionType);
     const cooldownRemaining = getCooldownRemaining(actionType);
@@ -84,6 +84,10 @@ const PhysiologicalUI = () => {
     }
   };
 
+  const drinkButtonState = getButtonState("drink");
+  const eatButtonState = getButtonState("eat");
+  const restButtonState = getButtonState("rest");
+
   return (
     <div className="physiological-ui-container">
       <div className="physiological-content">
@@ -99,8 +103,8 @@ const PhysiologicalUI = () => {
               height={250}
             />
             {drinkUnlocked && (
-              <button {...getButtonState("drink")} onClick={handleDrink}>
-                {getButtonState("drink").text}
+              <button {...drinkButtonState} onClick={handleDrink}>
+                {drinkButtonState.text}
               </button>
             )}
           </div>
@@ -115,8 +119,8 @@ const PhysiologicalUI = () => {
               height={250}
             />
             {eatUnlocked && (
-              <button {...getButtonState("eat")} onClick={handleEat}>
-                {getButtonState("eat").text}
+              <button {...eatButtonState} onClick={handleEat}>
+                {eatButtonState.text}
               </button>
             )}
           </div>
@@ -130,9 +134,9 @@ const PhysiologicalUI = () => {
               colorClass="fatigue-bar"
               height={250}
             />
-            {nestUnlocked && (
-              <button {...getButtonState("rest")} onClick={handleRest}>
-                {getButtonState("rest").text}
+            {restUnlocked && (
+              <button {...restButtonState} onClick={handleRest}>
+                {restButtonState.text}
               </button>
             )}
           </div>

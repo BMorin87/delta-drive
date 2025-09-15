@@ -124,6 +124,7 @@ function createUpdateFunctionKeys(
   };
 }
 
+// Factory function to reduce repetition.
 function createUpdateFunction(statKeys) {
   const { stat, capacity, upgradeRate, initialRate } = statKeys;
   return (state) => {

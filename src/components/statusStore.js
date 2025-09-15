@@ -1,93 +1,32 @@
 import { create } from "zustand";
 import { gameEngine } from "./gameEngine";
+import { STATUS_CONFIGS } from "./statusConfigs";
 
 export const useStatusStore = create((set, get) => ({
+  // The state of temporary statuses.
   activeStatuses: {},
   cooldowns: {},
-
-  // ========================
-  // Status Configurations
-  // ========================
-  statusConfigs: {
-    drink: {
-      duration: 5,
-      cooldown: 15,
-      cost: { base: 10, need: "thirst", capacity: "thirstCapacity" },
-      effects: [
-        {
-          target: "thirst",
-          rateKey: "initialThirstRate",
-          reductionMultiplier: 3,
-          rewards: [
-            {
-              resource: "volition",
-              perUnit: 2,
-              capacityKey: "volitionCapacity",
-            },
-          ],
-          synergy: { with: "eat", multiplier: 1.2 },
-        },
-      ],
-    },
-    eat: {
-      duration: 8,
-      cooldown: 20,
-      cost: { base: 10, need: "hunger", capacity: "hungerCapacity" },
-      effects: [
-        {
-          target: "hunger",
-          rateKey: "initialHungerRate",
-          reductionMultiplier: 3,
-          rewards: [
-            {
-              resource: "volition",
-              perUnit: 1.5,
-              capacityKey: "volitionCapacity",
-            },
-          ],
-          synergy: { with: "drink", multiplier: 1.2 },
-        },
-      ],
-    },
-    rest: {
-      duration: 10,
-      cooldown: 25,
-      cost: { base: 10, need: "fatigue", capacity: "fatigueCapacity" },
-      effects: [
-        {
-          target: "fatigue",
-          rateKey: "initialFatigueRate",
-          reductionMultiplier: 2,
-          rewards: [
-            {
-              resource: "volition",
-              perUnit: 1,
-              capacityKey: "volitionCapacity",
-            },
-          ],
-        },
-      ],
-    },
-  },
+  statusConfigs: STATUS_CONFIGS,
 
   // ========================
   // Actions
   // ========================
 
   startStatus: (statusType) => {
-    const state = get();
-    const gameStore = gameEngine.store;
-    const config = state.statusConfigs[statusType];
+    const myState = get();
+    const config = myState.statusConfigs[statusType];
 
     if (!config) return false;
-    if (state.cooldowns[statusType] > 0) return false;
+    if (myState.cooldowns[statusType] > 0) return false;
 
-    const cost = state.calculateVolitionCost(statusType);
+    // TODO: Make dependency on gameStore explicit and move calculateVolitionCost to gameStore.
+    const gameStore = gameEngine.store;
+    const cost = myState.calculateVolitionCost(statusType);
     if (!gameStore.getState().spendVolition(cost)) return false;
 
     // Cancel existing if already active
-    if (state.activeStatuses[statusType]) {
-      state.cancelStatus(statusType);
+    if (myState.activeStatuses[statusType]) {
+      myState.cancelStatus(statusType);
     }
 
     set((prev) => ({
@@ -101,7 +40,16 @@ export const useStatusStore = create((set, get) => ({
       },
     }));
 
-    get().registerStatusSystem(statusType);
+    gameEngine.registerSystem(
+      `Status_${statusType}`,
+      get().createStatusUpdate(statusType)
+    );
+
+    // Ensure the cooldown manager is registered only once
+    if (!gameEngine.systems.has("CooldownManager")) {
+      get().registerCooldownSystem();
+    }
+
     return true;
   },
 
@@ -117,15 +65,20 @@ export const useStatusStore = create((set, get) => ({
     }));
   },
 
+  // This accesses game state through the gameEngine and should be moved to gameStore.
   calculateVolitionCost: (statusType) => {
-    const { cost } = get().statusConfigs[statusType];
+    const config = get().statusConfigs[statusType];
+    if (!config) {
+      console.error(`Status config for "${statusType}" is undefined.`);
+      return 0;
+    }
+    const { cost } = config;
     const gameState = gameEngine.store.getState();
 
     const needLevel = gameState[cost.need];
     const maxNeed = gameState[cost.capacity];
     const needRatio = needLevel / maxNeed;
 
-    // Cost decreases as need increases (0.2x–1.0x multiplier)
     const costMultiplier = 1.0 - needRatio * 0.8;
     return Math.max(1, Math.floor(cost.base * costMultiplier));
   },
@@ -134,15 +87,24 @@ export const useStatusStore = create((set, get) => ({
   // System Registration
   // ========================
 
-  registerStatusSystem: (statusType) => {
-    const statusSystem = (gameState) => {
-      const { activeStatuses } = get();
-      const status = activeStatuses[statusType];
+  createStatusUpdate: (statusType) => {
+    return (gameState) => {
+      const statusStoreState = get();
+      const status = statusStoreState.activeStatuses[statusType];
       if (!status) return {};
 
       const newDuration = status.duration - 1 / 60;
+
       if (newDuration <= 0) {
-        get().cancelStatus(statusType);
+        gameEngine.unregisterSystem(`Status_${statusType}`);
+        const config = statusStoreState.statusConfigs[statusType];
+        set((prev) => ({
+          activeStatuses: { ...prev.activeStatuses, [statusType]: undefined },
+          cooldowns: {
+            ...prev.cooldowns,
+            [statusType]: config.cooldown,
+          },
+        }));
         return {};
       }
 
@@ -159,26 +121,24 @@ export const useStatusStore = create((set, get) => ({
           effect.reductionMultiplier * (gameState[effect.rateKey] || 0);
         const currentNeed = gameState[effect.target];
 
-        // Only consume what's actually available
         const actualReduction = Math.min(maxReduction, currentNeed);
         const newValue = Math.max(0, currentNeed - actualReduction);
-        const satisfied = actualReduction; // This is what was actually consumed
+        const satisfied = actualReduction;
 
-        // Start with resource update
         let newUpdates = { ...updates };
 
-        // Only update the target resource if we actually consumed something
         if (actualReduction > 0) {
           newUpdates[effect.target] = newValue;
         }
 
-        // Synergy multiplier
         let multiplier = 1.0;
-        if (effect.synergy?.with && activeStatuses[effect.synergy.with]) {
+        if (
+          effect.synergy?.with &&
+          statusStoreState.activeStatuses[effect.synergy.with]
+        ) {
           multiplier = effect.synergy.multiplier;
         }
 
-        // Rewards based on what was actually satisfied
         if (effect.rewards) {
           effect.rewards.forEach(({ resource, perUnit, capacityKey }) => {
             const gain = satisfied * perUnit * multiplier;
@@ -194,12 +154,6 @@ export const useStatusStore = create((set, get) => ({
         return newUpdates;
       }, {});
     };
-
-    gameEngine.registerSystem(`Status_${statusType}`, statusSystem);
-
-    if (!gameEngine.systems.has("CooldownManager")) {
-      get().registerCooldownSystem();
-    }
   },
 
   registerCooldownSystem: () => {
@@ -226,21 +180,16 @@ export const useStatusStore = create((set, get) => ({
     gameEngine.registerSystem("CooldownManager", cooldownSystem);
   },
 
-  // ========================
-  // UI Helpers
-  // ========================
-
-  isStatusActive: (type) => !!get().activeStatuses[type],
-  getStatusDuration: (type) => get().activeStatuses[type]?.duration || 0,
-  getStatusProgress: (type) => {
-    const s = get().activeStatuses[type];
-    return s ? (s.maxDuration - s.duration) / s.maxDuration : 0;
+  // Helper functions for tests.
+  isStatusActive: (statusType) => {
+    return !!get().activeStatuses[statusType];
   },
-  getCooldownRemaining: (type) => get().cooldowns[type] || 0,
-  getCooldownProgress: (type) => {
-    const { cooldowns, statusConfigs } = get();
-    const total = statusConfigs[type].cooldown;
-    const remaining = cooldowns[type] || 0;
-    return remaining > 0 ? 1 - remaining / total : 1;
+
+  getStatusDuration: (statusType) => {
+    return get().activeStatuses[statusType]?.duration || 0;
+  },
+
+  getCooldownRemaining: (statusType) => {
+    return get().cooldowns[statusType] || 0;
   },
 }));
