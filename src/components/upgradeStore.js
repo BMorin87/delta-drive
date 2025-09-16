@@ -9,6 +9,9 @@ export const useUpgradeStore = create((set, get) => ({
     thirstRate: { level: 0, baseCost: 8, type: "rate" },
     hungerRate: { level: 0, baseCost: 12, type: "rate" },
     fatigueRate: { level: 0, baseCost: 6, type: "rate" },
+    thirstCapacity: { level: 0, baseCost: 20, type: "capacity" },
+    hungerCapacity: { level: 0, baseCost: 25, type: "capacity" },
+    fatigueCapacity: { level: 0, baseCost: 18, type: "capacity" },
     drinkButton: { level: 0, baseCost: 10, type: "unlock", unlocks: "drink" },
     eatButton: { level: 0, baseCost: 40, type: "unlock", unlocks: "eat" },
     restButton: { level: 0, baseCost: 90, type: "unlock", unlocks: "rest" },
@@ -42,6 +45,12 @@ export const useUpgradeStore = create((set, get) => ({
         return (level * 1) / fps;
       case "fatigueRate":
         return (level * 0.5) / fps;
+      case "thirstCapacity":
+        return level * 20; // +20 capacity per level
+      case "hungerCapacity":
+        return level * 15; // +15 capacity per level
+      case "fatigueCapacity":
+        return level * 25; // +25 capacity per level
       default:
         return 0;
     }
@@ -93,7 +102,7 @@ export const useUpgradeStore = create((set, get) => ({
         break;
       }
 
-      // "rate" upgrades don’t need special handling;
+      // "rate" upgrades don't need special handling;
       // their effect is calculated dynamically in getUpgradeEffectAtLevel
     }
 

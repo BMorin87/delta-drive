@@ -3,8 +3,8 @@ import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import { gameEngine } from "./gameEngine";
 import VolitionCrown from "./VolitionCrown";
+import DiscoveryPanel from "./DiscoveryPanel";
 import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
-import UpgradesPanel from "./physiological/UpgradesPanel";
 
 const DeltaGame = () => {
   // Consume game state from the gameStore.
@@ -36,7 +36,7 @@ const DeltaGame = () => {
       gameEngine.unregisterSystem("Volition");
     };
   }, [
-    // Re-register if initial rates change for some reason.
+    // Re-register if initial rates change.
     initialThirstRate,
     initialHungerRate,
     initialFatigueRate,
@@ -53,8 +53,8 @@ const DeltaGame = () => {
             {isRunning ? "Pause Game" : "Resume Game"}
           </button>
         </div>
-        <div className="upgrades-hud">
-          <UpgradesPanel
+        <div className="discovery-hud">
+          <DiscoveryPanel
             currentVolition={volition}
             onSpendVolition={spendVolition}
           />

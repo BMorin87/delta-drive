@@ -1,14 +1,14 @@
-import { useUpgradeStore } from "../upgradeStore";
+import { useUpgradeStore } from "./upgradeStore";
 import UpgradeItem from "./UpgradeItem";
 
-const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
+const DiscoveryPanel = ({ currentVolition, onSpendVolition }) => {
   const { purchaseUpgrade, getUpgradeLevel } = useUpgradeStore();
 
   const handlePurchase = (upgradeId) => {
     return purchaseUpgrade(upgradeId, onSpendVolition);
   };
 
-  // Check if the drink button upgrade has been purchased
+  // Check if the button upgrades have been purchased
   const drinkButtonLevel = getUpgradeLevel("drinkButton");
   const isDrinkUnlocked = drinkButtonLevel > 0;
 
@@ -19,27 +19,12 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
   const isRestUnlocked = restButtonLevel > 0;
 
   return (
-    <div className="upgrades-panel">
-      <h2 className="upgrades-title">Upgrades</h2>
+    <div className="discovery-panel">
+      <h2 className="discovery-title">Discovery</h2>
+      <p className="discovery-subtitle">Unlock new abilities and features</p>
 
-      <div className="upgrades-grid">
-        <UpgradeItem
-          upgradeId="volitionRate"
-          title="Mental Focus"
-          description="Increases volition generation rate"
-          currentVolition={currentVolition}
-          onPurchase={handlePurchase}
-        />
-
-        <UpgradeItem
-          upgradeId="volitionCapacity"
-          title="Willpower Reservoir"
-          description="Increases maximum volition capacity"
-          currentVolition={currentVolition}
-          onPurchase={handlePurchase}
-        />
-
-        {/* Only show the unlock upgrade if it hasn't been purchased yet. */}
+      <div className="discovery-grid">
+        {/* Only show the unlock upgrades if they haven't been purchased yet */}
         {!isDrinkUnlocked && (
           <UpgradeItem
             upgradeId="drinkButton"
@@ -69,9 +54,18 @@ const UpgradesPanel = ({ currentVolition, onSpendVolition }) => {
             onPurchase={handlePurchase}
           />
         )}
+
+        {/* Show message when all discoveries are unlocked */}
+        {isDrinkUnlocked && isEatUnlocked && isRestUnlocked && (
+          <div className="all-discovered">
+            <div className="discovery-complete-icon">🎉</div>
+            <p>All basic abilities discovered!</p>
+            <p className="discovery-hint">More discoveries coming soon...</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default UpgradesPanel;
+export default DiscoveryPanel;

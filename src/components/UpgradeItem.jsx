@@ -1,5 +1,5 @@
-import { useUpgradeStore } from "../upgradeStore";
-import "../../styles/UpgradeItem.css";
+import { useUpgradeStore } from "./upgradeStore";
+import "../styles/UpgradeItem.css";
 
 const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
   const {
