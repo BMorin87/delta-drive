@@ -6,12 +6,9 @@ export const useUpgradeStore = create((set, get) => ({
   upgrades: {
     volitionRate: { level: 0, baseCost: 10, type: "rate" },
     volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
-    thirstRate: { level: 0, baseCost: 8, type: "rate" },
-    hungerRate: { level: 0, baseCost: 12, type: "rate" },
-    fatigueRate: { level: 0, baseCost: 6, type: "rate" },
-    thirstCapacity: { level: 0, baseCost: 20, type: "capacity" },
-    hungerCapacity: { level: 0, baseCost: 25, type: "capacity" },
-    fatigueCapacity: { level: 0, baseCost: 18, type: "capacity" },
+    thirstReward: { level: 0, baseCost: 15, type: "reward", affects: "drink" },
+    hungerReward: { level: 0, baseCost: 20, type: "reward", affects: "eat" },
+    fatigueReward: { level: 0, baseCost: 25, type: "reward", affects: "rest" },
     drinkButton: { level: 0, baseCost: 10, type: "unlock", unlocks: "drink" },
     eatButton: { level: 0, baseCost: 40, type: "unlock", unlocks: "eat" },
     restButton: { level: 0, baseCost: 90, type: "unlock", unlocks: "rest" },
@@ -39,21 +36,28 @@ export const useUpgradeStore = create((set, get) => ({
         return (level * 2) / fps; // +2 volition per second per level
       case "volitionCapacity":
         return level * 25; // +25 capacity per level
-      case "thirstRate":
-        return (level * 1) / fps;
-      case "hungerRate":
-        return (level * 1) / fps;
-      case "fatigueRate":
-        return (level * 0.5) / fps;
-      case "thirstCapacity":
-        return level * 20; // +20 capacity per level
-      case "hungerCapacity":
-        return level * 15; // +15 capacity per level
-      case "fatigueCapacity":
-        return level * 25; // +25 capacity per level
+      case "thirstReward":
+        return 1 + level * 0.1; // 1 at level zero, 10% base increase per level.
+      case "hungerReward":
+        return 1 + level * 0.1;
+      case "fatigueReward":
+        return 1 + level * 0.1;
       default:
         return 0;
     }
+  },
+
+  getRewardMultiplier: (statusType) => {
+    const upgradeStore = get();
+    let multiplier = 1.0;
+    if (statusType === "drink") {
+      multiplier = upgradeStore.getUpgradeEffectAtLevel("thirstReward");
+    } else if (statusType === "eat") {
+      multiplier = upgradeStore.getUpgradeEffectAtLevel("hungerReward");
+    } else if (statusType === "rest") {
+      multiplier = upgradeStore.getUpgradeEffectAtLevel("fatigueReward");
+    }
+    return multiplier;
   },
 
   purchaseUpgrade: (upgradeId) => {

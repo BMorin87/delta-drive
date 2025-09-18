@@ -14,7 +14,6 @@ const PhysiologicalUpgradesPanel = ({ currentVolition, onSpendVolition }) => {
       <p className="upgrades-subtitle">Enhance your basic capabilities</p>
 
       <div className="upgrades-grid">
-        {/* Volition Upgrades */}
         <UpgradeItem
           upgradeId="volitionRate"
           title="Mental Focus"
@@ -31,53 +30,26 @@ const PhysiologicalUpgradesPanel = ({ currentVolition, onSpendVolition }) => {
           onPurchase={handlePurchase}
         />
 
-        {/* Thirst Upgrades */}
         <UpgradeItem
-          upgradeId="thirstCapacity"
-          title="Hydration Efficiency"
-          description="Increases maximum thirst capacity"
+          upgradeId="thirstReward"
+          title="Hydration Reward"
+          description="Increases volition gained from drinking"
           currentVolition={currentVolition}
           onPurchase={handlePurchase}
         />
 
         <UpgradeItem
-          upgradeId="thirstRate"
-          title="Thirst Resistance"
-          description="Reduces how quickly you become thirsty"
-          currentVolition={currentVolition}
-          onPurchase={handlePurchase}
-        />
-
-        {/* Hunger Upgrades */}
-        <UpgradeItem
-          upgradeId="hungerCapacity"
-          title="Metabolic Enhancement"
-          description="Increases maximum hunger capacity"
+          upgradeId="hungerReward"
+          title="Nourishment Reward"
+          description="Increases volition gained from eating"
           currentVolition={currentVolition}
           onPurchase={handlePurchase}
         />
 
         <UpgradeItem
-          upgradeId="hungerRate"
-          title="Hunger Resistance"
-          description="Reduces how quickly you become hungry"
-          currentVolition={currentVolition}
-          onPurchase={handlePurchase}
-        />
-
-        {/* Fatigue Upgrades */}
-        <UpgradeItem
-          upgradeId="fatigueCapacity"
-          title="Endurance Training"
-          description="Increases maximum fatigue capacity"
-          currentVolition={currentVolition}
-          onPurchase={handlePurchase}
-        />
-
-        <UpgradeItem
-          upgradeId="fatigueRate"
-          title="Fatigue Resistance"
-          description="Reduces how quickly you become fatigued"
+          upgradeId="fatigueReward"
+          title="Restoration Reward"
+          description="Increases volition gained from resting"
           currentVolition={currentVolition}
           onPurchase={handlePurchase}
         />

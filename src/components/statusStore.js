@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { gameEngine } from "./gameEngine";
+import { useUpgradeStore } from "./upgradeStore";
 import { STATUS_CONFIGS } from "./statusConfigs";
 
 export const useStatusStore = create((set, get) => ({
@@ -19,16 +20,17 @@ export const useStatusStore = create((set, get) => ({
     if (!config) return false;
     if (myState.cooldowns[statusType] > 0) return false;
 
-    // TODO: Make dependency on gameStore explicit and move calculateVolitionCost to gameStore.
+    // TODO: Make dependency on gameStore more explicit and move calculateVolitionCost to gameStore.
     const gameStore = gameEngine.store;
     const cost = myState.calculateVolitionCost(statusType);
     if (!gameStore.getState().spendVolition(cost)) return false;
 
-    // Cancel existing if already active
+    // If the status is already active, reset it.
     if (myState.activeStatuses[statusType]) {
       myState.cancelStatus(statusType);
     }
 
+    // Activate the status.
     set((prev) => ({
       activeStatuses: {
         ...prev.activeStatuses,
@@ -40,13 +42,15 @@ export const useStatusStore = create((set, get) => ({
       },
     }));
 
+    // Register the status update function with the game engine.
     gameEngine.registerSystem(
       `Status_${statusType}`,
       get().createStatusUpdate(statusType)
     );
 
-    // Ensure the cooldown manager is registered only once
-    if (!gameEngine.systems.has("CooldownManager")) {
+    // Register the cooldown system, but only if it's not already there.
+    const systems = gameEngine.getRegisteredSystems();
+    if (!systems.includes("CooldownManager")) {
       get().registerCooldownSystem();
     }
 
@@ -96,6 +100,7 @@ export const useStatusStore = create((set, get) => ({
       const deltaTime = 1 / 60;
       const newDuration = status.duration - deltaTime;
 
+      // If status duration has expired, clean up and set cooldown.
       if (newDuration <= 0) {
         gameEngine.unregisterSystem(`Status_${statusType}`);
         const config = statusStoreState.statusConfigs[statusType];
@@ -109,6 +114,7 @@ export const useStatusStore = create((set, get) => ({
         return {};
       }
 
+      // Otherwise update the duration.
       set((prev) => ({
         activeStatuses: {
           ...prev.activeStatuses,
@@ -141,8 +147,11 @@ export const useStatusStore = create((set, get) => ({
         }
 
         if (effect.rewards) {
+          const rewardMultiplier = useUpgradeStore
+            .getState()
+            .getRewardMultiplier(statusType);
           effect.rewards.forEach(({ resource, perUnit, capacityKey }) => {
-            const gain = satisfied * perUnit * multiplier;
+            const gain = satisfied * perUnit * rewardMultiplier * multiplier;
             const currentValue = newUpdates[resource] ?? gameState[resource];
             const capped = capacityKey
               ? Math.min(gameState[capacityKey], currentValue + gain)
