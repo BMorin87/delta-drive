@@ -83,7 +83,7 @@ const PhysiologicalPanel = () => {
       return {
         text: `${
           actionType.charAt(0).toUpperCase() + actionType.slice(1)
-        } (${cost}v)`,
+        } (${cost} 👑)`,
         disabled: false,
         className: `action-button ${actionType}-button`,
       };

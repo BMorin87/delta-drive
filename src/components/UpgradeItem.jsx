@@ -34,7 +34,7 @@ const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
 
         <div className="upgrade-main">
           <div className="upgrade-title">{title}</div>
-          <div className="upgrade-cost">{cost} Volition</div>
+          <div className="upgrade-cost">{cost} 👑</div>
         </div>
       </button>
 

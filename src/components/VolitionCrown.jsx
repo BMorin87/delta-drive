@@ -10,9 +10,9 @@ const VolitionCrown = ({ current, max }) => {
       <div className="volition-label">Volition</div>
       <div className="crown-wrapper">
         <svg
-          width="160"
+          width="150"
           height="140"
-          viewBox="0 0 160 140"
+          viewBox="0 0 150 140"
           className="crown-svg"
         >
           <defs>
@@ -36,18 +36,18 @@ const VolitionCrown = ({ current, max }) => {
               </feMerge>
             </filter>
           </defs>
-          {/* Crown shape path with straight diagonal lines to outer peaks */}
+          {/* Crown shape path with adjusted horizontal position to prevent clipping */}
           <path
-            d="M20 110 L50 10 L70 55 L80 15 L100 55 L110 10 L140 110 Z"
+            d="M20 120 L15 30 L45 50 L75 30 L105 50 L135 30 L130 120 Z"
             fill="url(#crownGradient)"
             stroke="#8b5cf6"
             strokeWidth="3"
             filter="url(#crownGlow)"
           />
-          {/* Crown gems - positioned exactly at the peak tops */}
-          <circle cx="50" cy="10" r="5" fill="#c4b5fd" opacity="0.9" />
-          <circle cx="80" cy="15" r="4" fill="#c4b5fd" opacity="0.7" />
-          <circle cx="110" cy="10" r="5" fill="#c4b5fd" opacity="0.9" />
+          {/* Crown gems - adjusted for new peak positions */}
+          <circle cx="15" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
+          <circle cx="75" cy="30" r="4" fill="#c4b5fd" opacity="0.7" />
+          <circle cx="135" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
         </svg>
       </div>
       <div className="volition-values">
