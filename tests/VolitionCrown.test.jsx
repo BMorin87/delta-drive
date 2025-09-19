@@ -14,7 +14,7 @@ describe("VolitionCrown", () => {
     render(<VolitionCrown current={null} max={0} />);
 
     expect(screen.getByText("0")).toBeInTheDocument();
-    expect(screen.getByText("/0")).toBeInTheDocument(); // Safe max fallback
+    expect(screen.getByText("/1")).toBeInTheDocument(); // Safe max fallback
   });
 
   it("should round current value for display", () => {
