@@ -17,14 +17,14 @@ class GameEngine {
   tick() {
     if (!this.store) return;
 
-    const state = this.store.getState();
+    const oldState = this.store.getState();
     const updates = {};
 
     // Run all registered systems.
     this.systems.forEach((updateFunction, name) => {
       try {
-        // Use "current" game state, including any updates from the current tick.
-        const newStateUpdate = updateFunction({ ...state, ...updates });
+        // Use "current" game state, including any previous updates from the current tick.
+        const newStateUpdate = updateFunction({ ...oldState, ...updates });
         if (newStateUpdate && typeof newStateUpdate === "object") {
           Object.assign(updates, newStateUpdate);
         }
@@ -35,9 +35,16 @@ class GameEngine {
 
     // Only update if there are changes to the game state.
     if (Object.keys(updates).length > 0) {
+      // Calculate resource rates before updating state
+      const newState = { ...oldState, ...updates };
+      const rateUpdates = oldState._updateResourceRates
+        ? oldState._updateResourceRates(oldState, newState)
+        : {};
+
       this.store.setState((prevState) => ({
         ...prevState,
         ...updates,
+        ...rateUpdates,
       }));
     }
   }

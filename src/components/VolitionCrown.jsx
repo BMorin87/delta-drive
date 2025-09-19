@@ -1,9 +1,19 @@
+import { useGameStore } from "./gameStore";
 import "../styles/VolitionCrown.css";
 
 const VolitionCrown = ({ current, max }) => {
+  // Subscribe to the resource rates from game state
+  const volitionRate = useGameStore((state) => state.resourceRates.volition);
+
   const safeCurrent = Number.isFinite(current) ? current : 0;
   const safeMax = Number.isFinite(max) && max > 0 ? max : 1;
   const percentage = Math.min((safeCurrent / safeMax) * 100, 100);
+
+  // Format rate display
+  const formatRate = (rate) => {
+    const sign = rate >= 0 ? "+" : "";
+    return `${sign}${rate.toFixed(1)}/s`;
+  };
 
   return (
     <div className="volition-crown-container">
@@ -38,7 +48,7 @@ const VolitionCrown = ({ current, max }) => {
           </defs>
           {/* Crown shape path with adjusted horizontal position to prevent clipping */}
           <path
-            d="M20 120 L15 30 L45 50 L75 30 L105 50 L135 30 L130 120 Z"
+            d="M25 120 L15 30 L45 50 L75 30 L105 50 L135 30 L125 120 Z"
             fill="url(#crownGradient)"
             stroke="#8b5cf6"
             strokeWidth="3"
@@ -48,13 +58,37 @@ const VolitionCrown = ({ current, max }) => {
           <circle cx="15" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
           <circle cx="75" cy="30" r="4" fill="#c4b5fd" opacity="0.7" />
           <circle cx="135" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
+
+          {/* Current volition value - positioned in the crown center */}
+          <text
+            x="75"
+            y="80"
+            textAnchor="middle"
+            className="crown-text-current"
+            fill="#ffffff"
+            fontSize="24"
+            fontWeight="700"
+          >
+            {Math.round(safeCurrent)}
+            <tspan fill="#c4b5fd" fontSize="16" fontWeight="500">
+              /{safeMax}
+            </tspan>
+          </text>
+
+          {/* Rate display - positioned below current value */}
+          <text
+            x="75"
+            y="100"
+            textAnchor="middle"
+            className="crown-text-rate"
+            fill="#c4b5fd"
+            fontSize="12"
+            fontWeight="500"
+          >
+            {formatRate(volitionRate)}
+          </text>
         </svg>
       </div>
-      <div className="volition-values">
-        <span className="volition-current">{Math.round(current)}</span>
-        <span className="volition-max">/{max}</span>
-      </div>
-      <div className="volition-percentage">{percentage.toFixed(1)}%</div>
     </div>
   );
 };

@@ -30,6 +30,22 @@ export const useGameStore = create((set, get) => ({
   eatUnlocked: false,
   restUnlocked: false,
 
+  // Stores the change since last tick times TICKS_PER_SECOND.
+  resourceRates: {
+    volition: 0,
+    thirst: 0,
+    hunger: 0,
+    fatigue: 0,
+  },
+
+  // Previous resource values for rate calculation.
+  _previousValues: {
+    volition: 1,
+    thirst: 1,
+    hunger: 1,
+    fatigue: 1,
+  },
+
   // Actions
   tick: () => gameEngine.tick(),
 
@@ -51,6 +67,30 @@ export const useGameStore = create((set, get) => ({
     set((state) => ({
       isRunning: !state.isRunning,
     })),
+
+  _updateResourceRates: (oldState, newState) => {
+    const resources = ["volition", "thirst", "hunger", "fatigue"];
+    const ticksPerSecond = oldState.TICKS_PER_SECOND || 60;
+    const newRates = {};
+
+    resources.forEach((resource) => {
+      const oldValue = oldState[resource] || 0;
+      const newValue = newState[resource] || 0;
+      const changePerTick = newValue - oldValue;
+      const changePerSecond = changePerTick * ticksPerSecond;
+      newRates[resource] = changePerSecond;
+    });
+
+    return {
+      resourceRates: newRates,
+      _previousValues: {
+        volition: newState.volition || oldState.volition,
+        thirst: newState.thirst || oldState.thirst,
+        hunger: newState.hunger || oldState.hunger,
+        fatigue: newState.fatigue || oldState.fatigue,
+      },
+    };
+  },
 }));
 
 // gameEngine is a singleton that needs access to the store.
