@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { gameEngine } from "./gameEngine";
 import { useGameStore } from "./gameStore";
 import { useStatusStore } from "./statusStore";
@@ -6,93 +6,12 @@ import "../styles/DebugPanel.css";
 
 const GameDebugPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [systemOutputs, setSystemOutputs] = useState({});
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [resourceRates, setResourceRates] = useState({});
 
   const gameState = useGameStore();
   const statusState = useStatusStore();
 
-  // Capture system outputs by wrapping the tick function
-  useEffect(() => {
-    if (!isCapturing) return;
-
-    const originalTick = gameEngine.tick.bind(gameEngine);
-    let capturedOutputs = {};
-
-    gameEngine.tick = function () {
-      if (!this.store) return;
-
-      const state = this.store.getState();
-      const updates = {};
-      capturedOutputs = {};
-
-      // Run all registered systems and capture their outputs
-      this.systems.forEach((updateFunction, name) => {
-        try {
-          const newStateUpdate = updateFunction({ ...state, ...updates });
-          if (newStateUpdate && typeof newStateUpdate === "object") {
-            // Store the output for debugging
-            capturedOutputs[name] = newStateUpdate;
-            Object.assign(updates, newStateUpdate);
-          }
-        } catch (error) {
-          console.error(`Error in system ${name}:`, error);
-          capturedOutputs[name] = { error: error.message };
-        }
-      });
-
-      // Calculate rates for each system
-      setResourceRates((prevRates) => {
-        const newRates = { ...prevRates };
-
-        Object.entries(capturedOutputs).forEach(([systemName, output]) => {
-          if (output.error) return;
-
-          if (!newRates[systemName]) {
-            newRates[systemName] = {};
-          }
-
-          Object.entries(output).forEach(([resource, newValue]) => {
-            if (typeof newValue === "number") {
-              // Get previous value for this resource
-              const prevValue = state[resource] || 0;
-              const change = newValue - prevValue;
-              const ratePerSecond = change * 60; // Convert from per-tick to per-second
-
-              newRates[systemName][resource] = ratePerSecond;
-            }
-          });
-        });
-
-        return newRates;
-      });
-
-      // Update the captured outputs state
-      setSystemOutputs({ ...capturedOutputs });
-
-      // Only update if there are changes to the game state
-      if (Object.keys(updates).length > 0) {
-        this.store.setState((prevState) => ({
-          ...prevState,
-          ...updates,
-        }));
-      }
-    };
-
-    return () => {
-      gameEngine.tick = originalTick;
-    };
-  }, [isCapturing]);
-
-  // Clear rate tracking data when capture stops
-  const toggleCapture = () => {
-    setIsCapturing(!isCapturing);
-    if (!isCapturing) {
-      setSystemOutputs({});
-      setResourceRates({});
-    }
-  };
+  // Subscribe to the rates from gameStore instead of calculating our own
+  const resourceRates = useGameStore((state) => state.resourceRates);
 
   const getSystemType = (systemName) => {
     const alwaysOnSystems = ["Thirst", "Hunger", "Fatigue", "Volition"];
@@ -126,23 +45,12 @@ const GameDebugPanel = () => {
     };
   };
 
-  const formatValue = (value) => {
-    if (typeof value === "number") {
-      return value.toFixed(3);
-    }
-    return String(value);
-  };
-
   const formatRate = (rate) => {
     if (typeof rate === "number") {
       const sign = rate >= 0 ? "+" : "";
       return `${sign}${rate.toFixed(2)}/s`;
     }
-    return "";
-  };
-
-  const getRateForSystemResource = (systemName, resourceName) => {
-    return resourceRates[systemName]?.[resourceName] || 0;
+    return "0.0/s";
   };
 
   const registeredSystems = gameEngine.getRegisteredSystems();
@@ -151,27 +59,13 @@ const GameDebugPanel = () => {
     <div className="debug-panel">
       <div className="debug-panel-header" onClick={() => setIsOpen(!isOpen)}>
         <span className="debug-panel-title">
-          🐛 Debug Panel [{registeredSystems.length} systems]
+          🛠 Debug Panel [{registeredSystems.length} systems]
         </span>
         <span className="debug-panel-toggle">{isOpen ? "▼" : "▲"}</span>
       </div>
 
       {isOpen && (
         <div className="debug-panel-content">
-          <div className="debug-capture-controls">
-            <button
-              onClick={toggleCapture}
-              className={`debug-capture-btn ${isCapturing ? "capturing" : ""}`}
-            >
-              {isCapturing ? "⏹ Stop Capture" : "▶ Start Capture"}
-            </button>
-            <span className="debug-capture-status">
-              {isCapturing
-                ? "Capturing system outputs..."
-                : "Click to monitor system outputs"}
-            </span>
-          </div>
-
           <div className="debug-systems-list">
             <h4 className="debug-section-title">
               Registered Systems ({registeredSystems.length})
@@ -191,169 +85,91 @@ const GameDebugPanel = () => {
             </div>
           </div>
 
-          {/* System Outputs */}
-          {isCapturing && Object.keys(systemOutputs).length > 0 && (
-            <div className="debug-outputs-section">
-              <h4 className="debug-section-title">Live System Outputs</h4>
+          {/* Resource Rates from Game Store */}
+          <div className="debug-outputs-section">
+            <h4 className="debug-section-title">
+              Resource Rates (from Game Store)
+            </h4>
 
-              {/* Always-on Systems */}
-              <div style={{ marginBottom: "12px" }}>
-                <h5 className="debug-subsection-title always-on">
-                  Always-On Systems
-                </h5>
-                {Object.entries(systemOutputs)
-                  .filter(([name]) => getSystemType(name) === "always-on")
-                  .map(([systemName, output]) => (
+            <div style={{ marginBottom: "12px" }}>
+              <h5 className="debug-subsection-title always-on">
+                Always-On Resource Rates
+              </h5>
+              {Object.entries(resourceRates).map(([resource, rate]) => (
+                <div key={resource} className="debug-system-output always-on">
+                  <div className="debug-system-name">{resource}</div>
+                  <div className="debug-output-value">
+                    Current: {gameState[resource]?.toFixed(2) || "0.00"}
+                    <span
+                      style={{
+                        color: "#888",
+                        fontSize: "10px",
+                        marginLeft: "8px",
+                      }}
+                    >
+                      ({formatRate(rate)})
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Active Status Systems */}
+            <div>
+              <h5 className="debug-subsection-title temporary-status">
+                Active Status Systems
+              </h5>
+              {Object.entries(statusState.activeStatuses || {})
+                .filter(([, status]) => status && status.duration > 0)
+                .map(([statusType, status]) => {
+                  const systemName = `Status_${statusType}`;
+                  const statusInfo = getStatusInfo(systemName);
+
+                  return (
                     <div
                       key={systemName}
-                      className="debug-system-output always-on"
+                      className="debug-system-output temporary-status"
                     >
-                      <div className="debug-system-name">{systemName}</div>
-                      {output.error ? (
-                        <div className="debug-output-value error">
-                          Error: {output.error}
+                      <div className="debug-system-name">
+                        {systemName}
+                        <span className="debug-system-duration">
+                          ({status.duration.toFixed(1)}s remaining)
+                        </span>
+                      </div>
+
+                      {/* Status cost info */}
+                      {statusInfo && (
+                        <div className="debug-system-cost">
+                          Cost: {statusInfo.cost.volition} volition, Need:{" "}
+                          {statusInfo.cost.need} (
+                          {statusInfo.cost.needLevel.toFixed(1)}/
+                          {statusInfo.cost.maxNeed})
                         </div>
-                      ) : (
-                        Object.entries(output).map(([key, value]) => {
-                          const rate = getRateForSystemResource(
-                            systemName,
-                            key
-                          );
-                          return (
-                            <div key={key} className="debug-output-value">
-                              {key}: {formatValue(value)}{" "}
-                              <span style={{ color: "#888", fontSize: "10px" }}>
-                                ({formatRate(rate)})
-                              </span>
-                            </div>
-                          );
-                        })
                       )}
+
+                      {/* Note: Individual system outputs would require tick interception */}
+                      <div className="debug-output-value">
+                        System active - contributing to resource rates above
+                      </div>
                     </div>
-                  ))}
-              </div>
+                  );
+                })}
 
-              <div>
-                <h5 className="debug-subsection-title temporary-status">
-                  Temporary Status Systems
-                </h5>
-                {Object.entries(systemOutputs)
-                  .filter(
-                    ([name]) => getSystemType(name) === "temporary-status"
-                  )
-                  .map(([systemName, output]) => {
-                    const statusInfo = getStatusInfo(systemName);
-                    return (
-                      <div
-                        key={systemName}
-                        className="debug-system-output temporary-status"
-                      >
-                        <div className="debug-system-name">
-                          {systemName}
-                          {statusInfo && (
-                            <span className="debug-system-duration">
-                              ({statusInfo.activeStatus.duration.toFixed(1)}s
-                              remaining)
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Status cost info */}
-                        {statusInfo && (
-                          <div className="debug-system-cost">
-                            Cost: {statusInfo.cost.volition} volition, Need:{" "}
-                            {statusInfo.cost.need} (
-                            {statusInfo.cost.needLevel.toFixed(1)}/
-                            {statusInfo.cost.maxNeed})
-                          </div>
-                        )}
-
-                        {/* System outputs (rewards/changes) */}
-                        {output.error ? (
-                          <div className="debug-output-value error">
-                            Error: {output.error}
-                          </div>
-                        ) : (
-                          Object.entries(output).map(([key, value]) => {
-                            const rate = getRateForSystemResource(
-                              systemName,
-                              key
-                            );
-                            return (
-                              <div
-                                key={key}
-                                className={`debug-output-value ${
-                                  key === "volition" ? "reward" : ""
-                                }`}
-                              >
-                                {key}: {formatValue(value)}{" "}
-                                <span
-                                  style={{ color: "#888", fontSize: "10px" }}
-                                >
-                                  ({formatRate(rate)})
-                                </span>
-                                {key === "volition" && " (reward)"}
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    );
-                  })}
-              </div>
-
-              {/* Other Systems */}
-              {Object.entries(systemOutputs).filter(
-                ([name]) => getSystemType(name) === "other"
-              ).length > 0 && (
-                <div style={{ marginTop: "12px" }}>
-                  <h5 className="debug-subsection-title other">
-                    Other Systems
-                  </h5>
-                  {Object.entries(systemOutputs)
-                    .filter(([name]) => getSystemType(name) === "other")
-                    .map(([systemName, output]) => (
-                      <div
-                        key={systemName}
-                        className="debug-system-output other"
-                      >
-                        <div className="debug-system-name">{systemName}</div>
-                        {output.error ? (
-                          <div className="debug-output-value error">
-                            Error: {output.error}
-                          </div>
-                        ) : (
-                          Object.entries(output).map(([key, value]) => {
-                            const rate = getRateForSystemResource(
-                              systemName,
-                              key
-                            );
-                            return (
-                              <div key={key} className="debug-output-value">
-                                {key}: {formatValue(value)}{" "}
-                                <span
-                                  style={{ color: "#888", fontSize: "10px" }}
-                                >
-                                  ({formatRate(rate)})
-                                </span>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-                    ))}
+              {Object.keys(statusState.activeStatuses || {}).filter(
+                (key) => statusState.activeStatuses[key]?.duration > 0
+              ).length === 0 && (
+                <div className="debug-helper-text">
+                  No active status systems
                 </div>
               )}
             </div>
-          )}
+          </div>
 
-          {!isCapturing && (
-            <div className="debug-helper-text">
-              Start capture to see live system outputs. The debug panel will
-              intercept game engine ticks and display what each registered
-              system returns.
-            </div>
-          )}
+          <div className="debug-helper-text">
+            Resource rates are calculated by the game engine and stored in the
+            game state. This shows the true combined rate from all systems
+            including temporary statuses.
+          </div>
         </div>
       )}
     </div>
