@@ -5,6 +5,7 @@ import { gameEngine } from "./gameEngine";
 import VolitionCrown from "./VolitionCrown";
 import DiscoveryPanel from "./DiscoveryPanel";
 import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
+import DebugPanel from "./DebugPanel";
 
 const DeltaGame = () => {
   // Consume game state from the gameStore.
@@ -59,6 +60,7 @@ const DeltaGame = () => {
             onSpendVolition={spendVolition}
           />
         </div>
+        <DebugPanel />
       </div>
 
       {/* Main content area with progress bars */}

@@ -1,0 +1,297 @@
+/* ============================
+   DEBUG PANEL STYLES
+   ============================ */
+
+/* Main debug panel container */
+.debug-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 400px;
+  max-height: 80vh;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  color: #00ff00;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 255, 0, 0.2);
+  z-index: 2000;
+  overflow: hidden;
+}
+
+/* Debug panel header */
+.debug-panel-header {
+  padding: 8px 12px;
+  background: rgba(0, 17, 0, 0.8);
+  border-bottom: 1px solid #00ff00;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.debug-panel-header:hover {
+  background: rgba(0, 34, 0, 0.8);
+}
+
+.debug-panel-title {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.debug-panel-toggle {
+  color: #00ff00;
+  font-size: 14px;
+}
+
+/* Debug panel content */
+.debug-panel-content {
+  padding: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for debug panel */
+.debug-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.debug-panel-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.debug-panel-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 0, 0.3);
+  border-radius: 3px;
+}
+
+.debug-panel-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 0, 0.5);
+}
+
+/* Capture controls section */
+.debug-capture-controls {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.debug-capture-btn {
+  background-color: #00aa00;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: "Courier New", monospace;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.debug-capture-btn.capturing {
+  background-color: #ff4444;
+}
+
+.debug-capture-btn:hover {
+  background-color: #00cc00;
+}
+
+.debug-capture-btn.capturing:hover {
+  background-color: #ff6666;
+}
+
+.debug-capture-status {
+  margin-left: 12px;
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+/* System list section */
+.debug-systems-list {
+  margin-bottom: 16px;
+}
+
+.debug-section-title {
+  margin: 0 0 8px 0;
+  color: #ffff00;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.debug-system-item {
+  padding: 2px 0;
+  font-size: 11px;
+}
+
+.debug-system-item.always-on {
+  color: #00ffff;
+}
+
+.debug-system-item.temporary-status {
+  color: #ffaa00;
+}
+
+.debug-system-item.other {
+  color: #ffffff;
+}
+
+/* System outputs section */
+.debug-outputs-section {
+  margin-bottom: 16px;
+}
+
+.debug-subsection-title {
+  margin: 0 0 6px 0;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.debug-subsection-title.always-on {
+  color: #00ffff;
+}
+
+.debug-subsection-title.temporary-status {
+  color: #ffaa00;
+}
+
+.debug-subsection-title.other {
+  color: #ffffff;
+}
+
+/* Individual system output containers */
+.debug-system-output {
+  margin-bottom: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+
+.debug-system-output.always-on {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: rgba(0, 255, 255, 0.3);
+}
+
+.debug-system-output.temporary-status {
+  background: rgba(255, 170, 0, 0.1);
+  border-color: rgba(255, 170, 0, 0.3);
+}
+
+.debug-system-output.other {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* System output header */
+.debug-system-name {
+  font-weight: bold;
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.debug-system-duration {
+  margin-left: 8px;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* System cost information */
+.debug-system-cost {
+  margin-left: 12px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* System output values */
+.debug-output-value {
+  margin-left: 12px;
+  font-size: 11px;
+}
+
+.debug-output-value.reward {
+  color: #00ff00;
+}
+
+.debug-output-value.error {
+  color: #ff4444;
+}
+
+/* Helper/placeholder text */
+.debug-helper-text {
+  padding: 12px;
+  background: rgba(255, 255, 0, 0.1);
+  border-radius: 4px;
+  font-size: 11px;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* ============================
+   RESPONSIVE ADJUSTMENTS
+   ============================ */
+
+/* Medium screens */
+@media (max-width: 1200px) {
+  .debug-panel {
+    width: 350px;
+    top: 20px;
+    right: 20px;
+  }
+}
+
+/* Tablet screens */
+@media (max-width: 800px) {
+  .debug-panel {
+    width: 300px;
+    max-height: 60vh;
+    font-size: 11px;
+  }
+
+  .debug-panel-content {
+    padding: 10px;
+  }
+
+  .debug-capture-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  .debug-panel {
+    width: calc(100vw - 20px);
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    max-height: 50vh;
+    font-size: 10px;
+  }
+
+  .debug-panel-content {
+    padding: 8px;
+    max-height: 45vh;
+  }
+
+  .debug-capture-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .debug-capture-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .debug-capture-status {
+    margin-left: 0;
+    font-size: 10px;
+  }
+}
