@@ -4,7 +4,7 @@ import { useUpgradeStore } from "./upgradeStore";
 import { gameEngine } from "./gameEngine";
 import VolitionCrown from "./VolitionCrown";
 import DiscoveryPanel from "./DiscoveryPanel";
-import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
+import HierarchyNavigation from "./HierarchyNavigation";
 import DebugPanel from "./DebugPanel";
 
 const DeltaGame = () => {
@@ -65,7 +65,7 @@ const DeltaGame = () => {
 
       {/* Main content area with progress bars */}
       <div className="tier-content">
-        <PhysiologicalPanel />
+        <HierarchyNavigation />
       </div>
     </div>
   );

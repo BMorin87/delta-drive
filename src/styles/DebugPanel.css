@@ -5,7 +5,7 @@
 /* Main debug panel container */
 .debug-panel {
   position: fixed;
-  top: 10px;
+  bottom: 10px;
   right: 10px;
   width: 400px;
   max-height: 80vh;
@@ -240,7 +240,7 @@
 @media (max-width: 1200px) {
   .debug-panel {
     width: 350px;
-    top: 20px;
+    bottom: 10px;
     right: 20px;
   }
 }
@@ -269,7 +269,7 @@
     width: calc(100vw - 20px);
     left: 10px;
     right: 10px;
-    top: 10px;
+    bottom: 10px;
     max-height: 50vh;
     font-size: 10px;
   }
