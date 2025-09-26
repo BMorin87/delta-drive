@@ -1,16 +1,9 @@
-/* ============================
-   HIERARCHY NAVIGATION STYLES
-   ============================ */
-
-/* ============================
-   PYRAMID NAVIGATION
-   ============================ */
-
 .pyramid-nav {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  grid-area: nav;
 }
 
 .pyramid-wrapper {
@@ -24,7 +17,7 @@
   border-radius: 12px;
   border: 1px solid rgba(139, 92, 246, 0.3);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  min-width: 200px;
+  max-width: 20rem;
 }
 
 /* Individual pyramid tier buttons */
@@ -44,30 +37,24 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Specific tier widths - physiological should be widest (bottom of pyramid) */
-.tier-physiological {
+.pyramid-tier.tier-physiological {
   width: 200px;
-  font-size: 0.875rem;
 }
 
-.tier-security {
-  width: 180px;
-  font-size: 0.85rem;
+.pyramid-tier.tier-security {
+  width: 170px;
 }
 
-.tier-belonging {
-  width: 160px;
-  font-size: 0.825rem;
-}
-
-.tier-esteem {
+.pyramid-tier.tier-belonging {
   width: 140px;
-  font-size: 0.8rem;
 }
 
-.tier-self-actualization {
-  width: 120px;
-  font-size: 0.75rem;
+.pyramid-tier.tier-esteem {
+  width: 110px;
+}
+
+.pyramid-tier.tier-self-actualization {
+  width: 80px;
 }
 
 /* Hover effects for unlocked tiers */
@@ -133,395 +120,10 @@
 }
 
 /* Tier panel container - holds the active panel content */
-.tier-panel-container {
+.tier-content-container {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-}
-
-/* ============================
-   SECURITY PANEL STYLES
-   ============================ */
-
-.security-panel {
-  width: 100%;
-  max-width: 800px;
-}
-
-.security-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.tier-subtitle {
-  font-size: 1rem;
-  color: #9ca3af;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.security-stats-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
-  max-width: 600px;
-}
-
-.security-stat-item {
-  background: rgba(17, 24, 39, 0.9);
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid rgba(75, 85, 99, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.security-stat-item h3 {
-  margin: 0 0 1rem 0;
-  color: white;
-  font-size: 1.125rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Horizontal progress bars for security stats */
-.progress-bar-horizontal {
-  width: 100%;
-  height: 20px;
-  background: #374151;
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
-  margin-bottom: 0.75rem;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.3s ease;
-  position: relative;
-}
-
-.progress-fill::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 100%
-  );
-  animation: shimmer 2s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Security-specific progress colors */
-.shelter-fill {
-  background: linear-gradient(90deg, #7c3aed, #a855f7);
-}
-
-.income-fill {
-  background: linear-gradient(90deg, #059669, #10b981);
-}
-
-.health-fill {
-  background: linear-gradient(90deg, #dc2626, #ef4444);
-}
-
-.stat-value {
-  color: #d1d5db;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-  text-align: right;
-}
-
-.improve-button {
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  background: rgba(139, 92, 246, 0.2);
-  color: #c4b5fd;
-  border: 1px solid rgba(139, 92, 246, 0.5);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.improve-button:hover:not(:disabled) {
-  background: rgba(139, 92, 246, 0.3);
-  border-color: rgba(139, 92, 246, 0.7);
-  transform: translateY(-1px);
-}
-
-.improve-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Security upgrades section */
-.security-upgrades {
-  width: 100%;
-  max-width: 600px;
-  text-align: center;
-}
-
-.upgrade-placeholder {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.upgrade-item-placeholder {
-  background: rgba(55, 65, 81, 0.3);
-  border: 2px dashed rgba(156, 163, 175, 0.3);
-  border-radius: 12px;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.upgrade-item-placeholder h4 {
-  margin: 0 0 0.5rem 0;
-  color: #9ca3af;
-  font-size: 1rem;
-}
-
-.upgrade-item-placeholder p {
-  margin: 0 0 1rem 0;
-  color: #6b7280;
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
-.upgrade-item-placeholder button {
-  padding: 0.5rem 1rem;
-  background: #374151;
-  color: #9ca3af;
-  border: 1px solid #4b5563;
-  border-radius: 6px;
-  cursor: not-allowed;
-}
-
-/* Coming soon panels */
-.coming-soon {
-  text-align: center;
-  padding: 3rem 2rem;
-  background: rgba(17, 24, 39, 0.9);
-  border-radius: 12px;
-  border: 1px solid rgba(75, 85, 99, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.coming-soon-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.8;
-}
-
-.coming-soon h3 {
-  margin: 0 0 1rem 0;
-  color: #c4b5fd;
-  font-size: 1.5rem;
-}
-
-.coming-soon p {
-  margin: 0 0 1rem 0;
-  color: #9ca3af;
-  line-height: 1.5;
-}
-
-.coming-soon ul {
-  text-align: left;
-  margin: 1rem 0 0 0;
-  padding-left: 1.5rem;
-  color: #d1d5db;
-}
-
-.coming-soon li {
-  margin-bottom: 0.5rem;
-  color: #9ca3af;
-}
-
-/* ============================
-   DESKTOP LAYOUT (≥1200px)
-   ============================ */
-@media (min-width: 1200px) {
-  /* Override the default tier-content layout for hierarchy nav */
-  .game-layout .tier-content {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center; /* Center everything */
-    gap: 3rem;
-    width: 100%;
-    max-width: none;
-  }
-
-  /* Position pyramid nav as fixed sidebar (doesn't affect layout flow) */
-  .pyramid-nav {
-    position: fixed;
-    left: 20px;
-    top: 320px; /* Below the VolitionCrown */
-    width: 220px;
-    z-index: 100;
-    flex-shrink: 0;
-  }
-
-  /* Center the tier content in the full screen width */
-  .tier-panel-container {
-    width: 100%;
-    max-width: 800px; /* Reasonable max width for content */
-    margin: 0 auto; /* Center horizontally */
-    display: flex;
-    justify-content: center;
-    padding: 0 2rem;
-  }
-
-  .current-tier-info {
-    min-width: 220px;
-  }
-}
-
-/* ============================
-   TABLET & SMALLER DESKTOP (<1200px)
-   ============================ */
-@media (max-width: 1199px) {
-  /* Use existing vertical layout */
-  .game-layout .tier-content {
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .pyramid-nav {
-    order: 2; /* Move to bottom of stack */
-    position: relative;
-    width: auto;
-  }
-
-  .tier-panel-container {
-    order: 1; /* Move to top of stack */
-    margin-left: 0;
-    width: 100%;
-    padding: 0;
-  }
-
-  .pyramid-wrapper {
-    flex-direction: column; /* Keep vertical stacking */
-    flex-wrap: nowrap; /* Prevent wrapping */
-    justify-content: center;
-    align-items: center; /* Center the pyramid */
-    gap: 0.5rem; /* Consistent with desktop */
-    padding: 1rem;
-    min-width: auto;
-  }
-
-  /* Adjust sizes for horizontal layout */
-  .tier-physiological {
-    width: 130px;
-  }
-  .tier-security {
-    width: 120px;
-  }
-  .tier-belonging {
-    width: 110px;
-  }
-  .tier-esteem {
-    width: 100px;
-  }
-  .tier-self-actualization {
-    width: 90px;
-  }
-
-  .current-tier-info {
-    min-width: auto;
-  }
-}
-
-/* ============================
-   MOBILE (≤800px)
-   ============================ */
-@media (max-width: 800px) {
-  .game-layout .tier-content {
-    gap: 1.5rem;
-  }
-
-  .pyramid-wrapper {
-    gap: 0.5rem;
-    padding: 0.75rem;
-  }
-
-  .security-stats-container {
-    gap: 1.5rem;
-  }
-
-  .security-stat-item {
-    padding: 1rem;
-  }
-
-  .upgrade-placeholder {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  /* Even smaller tier sizes for mobile */
-  .tier-physiological {
-    width: 110px;
-    font-size: 0.8rem;
-  }
-  .tier-security {
-    width: 100px;
-    font-size: 0.75rem;
-  }
-  .tier-belonging {
-    width: 90px;
-    font-size: 0.75rem;
-  }
-  .tier-esteem {
-    width: 80px;
-    font-size: 0.7rem;
-  }
-  .tier-self-actualization {
-    width: 70px;
-    font-size: 0.7rem;
-  }
-}
-
-/* ============================
-   VERY SMALL MOBILE (≤480px)
-   ============================ */
-@media (max-width: 480px) {
-  .pyramid-tier {
-    height: 35px;
-  }
-
-  .tier-title {
-    font-size: 1.5rem;
-  }
-
-  .coming-soon {
-    padding: 2rem 1rem;
-  }
-
-  .coming-soon-icon {
-    font-size: 2rem;
-  }
+  grid-area: tier;
 }

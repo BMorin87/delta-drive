@@ -1,0 +1,51 @@
+.game-layout {
+  min-height: 100vh;
+  width: 100vw;
+  display: grid;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #111827;
+  color: white;
+  margin: 0;
+  grid-template-areas:
+    "volition discovery"
+    "tier tier"
+    "nav nav";
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (min-width: 1024px) {
+  .game-layout {
+    grid-template-areas:
+      "volition tier discovery"
+      "nav tier discovery";
+    grid-template-rows: auto auto;
+    grid-template-columns: 20rem auto 20rem;
+  }
+}
+
+.volition-container {
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 160px;
+  width: 160px;
+  grid-area: volition;
+}
+
+.discovery-container {
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  grid-area: discovery;
+}

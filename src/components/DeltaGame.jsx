@@ -6,6 +6,7 @@ import VolitionCrown from "./VolitionCrown";
 import DiscoveryPanel from "./DiscoveryPanel";
 import HierarchyNavigation from "./HierarchyNavigation";
 import DebugPanel from "./DebugPanel";
+import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
   // Consume game state from the gameStore.
@@ -46,27 +47,22 @@ const DeltaGame = () => {
 
   return (
     <div className="game-layout">
-      {/* Top row for volition and upgrades on smaller screens */}
-      <div className="top-row">
-        <div className="volition-hud">
-          <VolitionCrown current={volition} max={volitionCapacity} />
-          <button onClick={togglePause} className="pause-btn">
-            {isRunning ? "Pause Game" : "Resume Game"}
-          </button>
-        </div>
-        <div className="discovery-hud">
-          <DiscoveryPanel
-            currentVolition={volition}
-            onSpendVolition={spendVolition}
-          />
-        </div>
-        <DebugPanel />
+      <div className="volition-container">
+        <VolitionCrown current={volition} max={volitionCapacity} />
+        <button onClick={togglePause} className="pause-btn">
+          {isRunning ? "Pause Game" : "Resume Game"}
+        </button>
       </div>
+      <div className="discovery-container">
+        <DiscoveryPanel
+          currentVolition={volition}
+          onSpendVolition={spendVolition}
+        />
+      </div>
+      <DebugPanel />
 
       {/* Main content area with progress bars */}
-      <div className="tier-content">
-        <HierarchyNavigation />
-      </div>
+      <HierarchyNavigation />
     </div>
   );
 };

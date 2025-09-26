@@ -1,5 +1,6 @@
 import { useUpgradeStore } from "./upgradeStore";
 import UpgradeItem from "./UpgradeItem";
+import "../styles/DiscoveryPanel.css";
 
 const DiscoveryPanel = ({ currentVolition, onSpendVolition }) => {
   const { purchaseUpgrade, getUpgradeLevel } = useUpgradeStore();

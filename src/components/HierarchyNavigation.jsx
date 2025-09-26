@@ -65,13 +65,12 @@ const HierarchyNavigation = () => {
 
   return (
     <>
-      {/* Pyramid Navigation - positioned as sidebar on desktop */}
+      {/* Pyramid Navigation */}
       <div className="pyramid-nav">
         <div className="pyramid-wrapper">
           {/* Render tiers from top to bottom for visual pyramid */}
           {tiers.map((tier, index) => {
             const isActive = activeTier === tier.id;
-            // Display order: self-actualization at top, physiological at bottom
             const displayOrder = tiers.length - index;
 
             return (
@@ -100,15 +99,13 @@ const HierarchyNavigation = () => {
           })}
         </div>
 
-        {/* Current tier description */}
         <div className="current-tier-info">
           <h3>{tiers.find((t) => t.id === activeTier)?.name}</h3>
           <p>{tiers.find((t) => t.id === activeTier)?.description}</p>
         </div>
       </div>
-
-      {/* Active Panel Content - centered on screen */}
-      <div className="tier-panel-container">{renderActivePanel()}</div>
+      {/* Active Panel Content */}
+      <div className="tier-content-container">{renderActivePanel()}</div>
     </>
   );
 };

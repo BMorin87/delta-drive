@@ -1,0 +1,47 @@
+.discovery-panel {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.discovery-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #c4b5fd;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.discovery-subtitle {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.discovery-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.all-discovered {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+}
+
+.discovery-complete-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.discovery-hint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+}
