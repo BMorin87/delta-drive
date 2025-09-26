@@ -13,35 +13,35 @@ const HierarchyNavigation = () => {
       name: "Physiological",
       description: "Basic survival needs",
       unlocked: true, // Always unlocked
-      color: "#dc2626", // Red
+      color: "#dc2626",
     },
     {
       id: "security",
       name: "Security",
       description: "Safety and stability",
-      unlocked: true, // You can add unlock conditions later
-      color: "#ea580c", // Orange
+      unlocked: true, // Add unlock conditions later
+      color: "#ea580c",
     },
     {
       id: "belonging",
       name: "Belonging",
       description: "Love and connection",
-      unlocked: false, // Example: unlock when security is progressed
-      color: "#ca8a04", // Yellow
+      unlocked: false,
+      color: "#ca8a04",
     },
     {
       id: "esteem",
       name: "Esteem",
       description: "Recognition and respect",
       unlocked: false,
-      color: "#16a34a", // Green
+      color: "#16a34a",
     },
     {
       id: "self-actualization",
       name: "Self-Actualization",
       description: "Personal growth and fulfillment",
       unlocked: false,
-      color: "#2563eb", // Blue
+      color: "#2563eb",
     },
   ];
 
@@ -80,9 +80,6 @@ const HierarchyNavigation = () => {
                   isActive ? "active" : ""
                 } ${tier.unlocked ? "unlocked" : "locked"}`}
                 style={{
-                  backgroundColor: tier.unlocked ? tier.color : "#374151",
-                  opacity: tier.unlocked ? (isActive ? 1 : 0.7) : 0.3,
-                  cursor: tier.unlocked ? "pointer" : "not-allowed",
                   order: displayOrder,
                 }}
                 onClick={() => handleTierClick(tier.id)}

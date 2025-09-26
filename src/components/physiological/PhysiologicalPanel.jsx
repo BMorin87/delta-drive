@@ -3,6 +3,7 @@ import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
 import VerticalProgressBar from "./VerticalProgressBar";
 import PhysiologicalUpgradesPanel from "./PhysiologicalUpgradesPanel";
+import "../../styles/PhysiologicalPanel.css";
 import "../../styles/ProgressBars.css";
 
 const PhysiologicalPanel = () => {

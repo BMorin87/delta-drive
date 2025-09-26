@@ -1,0 +1,82 @@
+.physiological-upgrades-panel {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.upgrades-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.upgrades-subtitle {
+  font-size: 1rem;
+  color: #9ca3af;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.upgrades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+}
+
+.physiological-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.physiological-upgrades {
+  background: rgba(17, 24, 39, 0.9);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tier-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.tier-note {
+  text-align: center;
+  margin-top: 2rem;
+  color: #9ca3af;
+}
+.view-toggle-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.view-toggle-btn {
+  padding: 0.5rem 1.5rem;
+  background: rgba(55, 65, 81, 0.8);
+  color: #d1d5db;
+  border: 1px solid rgba(75, 85, 99, 0.5);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(75, 85, 99, 0.8);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.view-toggle-btn.active {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border-color: rgba(139, 92, 246, 0.5);
+}

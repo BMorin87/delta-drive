@@ -38,22 +38,27 @@
 }
 
 .pyramid-tier.tier-physiological {
+  background-color: #dc2626;
   width: 200px;
 }
 
 .pyramid-tier.tier-security {
+  background-color: #ea580c;
   width: 170px;
 }
 
 .pyramid-tier.tier-belonging {
+  background-color: #ca8a04;
   width: 140px;
 }
 
 .pyramid-tier.tier-esteem {
+  background-color: #16a34a;
   width: 110px;
 }
 
 .pyramid-tier.tier-self-actualization {
+  background-color: #2563eb;
   width: 80px;
 }
 
@@ -62,6 +67,7 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 255, 255, 0.3);
+  opacity: 0.7;
 }
 
 /* Active tier styling */
@@ -69,6 +75,7 @@
   border-color: rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
   transform: scale(1.05);
+  opacity: 1;
 }
 
 /* Locked tier styling */
@@ -76,6 +83,7 @@
   background-color: #374151 !important;
   color: #6b7280;
   cursor: not-allowed;
+  opacity: 0.3;
 }
 
 /* Lock icon positioning */

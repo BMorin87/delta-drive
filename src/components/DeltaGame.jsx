@@ -59,10 +59,9 @@ const DeltaGame = () => {
           onSpendVolition={spendVolition}
         />
       </div>
-      <DebugPanel />
-
-      {/* Main content area with progress bars */}
+      {/* The pyramid nav and tier-related content are bundled together in a single component. */}
       <HierarchyNavigation />
+      <DebugPanel />
     </div>
   );
 };
