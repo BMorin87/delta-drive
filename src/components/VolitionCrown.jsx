@@ -1,15 +1,17 @@
 import { useGameStore } from "./gameStore";
 import "../styles/VolitionCrown.css";
 
-const VolitionCrown = ({ current, max }) => {
+const VolitionCrown = () => {
   // Subscribe to the resource rates from game state
-  const volitionRate = useGameStore((state) => state.resourceRates.volition);
+  const { volition, volitionCapacity, resourceRates } = useGameStore();
+  const volitionRate = resourceRates.volition || 0;
 
-  const safeCurrent = Number.isFinite(current) ? current : 0;
-  const safeMax = Number.isFinite(max) && max > 0 ? max : 1;
+  const safeCurrent = Number.isFinite(volition) ? volition : 0;
+  const isPositive = Number.isFinite(volitionCapacity) && volitionCapacity > 0;
+  const safeMax = isPositive ? volitionCapacity : 1;
   const percentage = Math.min((safeCurrent / safeMax) * 100, 100);
 
-  // Format rate display
+  // Format the rate display.
   const formatRate = (rate) => {
     const sign = rate >= 0 ? "+" : "";
     return `${sign}${rate.toFixed(1)}/s`;
@@ -46,7 +48,7 @@ const VolitionCrown = ({ current, max }) => {
               </feMerge>
             </filter>
           </defs>
-          {/* Crown shape path with adjusted horizontal position to prevent clipping */}
+          {/* Crown shape path. */}
           <path
             d="M25 120 L15 30 L45 50 L75 30 L105 50 L135 30 L125 120 Z"
             fill="url(#crownGradient)"
@@ -54,7 +56,7 @@ const VolitionCrown = ({ current, max }) => {
             strokeWidth="3"
             filter="url(#crownGlow)"
           />
-          {/* Crown gems - adjusted for new peak positions */}
+          {/* Crown gems. */}
           <circle cx="15" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
           <circle cx="75" cy="30" r="4" fill="#c4b5fd" opacity="0.7" />
           <circle cx="135" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />

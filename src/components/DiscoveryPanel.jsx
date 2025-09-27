@@ -1,12 +1,14 @@
+import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import UpgradeItem from "./UpgradeItem";
 import "../styles/DiscoveryPanel.css";
 
-const DiscoveryPanel = ({ currentVolition, onSpendVolition }) => {
+const DiscoveryPanel = () => {
+  const { volition, spendVolition } = useGameStore();
   const { purchaseUpgrade, getUpgradeLevel } = useUpgradeStore();
 
   const handlePurchase = (upgradeId) => {
-    return purchaseUpgrade(upgradeId, onSpendVolition);
+    return purchaseUpgrade(upgradeId, spendVolition);
   };
 
   // Check if the button upgrades have been purchased
@@ -31,7 +33,7 @@ const DiscoveryPanel = ({ currentVolition, onSpendVolition }) => {
             upgradeId="drinkButton"
             title="Hydration Awareness"
             description="Unlock the ability to actively manage your thirst"
-            currentVolition={currentVolition}
+            currentVolition={volition}
             onPurchase={handlePurchase}
           />
         )}
@@ -41,7 +43,7 @@ const DiscoveryPanel = ({ currentVolition, onSpendVolition }) => {
             upgradeId="eatButton"
             title="Nutritional Awareness"
             description="Unlock the ability to actively manage your hunger"
-            currentVolition={currentVolition}
+            currentVolition={volition}
             onPurchase={handlePurchase}
           />
         )}
@@ -51,7 +53,7 @@ const DiscoveryPanel = ({ currentVolition, onSpendVolition }) => {
             upgradeId="restButton"
             title="Restfulness Awareness"
             description="Unlock the ability to actively manage your fatigue"
-            currentVolition={currentVolition}
+            currentVolition={volition}
             onPurchase={handlePurchase}
           />
         )}

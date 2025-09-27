@@ -11,15 +11,12 @@ import "../styles/DeltaGame.css";
 const DeltaGame = () => {
   // Consume game state from the gameStore.
   const {
-    volition,
-    volitionCapacity,
     initialVolitionRate,
     initialThirstRate,
     initialHungerRate,
     initialFatigueRate,
     isRunning,
     togglePause,
-    spendVolition,
   } = useGameStore();
 
   // Register base systems on first mount.
@@ -48,16 +45,13 @@ const DeltaGame = () => {
   return (
     <div className="game-layout">
       <div className="volition-container">
-        <VolitionCrown current={volition} max={volitionCapacity} />
+        <VolitionCrown />
         <button onClick={togglePause} className="pause-btn">
           {isRunning ? "Pause Game" : "Resume Game"}
         </button>
       </div>
       <div className="discovery-container">
-        <DiscoveryPanel
-          currentVolition={volition}
-          onSpendVolition={spendVolition}
-        />
+        <DiscoveryPanel />
       </div>
       {/* The pyramid nav and tier-related content are bundled together in a single component. */}
       <HierarchyNavigation />
