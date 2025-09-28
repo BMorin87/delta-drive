@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
 import VerticalProgressBar from "./VerticalProgressBar";
+import ForageButton from "./ForageButton";
+import ForagePanel from "./ForagePanel";
+import "../../styles/PhysiologicalNeeds.css";
 import "../../styles/ProgressBars.css";
 
 const PhysiologicalNeeds = () => {
@@ -23,6 +27,8 @@ const PhysiologicalNeeds = () => {
     cancelStatus,
     calculateVolitionCost,
   } = useStatusStore();
+
+  const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
 
   // Helper functions
   const isStatusActive = (type) => !!activeStatuses[type];
@@ -68,7 +74,7 @@ const PhysiologicalNeeds = () => {
     }
   };
 
-  // Need configurations for cleaner rendering
+  // Needs configurations for cleaner rendering
   const needs = [
     {
       type: "drink",
@@ -134,6 +140,21 @@ const PhysiologicalNeeds = () => {
           </p>
         )}
       </div>
+
+      <div className="forage-section">
+        <h3>Exploration</h3>
+        <div className="forage-container">
+          <ForageButton onOpenForage={() => setIsForagePanelOpen(true)} />
+          <p className="forage-description">
+            Search for resources in the wilderness
+          </p>
+        </div>
+      </div>
+
+      <ForagePanel
+        isOpen={isForagePanelOpen}
+        onClose={() => setIsForagePanelOpen(false)}
+      />
     </>
   );
 };

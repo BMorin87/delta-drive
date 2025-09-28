@@ -58,4 +58,25 @@ export const STATUS_CONFIGS = {
       },
     ],
   },
+  forage: {
+    duration: 12,
+    cooldown: 30,
+    cost: { base: 15, need: "volition", capacity: "volitionCapacity" },
+    effects: [
+      {
+        target: "volition",
+        rateKey: "initialVolitionRate",
+        reductionMultiplier: 0.5,
+        rewards: [
+          // Rewards will be handled by the memory card game mechanic
+          // For now, just a small volition return on completion
+          {
+            resource: "volition",
+            perUnit: 0.1,
+            capacityKey: "volitionCapacity",
+          },
+        ],
+      },
+    ],
+  },
 };

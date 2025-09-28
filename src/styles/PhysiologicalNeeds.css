@@ -1,0 +1,27 @@
+.forage-section {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.forage-section h3 {
+  margin: 0 0 16px 0;
+  color: #e5e7eb;
+  font-size: 18px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.forage-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.forage-description {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0;
+}
