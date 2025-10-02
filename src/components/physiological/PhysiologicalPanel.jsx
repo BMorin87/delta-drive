@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import PhysiologicalNeeds from "./PhysiologicalNeeds";
-import PhysiologicalUpgradesPanel from "./PhysiologicalUpgradesPanel";
+import PhysiologicalUpgradesPanel from "./PhysiologicalUpgrades";
 import "../../styles/PhysiologicalPanel.css";
 
 const PhysiologicalPanel = () => {

@@ -1,6 +1,6 @@
 export const STATUS_CONFIGS = {
   drink: {
-    duration: 5,
+    duration: 5, // seconds
     cooldown: 15,
     cost: { base: 10, need: "thirst", capacity: "thirstCapacity" },
     effects: [
@@ -67,15 +67,8 @@ export const STATUS_CONFIGS = {
         target: "volition",
         rateKey: "initialVolitionRate",
         reductionMultiplier: 0.5,
-        rewards: [
-          // Rewards will be handled by the memory card game mechanic
-          // For now, just a small volition return on completion
-          {
-            resource: "volition",
-            perUnit: 0.1,
-            capacityKey: "volitionCapacity",
-          },
-        ],
+        // No direct rewards. Items can be found while foraging.
+        rewards: [],
       },
     ],
   },
