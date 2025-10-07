@@ -17,11 +17,6 @@
   margin-bottom: 0.25rem;
 }
 
-/* Crown SVG wrapper */
-.crown-wrapper {
-  position: relative;
-}
-
 /* Crown SVG styling */
 .crown-svg {
   filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4));

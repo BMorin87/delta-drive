@@ -50,7 +50,7 @@ const VolitionCrown = () => {
           </defs>
           {/* Crown shape path. */}
           <path
-            d="M25 120 L15 30 L45 50 L75 30 L105 50 L135 30 L125 120 Z"
+            d="M25 120 L15 30 L45 60 L75 20 L105 60 L135 30 L125 120 Z"
             fill="url(#crownGradient)"
             stroke="#8b5cf6"
             strokeWidth="3"
@@ -58,7 +58,7 @@ const VolitionCrown = () => {
           />
           {/* Crown gems. */}
           <circle cx="15" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
-          <circle cx="75" cy="30" r="4" fill="#c4b5fd" opacity="0.7" />
+          <circle cx="75" cy="20" r="4" fill="#c4b5fd" opacity="0.7" />
           <circle cx="135" cy="30" r="5" fill="#c4b5fd" opacity="0.9" />
 
           {/* Current volition value - positioned in the crown center */}
