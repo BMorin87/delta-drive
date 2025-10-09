@@ -110,6 +110,10 @@ const PhysiologicalNeeds = () => {
         {needs.map((need) => {
           const buttonState = getButtonState(need.type);
 
+          if (isForagePanelOpen) {
+            return null;
+            // Or return a div with a set height to maintain layout.
+          }
           return (
             <div key={need.type} className="bar-with-action">
               <VerticalProgressBar

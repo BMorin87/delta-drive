@@ -3,7 +3,7 @@ import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
   // Game state variables are highly fragile to refactoring and prototyping!
-  TICKS_PER_SECOND: 60,
+  TICKS_PER_SECOND: 12,
   isRunning: true,
 
   volition: 1,
@@ -16,10 +16,10 @@ export const useGameStore = create((set, get) => ({
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
-  initialVolitionRate: 4 / 60, // 4 per second
-  initialThirstRate: 3 / 60,
-  initialHungerRate: 2 / 60,
-  initialFatigueRate: 1 / 60,
+  initialVolitionRate: 4 / 12, // 4 per second
+  initialThirstRate: 3 / 12,
+  initialHungerRate: 2 / 12,
+  initialFatigueRate: 1 / 12,
 
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,
@@ -70,7 +70,7 @@ export const useGameStore = create((set, get) => ({
 
   _updateResourceRates: (oldState, newState) => {
     const resources = ["volition", "thirst", "hunger", "fatigue"];
-    const ticksPerSecond = oldState.TICKS_PER_SECOND || 60;
+    const ticksPerSecond = oldState.TICKS_PER_SECOND || 12;
     const newRates = {};
 
     resources.forEach((resource) => {
