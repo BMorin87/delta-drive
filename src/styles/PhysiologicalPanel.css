@@ -1,41 +1,11 @@
-.physiological-upgrades-panel {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.upgrades-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: white;
-}
-
-.upgrades-subtitle {
-  font-size: 1rem;
-  color: #9ca3af;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.upgrades-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
-  max-width: 800px;
+.physiological-ui-container {
+  width: 100%;
 }
 
 .physiological-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.physiological-upgrades {
-  background: rgba(17, 24, 39, 0.9);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .tier-title {
@@ -46,11 +16,6 @@
   color: white;
 }
 
-.tier-note {
-  text-align: center;
-  margin-top: 2rem;
-  color: #9ca3af;
-}
 .view-toggle-container {
   display: flex;
   gap: 0.5rem;

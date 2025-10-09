@@ -1,0 +1,32 @@
+.physiological-upgrades-panel {
+  max-width: 800px;
+  width: 100%;
+}
+
+.upgrades-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.upgrades-subtitle {
+  font-size: 1rem;
+  color: #9ca3af;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.upgrades-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+@media (min-width: 600px) {
+  .upgrades-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

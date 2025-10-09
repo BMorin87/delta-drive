@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import PhysiologicalNeeds from "./PhysiologicalNeeds";
-import PhysiologicalUpgradesPanel from "./PhysiologicalUpgrades";
+import PhysiologicalUpgrades from "./PhysiologicalUpgrades";
 import "../../styles/PhysiologicalPanel.css";
 
 const PhysiologicalPanel = () => {
@@ -37,7 +37,7 @@ const PhysiologicalPanel = () => {
         {activeView === "progress" ? (
           <PhysiologicalNeeds />
         ) : (
-          <PhysiologicalUpgradesPanel
+          <PhysiologicalUpgrades
             currentVolition={volition}
             onSpendVolition={spendVolition}
           />

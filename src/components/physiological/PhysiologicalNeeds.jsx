@@ -133,7 +133,7 @@ const PhysiologicalNeeds = () => {
       </div>
 
       <div className="tier-note">
-        <p>Fulfill your physiological needs to generate Volition.</p>
+        <p>Satisfying physiological needs generates Volition.</p>
         {hasSynergyBonus && (
           <p className="bonus-indicator">
             🌟 Synergy Bonus Active! +20% efficiency

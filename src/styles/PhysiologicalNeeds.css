@@ -25,3 +25,7 @@
   color: #9ca3af;
   margin: 0;
 }
+
+.tier-note {
+  word-wrap: normal;
+}
