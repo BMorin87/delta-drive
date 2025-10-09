@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { gameEngine } from "./gameEngine";
 
 export const useGameStore = create((set, get) => ({
-  // Game state variables are highly fragile to refactoring and prototyping!
+  // Game state variables are highly fragile to refactoring and prototyping! E.g. statusStore doesn't read TICKS_PER_SECOND from here. :-(
   TICKS_PER_SECOND: 12,
   isRunning: true,
 

@@ -97,7 +97,7 @@ export const useStatusStore = create((set, get) => ({
       const status = statusStoreState.activeStatuses[statusType];
       if (!status) return {};
 
-      const deltaTime = 1 / 60;
+      const deltaTime = 1 / 12;
       const newDuration = status.duration - deltaTime;
 
       // If status duration has expired, clean up and set cooldown.
@@ -168,7 +168,7 @@ export const useStatusStore = create((set, get) => ({
 
   registerCooldownSystem: () => {
     const cooldownSystem = () => {
-      const deltaTime = 1 / 60;
+      const deltaTime = 1 / 12;
       set((prev) => {
         const updated = {};
         let changed = false;
