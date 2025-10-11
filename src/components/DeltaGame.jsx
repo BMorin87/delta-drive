@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import { gameEngine } from "./gameEngine";
@@ -6,20 +6,58 @@ import VolitionCrown from "./VolitionCrown";
 import DiscoveryPanel from "./DiscoveryPanel";
 import HierarchyNavigation from "./HierarchyNavigation";
 import DebugPanel from "./DebugPanel";
+import SettingsMenu from "./SettingsMenu";
 import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
-  // Consume game state from the gameStore.
+  const [isSettingsOpen, setSettingsOpen] = useState(false);
+  const { isRunning, togglePause } = useGameStore();
+
+  useGameSystems();
+
+  const handleSettingsToggle = () => {
+    if (!isSettingsOpen) {
+      if (isRunning) {
+        togglePause();
+      }
+    }
+    setSettingsOpen(!isSettingsOpen);
+  };
+
+  return (
+    <div className="game-layout">
+      <div className="volition-container">
+        <VolitionCrown />
+        <div className="button-group">
+          <button onClick={togglePause} className="pause-btn">
+            {isRunning ? "Pause" : "Resume"}
+          </button>
+          <button onClick={handleSettingsToggle} className="settings-btn">
+            ⚙️ Settings
+          </button>
+        </div>
+      </div>
+
+      <SettingsMenu isOpen={isSettingsOpen} onClose={handleSettingsToggle} />
+
+      <div className="discovery-container">
+        <DiscoveryPanel />
+      </div>
+      <HierarchyNavigation />
+      <DebugPanel />
+    </div>
+  );
+};
+
+function useGameSystems() {
+  // TODO: I don't think these need to consume the initial rates.
   const {
     initialVolitionRate,
     initialThirstRate,
     initialHungerRate,
     initialFatigueRate,
-    isRunning,
-    togglePause,
   } = useGameStore();
 
-  // Register base systems on first mount.
   useEffect(() => {
     registerGlobalGameSystems(
       initialThirstRate,
@@ -35,32 +73,13 @@ const DeltaGame = () => {
       gameEngine.unregisterSystem("Volition");
     };
   }, [
-    // Re-register if initial rates change.
     initialThirstRate,
     initialHungerRate,
     initialFatigueRate,
     initialVolitionRate,
   ]);
+}
 
-  return (
-    <div className="game-layout">
-      <div className="volition-container">
-        <VolitionCrown />
-        <button onClick={togglePause} className="pause-btn">
-          {isRunning ? "Pause Game" : "Resume Game"}
-        </button>
-      </div>
-      <div className="discovery-container">
-        <DiscoveryPanel />
-      </div>
-      {/* The pyramid nav and tier-related content are bundled together in a single component. */}
-      <HierarchyNavigation />
-      <DebugPanel />
-    </div>
-  );
-};
-
-// Initial rates are passed in to allow re-registration if they ever change.
 function registerGlobalGameSystems(
   initialThirstRate,
   initialHungerRate,
@@ -86,7 +105,6 @@ function createUpdateFunctionKeys(
   initialFatigueRate,
   initialVolitionRate
 ) {
-  // "Magic" names used to refer to state variables in the gameStore and upgradeStore.
   return {
     thirst: {
       stat: "thirst",
@@ -115,7 +133,6 @@ function createUpdateFunctionKeys(
   };
 }
 
-// Factory function to reduce repetition.
 function createUpdateFunction(statKeys) {
   const { stat, capacity, upgradeRate, initialRate } = statKeys;
   return (state) => {

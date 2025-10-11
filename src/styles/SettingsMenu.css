@@ -1,0 +1,226 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+/* Settings Panel */
+.settings-panel {
+  background: linear-gradient(
+    145deg,
+    rgba(17, 24, 39, 0.98),
+    rgba(31, 41, 55, 0.98)
+  );
+  border-radius: 16px;
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Settings Header */
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.settings-header h2 {
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 24px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Close Button */
+.close-button {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* Settings Content */
+.settings-content {
+  padding: 24px;
+}
+
+.settings-section {
+  margin-bottom: 24px;
+}
+
+.settings-section h3 {
+  margin: 0 0 16px 0;
+  color: #c4b5fd;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Settings Actions */
+.settings-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-action-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+/* Export Button */
+.export-btn {
+  background: linear-gradient(
+    145deg,
+    rgba(34, 197, 94, 0.8),
+    rgba(22, 163, 74, 0.8)
+  );
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.export-btn:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(34, 197, 94, 1),
+    rgba(22, 163, 74, 1)
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+/* Import Button */
+.import-btn {
+  background: linear-gradient(
+    145deg,
+    rgba(59, 130, 246, 0.8),
+    rgba(37, 99, 235, 0.8)
+  );
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.import-btn:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(59, 130, 246, 1),
+    rgba(37, 99, 235, 1)
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.file-input {
+  display: none;
+}
+
+/* Reset Button */
+.reset-btn {
+  background: linear-gradient(
+    145deg,
+    rgba(239, 68, 68, 0.8),
+    rgba(220, 38, 38, 0.8)
+  );
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.reset-btn:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(239, 68, 68, 1),
+    rgba(220, 38, 38, 1)
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+/* Import Error */
+.import-error {
+  color: #fca5a5;
+  font-size: 14px;
+  text-align: center;
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Settings Footer */
+.settings-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.close-settings-btn {
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(55, 65, 81, 0.8);
+  color: #d1d5db;
+  border: 1px solid rgba(75, 85, 99, 0.5);
+}
+
+.close-settings-btn:hover {
+  background: rgba(75, 85, 99, 0.8);
+  border-color: rgba(107, 114, 128, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-panel {
+    width: 95%;
+  }
+
+  .settings-header h2 {
+    font-size: 20px;
+  }
+
+  .settings-action-btn {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}

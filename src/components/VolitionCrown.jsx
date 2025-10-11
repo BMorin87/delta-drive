@@ -2,14 +2,12 @@ import { useGameStore } from "./gameStore";
 import "../styles/VolitionCrown.css";
 
 const VolitionCrown = () => {
-  // Subscribe to the resource rates from game state
   const { volition, volitionCapacity, resourceRates } = useGameStore();
-  const volitionRate = resourceRates.volition || 0;
 
   const safeCurrent = Number.isFinite(volition) ? volition : 0;
   const isPositive = Number.isFinite(volitionCapacity) && volitionCapacity > 0;
   const safeMax = isPositive ? volitionCapacity : 1;
-  const percentage = Math.min((safeCurrent / safeMax) * 100, 100);
+  const percentFull = Math.min((safeCurrent / safeMax) * 100, 100);
 
   // Format the rate display.
   const formatRate = (rate) => {
@@ -36,8 +34,8 @@ const VolitionCrown = () => {
               y2="0%"
             >
               <stop offset="0%" stopColor="#581c87" />
-              <stop offset={`${percentage}%`} stopColor="#8b5cf6" />
-              <stop offset={`${percentage}%`} stopColor="#374151" />
+              <stop offset={`${percentFull}%`} stopColor="#8b5cf6" />
+              <stop offset={`${percentFull}%`} stopColor="#374151" />
               <stop offset="100%" stopColor="#374151" />
             </linearGradient>
             <filter id="crownGlow">
@@ -87,7 +85,7 @@ const VolitionCrown = () => {
             fontSize="12"
             fontWeight="500"
           >
-            {formatRate(volitionRate)}
+            {formatRate(resourceRates.volition)}
           </text>
         </svg>
       </div>
