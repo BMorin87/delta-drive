@@ -1,4 +1,3 @@
-/* Game Layout */
 .game-layout {
   min-height: 100vh;
   width: 100vw;
@@ -19,7 +18,7 @@
   .game-layout {
     grid-template-areas:
       "volition tier discovery"
-      "nav tier discovery";
+      "nav tier .";
     grid-template-rows: auto auto;
     grid-template-columns: 20rem auto 20rem;
   }
