@@ -1,6 +1,6 @@
 import { useUpgradeStore } from "../upgradeStore";
 import UpgradeItem from "../UpgradeItem";
-import "../../styles/PhysiologicalUpgrades.css";
+import "../../styles/physiological/PhysiologicalUpgrades.css";
 
 const PhysiologicalUpgradesPanel = ({ currentVolition, onSpendVolition }) => {
   const { purchaseUpgrade } = useUpgradeStore();

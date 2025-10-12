@@ -4,7 +4,7 @@ import { useStatusStore } from "../statusStore";
 import VerticalProgressBar from "./VerticalProgressBar";
 import ForageButton from "./ForageButton";
 import ForagePanel from "./ForagePanel";
-import "../../styles/PhysiologicalNeeds.css";
+import "../../styles/physiological/PhysiologicalNeeds.css";
 import "../../styles/ProgressBars.css";
 
 const PhysiologicalNeeds = () => {
@@ -74,7 +74,7 @@ const PhysiologicalNeeds = () => {
     }
   };
 
-  // Needs configurations for cleaner rendering
+  // The "needs" information organized for easy rendering.
   const needs = [
     {
       type: "drink",
@@ -112,7 +112,7 @@ const PhysiologicalNeeds = () => {
 
           if (isForagePanelOpen) {
             return null;
-            // Or return a div with a set height to maintain layout.
+            // TODO: Return a div with a set height to maintain layout.
           }
           return (
             <div key={need.type} className="bar-with-action">

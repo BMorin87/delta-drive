@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useStatusStore } from "../statusStore";
-import "../../styles/ForagePanel.css";
+import "../../styles/physiological/ForagePanel.css";
 
 const RESOURCE_TYPES = {
   FOOD: { emoji: "🎃", name: "food" },

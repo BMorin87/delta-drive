@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import PhysiologicalNeeds from "./PhysiologicalNeeds";
 import PhysiologicalUpgrades from "./PhysiologicalUpgrades";
-import "../../styles/PhysiologicalPanel.css";
+import "../../styles/physiological/PhysiologicalPanel.css";
 
 const PhysiologicalPanel = () => {
   const [activeView, setActiveView] = useState("progress");
