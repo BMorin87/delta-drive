@@ -17,7 +17,7 @@ const VolitionCrown = () => {
 
   return (
     <div className="volition-crown-container">
-      <div className="volition-label">Volition</div>
+      <h2 className="volition-label">Volition</h2>
       <div className="crown-wrapper">
         <svg
           width="150"
