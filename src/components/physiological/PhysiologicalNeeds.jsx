@@ -110,9 +110,9 @@ const PhysiologicalNeeds = () => {
         {needs.map((need) => {
           const buttonState = getButtonState(need.type);
 
+          // If the forage window is open, return a placeholder to maintain layout.
           if (isForagePanelOpen) {
-            return null;
-            // TODO: Return a div with a set height to maintain layout.
+            return <div style={{ height: 376 }} />;
           }
           return (
             <div key={need.type} className="bar-with-action">

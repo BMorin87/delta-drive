@@ -10,9 +10,10 @@ import SettingsMenu from "./SettingsMenu";
 import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
-  const [isSettingsOpen, setSettingsOpen] = useState(false);
   const { isRunning, togglePause } = useGameStore();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  // Register the initial game systems with the game engine.
   useGameSystems();
 
   const handleSettingsToggle = () => {
@@ -21,7 +22,7 @@ const DeltaGame = () => {
         togglePause();
       }
     }
-    setSettingsOpen(!isSettingsOpen);
+    setIsSettingsOpen(!isSettingsOpen);
   };
 
   return (
