@@ -110,29 +110,40 @@ const PhysiologicalNeeds = () => {
         {needs.map((need) => {
           const buttonState = getButtonState(need.type);
 
-          // If the forage window is open, return a placeholder to maintain layout.
+          // If the forage window is open, cull the bars by returning a placeholder div.
           if (isForagePanelOpen) {
             return <div style={{ height: 376 }} />;
-          }
-          return (
-            <div key={need.type} className="bar-with-action">
-              <VerticalProgressBar
-                current={need.current}
-                max={need.capacity}
-                label={need.label}
-                colorClass={need.colorClass}
-                height={250}
-              />
-              {need.unlocked && (
+          } else if (!need.unlocked) {
+            return (
+              <div key={need.type} className="bar-with-action">
+                <VerticalProgressBar
+                  current={need.current}
+                  max={need.capacity}
+                  label={need.label}
+                  colorClass={need.colorClass}
+                  height={250}
+                />
+                <div style={{ height: 34 }} />
+              </div>
+            );
+          } else
+            return (
+              <div key={need.type} className="bar-with-action">
+                <VerticalProgressBar
+                  current={need.current}
+                  max={need.capacity}
+                  label={need.label}
+                  colorClass={need.colorClass}
+                  height={250}
+                />
                 <button
                   {...buttonState}
                   onClick={() => handleAction(need.type)}
                 >
                   {buttonState.text}
                 </button>
-              )}
-            </div>
-          );
+              </div>
+            );
         })}
       </div>
 
