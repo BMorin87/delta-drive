@@ -10,7 +10,6 @@ const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
   } = useUpgradeStore();
 
   const upgrade = upgrades[upgradeId];
-  console.log(upgrades);
   const cost = getUpgradeCost(upgradeId);
   const canAfford = canAffordUpgrade(upgradeId);
   const effect = getUpgradeEffectAtLevel(upgradeId, upgrade.level);
