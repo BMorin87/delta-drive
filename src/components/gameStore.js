@@ -29,9 +29,7 @@ export const useGameStore = create(
       initialHungerCapacity: 100,
       initialFatigueCapacity: 100,
 
-      drinkUnlocked: false,
-      eatUnlocked: false,
-      restUnlocked: false,
+      isActionsUnlocked: false,
 
       // Stores the change since last tick times TICKS_PER_SECOND.
       resourceRates: {
@@ -109,9 +107,7 @@ export const useGameStore = create(
         thirstCapacity: state.thirstCapacity,
         hungerCapacity: state.hungerCapacity,
         fatigueCapacity: state.fatigueCapacity,
-        drinkUnlocked: state.drinkUnlocked,
-        eatUnlocked: state.eatUnlocked,
-        restUnlocked: state.restUnlocked,
+        basicNeedsUnlocked: state.basicNeedsUnlocked,
       }),
     }
   )

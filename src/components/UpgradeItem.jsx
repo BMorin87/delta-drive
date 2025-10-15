@@ -10,11 +10,12 @@ const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
   } = useUpgradeStore();
 
   const upgrade = upgrades[upgradeId];
+  console.log(upgrades);
   const cost = getUpgradeCost(upgradeId);
   const canAfford = canAffordUpgrade(upgradeId);
   const effect = getUpgradeEffectAtLevel(upgradeId, upgrade.level);
 
-  // TODO: Create lookup for upgrade costs and effects based on upgradeId.
+  // TODO: Create dictionary for upgrade costs and effects based on upgradeId.
 
   const handlePurchase = () => {
     if (canAfford) {

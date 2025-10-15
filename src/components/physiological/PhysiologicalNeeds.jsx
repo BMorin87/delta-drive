@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
 import VerticalProgressBar from "./VerticalProgressBar";
@@ -15,9 +15,7 @@ const PhysiologicalNeeds = () => {
     thirstCapacity,
     hungerCapacity,
     fatigueCapacity,
-    drinkUnlocked,
-    eatUnlocked,
-    restUnlocked,
+    isActionsUnlocked,
   } = useGameStore();
 
   const {
@@ -29,6 +27,13 @@ const PhysiologicalNeeds = () => {
   } = useStatusStore();
 
   const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
+  const [showActionButtons, setShowActionButtons] = useState(isActionsUnlocked);
+
+  useEffect(() => {
+    if (isActionsUnlocked) {
+      setShowActionButtons(true);
+    }
+  }, [isActionsUnlocked]);
 
   // Helper functions
   const isStatusActive = (type) => !!activeStatuses[type];
@@ -82,7 +87,7 @@ const PhysiologicalNeeds = () => {
       capacity: thirstCapacity,
       label: "Thirst",
       colorClass: "thirst-bar",
-      unlocked: drinkUnlocked,
+      unlocked: isActionsUnlocked,
     },
     {
       type: "eat",
@@ -90,7 +95,7 @@ const PhysiologicalNeeds = () => {
       capacity: hungerCapacity,
       label: "Hunger",
       colorClass: "hunger-bar",
-      unlocked: eatUnlocked,
+      unlocked: isActionsUnlocked,
     },
     {
       type: "rest",
@@ -98,11 +103,13 @@ const PhysiologicalNeeds = () => {
       capacity: fatigueCapacity,
       label: "Fatigue",
       colorClass: "fatigue-bar",
-      unlocked: restUnlocked,
+      unlocked: isActionsUnlocked,
     },
   ];
 
   const hasSynergyBonus = isStatusActive("drink") && isStatusActive("eat");
+
+  const unlockClass = showActionButtons ? "is-unlocked" : "";
 
   return (
     <>
@@ -124,15 +131,19 @@ const PhysiologicalNeeds = () => {
                 colorClass={need.colorClass}
                 height={250}
               />
+
               {need.unlocked ? (
-                <button
-                  {...buttonState}
-                  onClick={() => handleAction(need.type)}
-                >
-                  {buttonState.text}
-                </button>
+                <div className={`action-button-wrapper ${unlockClass}`}>
+                  <button
+                    {...buttonState}
+                    onClick={() => handleAction(need.type)}
+                  >
+                    {buttonState.text}
+                  </button>
+                </div>
               ) : (
-                <div style={{ height: 34 }} />
+                // Placeholder to reserve space while actions are locked
+                <div className="action-button-wrapper" />
               )}
             </div>
           );

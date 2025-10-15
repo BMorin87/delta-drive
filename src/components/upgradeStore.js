@@ -27,14 +27,12 @@ export const useUpgradeStore = create(
           type: "reward",
           affects: "rest",
         },
-        drinkButton: {
+        basicNeeds: {
           level: 0,
-          baseCost: 10,
+          baseCost: 50,
           type: "unlock",
-          unlocks: "drink",
+          unlocks: "actions",
         },
-        eatButton: { level: 0, baseCost: 40, type: "unlock", unlocks: "eat" },
-        restButton: { level: 0, baseCost: 90, type: "unlock", unlocks: "rest" },
       },
 
       // Actions
@@ -122,12 +120,8 @@ export const useUpgradeStore = create(
           }
 
           case "unlock": {
-            if (upgrade.unlocks === "drink") {
-              useGameStore.setState({ drinkUnlocked: true });
-            } else if (upgrade.unlocks === "eat") {
-              useGameStore.setState({ eatUnlocked: true });
-            } else if (upgrade.unlocks === "rest") {
-              useGameStore.setState({ restUnlocked: true });
+            if (upgrade.unlocks === "actions") {
+              useGameStore.setState({ isActionsUnlocked: true });
             }
             break;
           }
