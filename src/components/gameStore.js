@@ -9,6 +9,7 @@ export const useGameStore = create(
       TICKS_PER_SECOND: 12,
       isRunning: true,
 
+      // Actual canonical resource values.
       volition: 1,
       thirst: 1,
       hunger: 1,
@@ -19,7 +20,7 @@ export const useGameStore = create(
       hungerCapacity: 100,
       fatigueCapacity: 100,
 
-      // Volition currently fills at 4 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
+      // Volition's initial rate is 4 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
       initialVolitionRate: 4 / 12,
       initialThirstRate: 3 / 12,
       initialHungerRate: 2 / 12,
@@ -31,6 +32,8 @@ export const useGameStore = create(
       initialFatigueCapacity: 100,
 
       isAwarenessUnlocked: false,
+      isNavigationUnlocked: false,
+      isForageUnlocked: false,
 
       // Used by _updateResourceRates to store the per-second rate value, i.e. the change since last tick multiplied by the TICKS_PER_SECOND.
       resourceRates: {
@@ -48,9 +51,7 @@ export const useGameStore = create(
         fatigue: 1,
       },
 
-      // Actions
-
-      // Called by useEffect and setInterval in App.jsx.
+      // Called in App.jsx with useEffect and setInterval.
       tick: () => gameEngine.tick(),
 
       spendVolition: (amount) => {
@@ -73,6 +74,7 @@ export const useGameStore = create(
           isRunning: !state.isRunning,
         })),
 
+      // Internal function used by the gameEngine to update resource rates used by UI components.
       _updateResourceRates: (oldState, newState) => {
         // The resources currently being tracked.
         const resources = ["volition", "thirst", "hunger", "fatigue"];
@@ -115,7 +117,9 @@ export const useGameStore = create(
         thirstCapacity: state.thirstCapacity,
         hungerCapacity: state.hungerCapacity,
         fatigueCapacity: state.fatigueCapacity,
-        basicNeedsUnlocked: state.basicNeedsUnlocked,
+        isAwarenessUnlocked: state.isAwarenessUnlocked,
+        isNavigationUnlocked: state.isNavigationUnlocked,
+        isForageUnlocked: state.isForageUnlocked,
       }),
     }
   )

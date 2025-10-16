@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useGameStore } from "./gameStore";
 import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
 import SecurityPanel from "./security/SecurityPanel";
 import "../styles/HierarchyNavigation.css";
 
 const HierarchyNavigation = () => {
   const [activeTier, setActiveTier] = useState("physiological");
+  const { isNavigationUnlocked } = useGameStore();
 
   // Define the tiers in pyramid order (bottom to top)
   const tiers = [
@@ -65,42 +67,43 @@ const HierarchyNavigation = () => {
 
   return (
     <>
-      {/* Pyramid Navigation */}
-      <div className="pyramid-nav">
-        <div className="pyramid-wrapper">
-          {/* Render tiers from top to bottom for visual pyramid */}
-          {tiers.map((tier, index) => {
-            const isActive = activeTier === tier.id;
-            const displayOrder = tiers.length - index;
+      {isNavigationUnlocked && (
+        <div className="pyramid-nav">
+          <div className="pyramid-wrapper">
+            {/* Render tiers from top to bottom for visual pyramid */}
+            {tiers.map((tier, index) => {
+              const isActive = activeTier === tier.id;
+              const displayOrder = tiers.length - index;
 
-            return (
-              <div
-                key={tier.id}
-                className={`pyramid-tier tier-${tier.id} ${
-                  isActive ? "active" : ""
-                } ${tier.unlocked ? "unlocked" : "locked"}`}
-                style={{
-                  order: displayOrder,
-                }}
-                onClick={() => handleTierClick(tier.id)}
-                title={
-                  tier.unlocked
-                    ? tier.description
-                    : "Locked - progress further to unlock"
-                }
-              >
-                <div className="tier-name">{tier.name}</div>
-                {!tier.unlocked && <div className="lock-icon">🔒</div>}
-              </div>
-            );
-          })}
-        </div>
+              return (
+                <div
+                  key={tier.id}
+                  className={`pyramid-tier tier-${tier.id} ${
+                    isActive ? "active" : ""
+                  } ${tier.unlocked ? "unlocked" : "locked"}`}
+                  style={{
+                    order: displayOrder,
+                  }}
+                  onClick={() => handleTierClick(tier.id)}
+                  title={
+                    tier.unlocked
+                      ? tier.description
+                      : "Locked - progress further to unlock"
+                  }
+                >
+                  <div className="tier-name">{tier.name}</div>
+                  {!tier.unlocked && <div className="lock-icon">🔒</div>}
+                </div>
+              );
+            })}
+          </div>
 
-        <div className="current-tier-info">
-          <h3>{tiers.find((t) => t.id === activeTier)?.name}</h3>
-          <p>{tiers.find((t) => t.id === activeTier)?.description}</p>
+          <div className="current-tier-info">
+            <p>{tiers.find((t) => t.id === activeTier)?.description}</p>
+          </div>
         </div>
-      </div>
+      )}
+
       {/* Active Panel Content */}
       <div className="tier-content-container">{renderActivePanel()}</div>
     </>

@@ -15,7 +15,8 @@ const PhysiologicalNeeds = () => {
     thirstCapacity,
     hungerCapacity,
     fatigueCapacity,
-    isActionsUnlocked,
+    isAwarenessUnlocked,
+    isForageUnlocked,
   } = useGameStore();
 
   const {
@@ -27,13 +28,14 @@ const PhysiologicalNeeds = () => {
   } = useStatusStore();
 
   const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
-  const [showActionButtons, setShowActionButtons] = useState(isActionsUnlocked);
+  const [showActionButtons, setShowActionButtons] =
+    useState(isAwarenessUnlocked);
 
   useEffect(() => {
-    if (isActionsUnlocked) {
+    if (isAwarenessUnlocked) {
       setShowActionButtons(true);
     }
-  }, [isActionsUnlocked]);
+  }, [isAwarenessUnlocked]);
 
   // Helper functions
   const isStatusActive = (type) => !!activeStatuses[type];
@@ -87,7 +89,7 @@ const PhysiologicalNeeds = () => {
       capacity: thirstCapacity,
       label: "Thirst",
       colorClass: "thirst-bar",
-      unlocked: isActionsUnlocked,
+      unlocked: isAwarenessUnlocked,
     },
     {
       type: "eat",
@@ -95,7 +97,7 @@ const PhysiologicalNeeds = () => {
       capacity: hungerCapacity,
       label: "Hunger",
       colorClass: "hunger-bar",
-      unlocked: isActionsUnlocked,
+      unlocked: isAwarenessUnlocked,
     },
     {
       type: "rest",
@@ -103,7 +105,7 @@ const PhysiologicalNeeds = () => {
       capacity: fatigueCapacity,
       label: "Fatigue",
       colorClass: "fatigue-bar",
-      unlocked: isActionsUnlocked,
+      unlocked: isAwarenessUnlocked,
     },
   ];
 
@@ -159,15 +161,17 @@ const PhysiologicalNeeds = () => {
         )}
       </div>
 
-      <div className="forage-section">
-        <h3>Exploration</h3>
-        <div className="forage-container">
-          <ForageButton onOpenForage={() => setIsForagePanelOpen(true)} />
-          <p className="forage-description">
-            Search for resources in the wilderness
-          </p>
+      {isForageUnlocked && (
+        <div className="forage-section">
+          <h3>Exploration</h3>
+          <div className="forage-container">
+            <ForageButton onOpenForage={() => setIsForagePanelOpen(true)} />
+            <p className="forage-description">
+              Search for resources in the wilderness
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <ForagePanel
         isOpen={isForagePanelOpen}

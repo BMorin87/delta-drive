@@ -97,9 +97,6 @@ function registerGlobalGameSystems(
   );
 
   // Hook the update functions to the game engine.
-  console.log("Registering game systems with engine.");
-  console.log(keys);
-  console.log(createUpdateFunction(keys.thirst));
   gameEngine.registerSystem("Thirst", createUpdateFunction(keys.thirst));
   gameEngine.registerSystem("Hunger", createUpdateFunction(keys.hunger));
   gameEngine.registerSystem("Fatigue", createUpdateFunction(keys.fatigue));

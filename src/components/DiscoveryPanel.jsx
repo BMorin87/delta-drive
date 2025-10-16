@@ -4,7 +4,12 @@ import UpgradeItem from "./UpgradeItem";
 import "../styles/DiscoveryPanel.css";
 
 const DiscoveryPanel = () => {
-  const { spendVolition, isActionsUnlocked } = useGameStore();
+  const {
+    spendVolition,
+    isAwarenessUnlocked,
+    isNavigationUnlocked,
+    isForageUnlocked,
+  } = useGameStore();
   const { purchaseUpgrade } = useUpgradeStore();
 
   const handlePurchase = (upgradeId) => {
@@ -17,7 +22,7 @@ const DiscoveryPanel = () => {
       <p className="discovery-subtitle">Unlock new abilities and features</p>
 
       <div className="discovery-grid">
-        {!isActionsUnlocked && (
+        {!isAwarenessUnlocked && (
           <UpgradeItem
             upgradeId="basicNeeds"
             title="Awareness"
@@ -26,8 +31,26 @@ const DiscoveryPanel = () => {
           />
         )}
 
+        {!isNavigationUnlocked && (
+          <UpgradeItem
+            upgradeId="pyramidNav"
+            title="Hierarchy Navigation"
+            description="Operate on multiple levels."
+            onPurchase={handlePurchase}
+          />
+        )}
+
+        {!isForageUnlocked && (
+          <UpgradeItem
+            upgradeId="foraging"
+            title="Foraging"
+            description="Explore your environment to find resources."
+            onPurchase={handlePurchase}
+          />
+        )}
+
         {/* Show message when all discoveries are unlocked */}
-        {isActionsUnlocked && (
+        {isAwarenessUnlocked && (
           <div className="all-discovered">
             <div className="discovery-complete-icon">🎉</div>
             <p>All basic abilities discovered!</p>
