@@ -13,7 +13,7 @@ const DeltaGame = () => {
   const { isRunning, togglePause } = useGameStore();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // Register the initial game systems with the game engine.
+  // Register the initial game systems with the game engine using a useEffect hook.
   useGameSystems();
 
   const handleSettingsToggle = () => {
@@ -51,7 +51,7 @@ const DeltaGame = () => {
 };
 
 function useGameSystems() {
-  // TODO: I don't think these need to consume the initial rates.
+  // The "base" rates are consumed here in case the base values change via upgrades or other means.
   const {
     initialVolitionRate,
     initialThirstRate,
@@ -59,6 +59,7 @@ function useGameSystems() {
     initialFatigueRate,
   } = useGameStore();
 
+  // Hook the initial game systems to the engine once, and re-register if the base rates change.
   useEffect(() => {
     registerGlobalGameSystems(
       initialThirstRate,
@@ -87,6 +88,7 @@ function registerGlobalGameSystems(
   initialFatigueRate,
   initialVolitionRate
 ) {
+  // The keys have "magic words" to generate the update functions. This balances fragility with extensibility.
   const keys = createUpdateFunctionKeys(
     initialThirstRate,
     initialHungerRate,
@@ -94,6 +96,10 @@ function registerGlobalGameSystems(
     initialVolitionRate
   );
 
+  // Hook the update functions to the game engine.
+  console.log("Registering game systems with engine.");
+  console.log(keys);
+  console.log(createUpdateFunction(keys.thirst));
   gameEngine.registerSystem("Thirst", createUpdateFunction(keys.thirst));
   gameEngine.registerSystem("Hunger", createUpdateFunction(keys.hunger));
   gameEngine.registerSystem("Fatigue", createUpdateFunction(keys.fatigue));
@@ -109,41 +115,45 @@ function createUpdateFunctionKeys(
   return {
     thirst: {
       stat: "thirst",
-      capacity: "thirstCapacity",
-      upgradeRate: "thirstRate",
+      capacityName: "thirstCapacity",
+      upgradeRateName: "thirstRate",
       initialRate: initialThirstRate,
     },
     hunger: {
       stat: "hunger",
-      capacity: "hungerCapacity",
-      upgradeRate: "hungerRate",
+      capacityName: "hungerCapacity",
+      upgradeRateName: "hungerRate",
       initialRate: initialHungerRate,
     },
     fatigue: {
       stat: "fatigue",
-      capacity: "fatigueCapacity",
-      upgradeRate: "fatigueRate",
+      capacityName: "fatigueCapacity",
+      upgradeRateName: "fatigueRate",
       initialRate: initialFatigueRate,
     },
     volition: {
       stat: "volition",
-      capacity: "volitionCapacity",
-      upgradeRate: "volitionRate",
+      capacityName: "volitionCapacity",
+      upgradeRateName: "volitionRate",
       initialRate: initialVolitionRate,
     },
   };
 }
 
 function createUpdateFunction(statKeys) {
-  const { stat, capacity, upgradeRate, initialRate } = statKeys;
+  const { stat, capacityName, rateName, initialRate } = statKeys;
   return (state) => {
     if (state[stat] == null) {
       return {};
     }
+    // Calculate the total growth rate for the current stat by reading the upgradeStore's state.
     const totalGrowth =
       initialRate +
-      useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRate);
-    const cappedValue = Math.min(state[capacity], state[stat] + totalGrowth);
+      useUpgradeStore.getState().getUpgradeEffectAtLevel(rateName);
+    const cappedValue = Math.min(
+      state[capacityName],
+      state[stat] + totalGrowth
+    );
     return {
       [stat]: cappedValue,
     };

@@ -5,7 +5,7 @@ import { useGameStore } from "./gameStore";
 export const useUpgradeStore = create(
   persist(
     (set, get) => ({
-      // The state.
+      // The state. Highly fragile to refactoring and prototyping!
       upgrades: {
         volitionRate: { level: 0, baseCost: 10, type: "rate" },
         volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
@@ -31,7 +31,7 @@ export const useUpgradeStore = create(
           level: 0,
           baseCost: 50,
           type: "unlock",
-          unlocks: "actions",
+          unlocks: "awareness",
         },
       },
 
@@ -45,13 +45,16 @@ export const useUpgradeStore = create(
       getUpgradeLevel: (upgradeId) => get().upgrades[upgradeId]?.level ?? 0,
 
       canAffordUpgrade: (upgradeId) => {
-        const cost = get().getUpgradeCost(upgradeId);
-        return useGameStore.getState().volition >= cost;
+        const isAffordable =
+          useGameStore.getState().volition >= get().getUpgradeCost(upgradeId);
+        return isAffordable;
       },
 
       getUpgradeEffectAtLevel: (upgradeId, requestedLevel) => {
+        // The requestedLevel parameter is optional. By default, use the current level from the store.
         const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
         const fps = useGameStore.getState().TICKS_PER_SECOND;
+        // The upgrade effects are hardcoded here. Fragile!
         switch (upgradeId) {
           case "volitionRate":
             return (level * 2) / fps; // +2 volition per second per level
@@ -68,15 +71,16 @@ export const useUpgradeStore = create(
         }
       },
 
+      // Used by the statusStore to apply reward multipliers from temporary statuses.
       getRewardMultiplier: (statusType) => {
-        const upgradeStore = get();
+        const store = get();
         let multiplier = 1.0;
         if (statusType === "drink") {
-          multiplier = upgradeStore.getUpgradeEffectAtLevel("thirstReward");
+          multiplier = store.getUpgradeEffectAtLevel("thirstReward");
         } else if (statusType === "eat") {
-          multiplier = upgradeStore.getUpgradeEffectAtLevel("hungerReward");
+          multiplier = store.getUpgradeEffectAtLevel("hungerReward");
         } else if (statusType === "rest") {
-          multiplier = upgradeStore.getUpgradeEffectAtLevel("fatigueReward");
+          multiplier = store.getUpgradeEffectAtLevel("fatigueReward");
         }
         return multiplier;
       },
@@ -120,14 +124,13 @@ export const useUpgradeStore = create(
           }
 
           case "unlock": {
-            if (upgrade.unlocks === "actions") {
-              useGameStore.setState({ isActionsUnlocked: true });
+            if (upgrade.unlocks === "awareness") {
+              useGameStore.setState({ isAwarenessUnlocked: true });
             }
             break;
           }
 
-          // "rate" upgrades don't need special handling;
-          // their effect is calculated dynamically in getUpgradeEffectAtLevel
+          // "Rate" upgrades don't need special handling; their effect is calculated dynamically using getUpgradeEffectAtLevel.
         }
 
         return true;
@@ -138,7 +141,6 @@ export const useUpgradeStore = create(
       version: 1,
       storage: createJSONStorage(() => localStorage),
 
-      // Only persist the upgrades object (not the action functions)
       partialize: (state) => ({
         upgrades: state.upgrades,
       }),

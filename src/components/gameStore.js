@@ -19,7 +19,8 @@ export const useGameStore = create(
       hungerCapacity: 100,
       fatigueCapacity: 100,
 
-      initialVolitionRate: 4 / 12, // 4 per second
+      // Volition currently fills at 4 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
+      initialVolitionRate: 4 / 12,
       initialThirstRate: 3 / 12,
       initialHungerRate: 2 / 12,
       initialFatigueRate: 1 / 12,
@@ -29,9 +30,9 @@ export const useGameStore = create(
       initialHungerCapacity: 100,
       initialFatigueCapacity: 100,
 
-      isActionsUnlocked: false,
+      isAwarenessUnlocked: false,
 
-      // Stores the change since last tick times TICKS_PER_SECOND.
+      // Used by _updateResourceRates to store the per-second rate value, i.e. the change since last tick multiplied by the TICKS_PER_SECOND.
       resourceRates: {
         volition: 0,
         thirst: 0,
@@ -39,7 +40,7 @@ export const useGameStore = create(
         fatigue: 0,
       },
 
-      // Previous resource values for rate calculation.
+      // The previous tick's resource values used for rate calculation.
       _previousValues: {
         volition: 1,
         thirst: 1,
@@ -48,6 +49,8 @@ export const useGameStore = create(
       },
 
       // Actions
+
+      // Called by useEffect and setInterval in App.jsx.
       tick: () => gameEngine.tick(),
 
       spendVolition: (amount) => {
@@ -59,6 +62,7 @@ export const useGameStore = create(
         return false;
       },
 
+      // Bad function name, this will actually set any property in the store. Initially used for the Volition capacity upgrade.
       setCapacity: (prop, value) => {
         if (!prop) return;
         set((prev) => ({ ...prev, [prop]: value }));
@@ -70,10 +74,12 @@ export const useGameStore = create(
         })),
 
       _updateResourceRates: (oldState, newState) => {
+        // The resources currently being tracked.
         const resources = ["volition", "thirst", "hunger", "fatigue"];
         const ticksPerSecond = oldState.TICKS_PER_SECOND || 12;
         const newRates = {};
 
+        // Set the per-second rate for each resource.
         resources.forEach((resource) => {
           const oldValue = oldState[resource] || 0;
           const newValue = newState[resource] || 0;
@@ -85,6 +91,7 @@ export const useGameStore = create(
         return {
           resourceRates: newRates,
           _previousValues: {
+            // Preserve the old values if the new ones are undefined or falsy (e.g. during initial load).
             volition: newState.volition || oldState.volition,
             thirst: newState.thirst || oldState.thirst,
             hunger: newState.hunger || oldState.hunger,
@@ -93,6 +100,7 @@ export const useGameStore = create(
         };
       },
     }),
+    // Persist the game state in localStorage. Other stores handle their own persistence.
     {
       name: "game-storage",
       version: 1,
