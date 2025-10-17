@@ -32,6 +32,7 @@ export const useGameStore = create(
       initialFatigueCapacity: 100,
 
       isAwarenessUnlocked: false,
+      isUpgradePanelUnlocked: false,
       isNavigationUnlocked: false,
       isForageUnlocked: false,
 

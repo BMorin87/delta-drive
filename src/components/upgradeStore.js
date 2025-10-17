@@ -33,15 +33,21 @@ export const useUpgradeStore = create(
           type: "unlock",
           unlocks: "awareness",
         },
-        pyramidNav: {
+        upgradePanel: {
           level: 0,
           baseCost: 2,
+          type: "unlock",
+          unlocks: "upgradePanel",
+        },
+        pyramidNav: {
+          level: 0,
+          baseCost: 3,
           type: "unlock",
           unlocks: "navigation",
         },
         foraging: {
           level: 0,
-          baseCost: 3,
+          baseCost: 4,
           type: "unlock",
           unlocks: "forage",
         },
@@ -138,6 +144,8 @@ export const useUpgradeStore = create(
           case "unlock": {
             if (upgrade.unlocks === "awareness") {
               useGameStore.setState({ isAwarenessUnlocked: true });
+            } else if (upgrade.unlocks === "upgradePanel") {
+              useGameStore.setState({ isUpgradePanelUnlocked: true });
             } else if (upgrade.unlocks === "navigation") {
               useGameStore.setState({ isNavigationUnlocked: true });
             } else if (upgrade.unlocks === "forage") {

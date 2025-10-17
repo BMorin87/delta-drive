@@ -7,6 +7,7 @@ const DiscoveryPanel = () => {
   const {
     spendVolition,
     isAwarenessUnlocked,
+    isUpgradingPanelUnlocked,
     isNavigationUnlocked,
     isForageUnlocked,
   } = useGameStore();
@@ -27,6 +28,15 @@ const DiscoveryPanel = () => {
             upgradeId="basicNeeds"
             title="Awareness"
             description="Satisfy your basic physiological needs."
+            onPurchase={handlePurchase}
+          />
+        )}
+
+        {!isUpgradingPanelUnlocked && (
+          <UpgradeItem
+            upgradeId="upgradePanel"
+            title="Upgrade Panel"
+            description="Enhance your mental qualities."
             onPurchase={handlePurchase}
           />
         )}
