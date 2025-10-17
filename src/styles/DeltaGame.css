@@ -19,7 +19,7 @@
     grid-template-areas:
       "volition tier discovery"
       "nav tier .";
-    grid-template-rows: auto auto;
+    grid-template-rows: 50% 50%;
     grid-template-columns: 17rem auto 17rem;
   }
 }
