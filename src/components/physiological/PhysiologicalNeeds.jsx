@@ -122,33 +122,33 @@ const PhysiologicalNeeds = () => {
           // If the forage window is open, cull the bars by returning a placeholder div.
           if (isForagePanelOpen) {
             return <div key={need.type} style={{ height: 376 }} />;
+          } else {
+            return (
+              <div key={need.type} className="bar-with-action">
+                <VerticalProgressBar
+                  current={need.current}
+                  max={need.capacity}
+                  label={need.label}
+                  colorClass={need.colorClass}
+                  height={250}
+                />
+
+                {need.unlocked ? (
+                  <div className={`action-button-wrapper ${unlockClass}`}>
+                    <button
+                      {...buttonState}
+                      onClick={() => handleAction(need.type)}
+                    >
+                      {buttonState.text}
+                    </button>
+                  </div>
+                ) : (
+                  // Placeholder to reserve space while actions are locked
+                  <div className="action-button-wrapper" />
+                )}
+              </div>
+            );
           }
-
-          return (
-            <div key={need.type} className="bar-with-action">
-              <VerticalProgressBar
-                current={need.current}
-                max={need.capacity}
-                label={need.label}
-                colorClass={need.colorClass}
-                height={250}
-              />
-
-              {need.unlocked ? (
-                <div className={`action-button-wrapper ${unlockClass}`}>
-                  <button
-                    {...buttonState}
-                    onClick={() => handleAction(need.type)}
-                  >
-                    {buttonState.text}
-                  </button>
-                </div>
-              ) : (
-                // Placeholder to reserve space while actions are locked
-                <div className="action-button-wrapper" />
-              )}
-            </div>
-          );
         })}
       </div>
 

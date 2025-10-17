@@ -13,8 +13,8 @@ const PhysiologicalPanel = () => {
       <div className="physiological-content">
         <h1 className="tier-title">Physiological Needs</h1>
 
-        {/* Buttons to toggle tier-related content. */}
-        {isUpgradePanelUnlocked && (
+        {/* Conditional display on toggle buttons to go to the Upgrades page. */}
+        {isUpgradePanelUnlocked ? (
           <div className="view-toggle-container">
             <button
               className={`view-toggle-btn ${
@@ -33,6 +33,11 @@ const PhysiologicalPanel = () => {
               Upgrades
             </button>
           </div>
+        ) : (
+          <div
+            className="toggle-button-placeholder"
+            style={{ height: "66px" }}
+          />
         )}
 
         {/* Conditional content view based on active toggle. */}

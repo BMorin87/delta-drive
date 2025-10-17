@@ -7,7 +7,7 @@ const DiscoveryPanel = () => {
   const {
     spendVolition,
     isAwarenessUnlocked,
-    isUpgradingPanelUnlocked,
+    isUpgradePanelUnlocked,
     isNavigationUnlocked,
     isForageUnlocked,
   } = useGameStore();
@@ -32,7 +32,7 @@ const DiscoveryPanel = () => {
           />
         )}
 
-        {!isUpgradingPanelUnlocked && (
+        {!isUpgradePanelUnlocked && (
           <UpgradeItem
             upgradeId="upgradePanel"
             title="Upgrade Panel"
@@ -60,13 +60,16 @@ const DiscoveryPanel = () => {
         )}
 
         {/* Show message when all discoveries are unlocked */}
-        {isAwarenessUnlocked && (
-          <div className="all-discovered">
-            <div className="discovery-complete-icon">🎉</div>
-            <p>All basic abilities discovered!</p>
-            <p className="discovery-hint">More discoveries coming soon...</p>
-          </div>
-        )}
+        {isAwarenessUnlocked &&
+          isForageUnlocked &&
+          isNavigationUnlocked &&
+          isUpgradePanelUnlocked && (
+            <div className="all-discovered">
+              <div className="discovery-complete-icon">🎉</div>
+              <p>All basic abilities discovered!</p>
+              <p className="discovery-hint">More discoveries coming soon...</p>
+            </div>
+          )}
       </div>
     </div>
   );
