@@ -22,9 +22,11 @@
   justify-content: center;
   opacity: 0;
   transition: opacity 0.5s ease-out;
+  height: 50px;
 }
 
 .view-toggle-container.is-unlocked {
+  height: auto;
   opacity: 1;
   margin-bottom: 1rem;
 }

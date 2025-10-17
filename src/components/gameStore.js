@@ -121,6 +121,7 @@ export const useGameStore = create(
         isAwarenessUnlocked: state.isAwarenessUnlocked,
         isNavigationUnlocked: state.isNavigationUnlocked,
         isForageUnlocked: state.isForageUnlocked,
+        isUpgradePanelUnlocked: state.isUpgradePanelUnlocked,
       }),
     }
   )

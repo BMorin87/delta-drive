@@ -6,7 +6,7 @@ import "../../styles/physiological/PhysiologicalPanel.css";
 
 const PhysiologicalPanel = () => {
   const { volition, spendVolition, isUpgradePanelUnlocked } = useGameStore();
-  const [activeView, setActiveView] = useState("progress");
+  const [activeView, setActiveView] = useState("drives");
   const [showToggleButtons, setShowToggleButtons] = useState(
     isUpgradePanelUnlocked
   );
@@ -29,11 +29,11 @@ const PhysiologicalPanel = () => {
           <div className={`view-toggle-container ${unlockClass}`}>
             <button
               className={`view-toggle-btn ${
-                activeView === "progress" ? "active" : ""
+                activeView === "drives" ? "active" : ""
               }`}
-              onClick={() => setActiveView("progress")}
+              onClick={() => setActiveView("drives")}
             >
-              Progress
+              Drives
             </button>
             <button
               className={`view-toggle-btn ${
@@ -46,11 +46,11 @@ const PhysiologicalPanel = () => {
           </div>
         ) : (
           // Render a fixed-height placeholder if the upgrade is locked to stabilize the layout.
-          <div className="view-toggle-container" style={{ height: "50px" }} />
+          <div className="view-toggle-container" />
         )}
 
         {/* Conditional content view based on active toggle. */}
-        {activeView === "progress" ? (
+        {activeView === "drives" ? (
           <PhysiologicalNeeds />
         ) : (
           <PhysiologicalUpgrades
