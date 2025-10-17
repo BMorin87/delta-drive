@@ -31,16 +31,16 @@ const PhysiologicalNeeds = () => {
   const [showActionButtons, setShowActionButtons] =
     useState(isAwarenessUnlocked);
 
+  // Helper functions to manage state data from the statusStore.
+  const isStatusActive = (type) => !!activeStatuses[type];
+  const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
+  const getCooldownRemaining = (type) => cooldowns[type] || 0;
+
   useEffect(() => {
     if (isAwarenessUnlocked) {
       setShowActionButtons(true);
     }
   }, [isAwarenessUnlocked]);
-
-  // Helper functions
-  const isStatusActive = (type) => !!activeStatuses[type];
-  const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
-  const getCooldownRemaining = (type) => cooldowns[type] || 0;
 
   const handleAction = (actionType) => {
     if (isStatusActive(actionType)) {
@@ -74,14 +74,14 @@ const PhysiologicalNeeds = () => {
       return {
         text: `${
           actionType.charAt(0).toUpperCase() + actionType.slice(1)
-        } (${cost} 💪)`,
+        } (${cost} 👑)`,
         disabled: false,
         className: `action-button ${actionType}-button`,
       };
     }
   };
 
-  // The "needs" information organized for easy rendering.
+  // The physiological needs data organized for easy rendering.
   const needs = [
     {
       type: "drink",
@@ -119,7 +119,7 @@ const PhysiologicalNeeds = () => {
         {needs.map((need) => {
           const buttonState = getButtonState(need.type);
 
-          // If the forage window is open, cull the bars by returning a placeholder div.
+          // If the forage window is open, cull the bars by returning a placeholder div. Otherwise render the bar with optional action button.
           if (isForagePanelOpen) {
             return <div key={need.type} style={{ height: 376 }} />;
           } else {
@@ -162,6 +162,7 @@ const PhysiologicalNeeds = () => {
       </div>
 
       {isForageUnlocked && (
+        // An optional forage button below the bars.
         <div className="forage-section">
           <h3>Exploration</h3>
           <div className="forage-container">

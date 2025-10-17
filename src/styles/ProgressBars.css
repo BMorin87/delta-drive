@@ -110,27 +110,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 1rem;
   width: 100px;
 }
 
 .action-button-wrapper {
-  max-height: 0;
+  height: 50px;
   opacity: 0;
-  overflow: hidden;
-  transition: opacity 0.5s ease-out, max-height 0.5s ease-out,
-    margin-top 0.5s ease-out;
+  transition: opacity 0.5s ease-out;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
 }
 
 .action-button-wrapper.is-unlocked {
   opacity: 1;
-  max-height: 50px; /* A value larger than the button height (e.g., 34px) */
-  margin-top: 0;
 }
 
 .action-button {
