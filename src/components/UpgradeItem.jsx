@@ -1,12 +1,13 @@
 import { useUpgradeStore } from "./upgradeStore";
 import "../styles/UpgradeItem.css";
 
-const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
+const UpgradeItem = ({ upgradeId, title, description }) => {
   const {
     upgrades,
     getUpgradeCost,
     canAffordUpgrade,
     getUpgradeEffectAtLevel,
+    purchaseUpgrade,
   } = useUpgradeStore();
 
   const upgrade = upgrades[upgradeId];
@@ -18,7 +19,7 @@ const UpgradeItem = ({ upgradeId, title, description, onPurchase }) => {
 
   const handlePurchase = () => {
     if (canAfford) {
-      onPurchase(upgradeId);
+      purchaseUpgrade(upgradeId);
     }
   };
 

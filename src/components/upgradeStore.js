@@ -69,7 +69,7 @@ export const useUpgradeStore = create(
       },
 
       getUpgradeEffectAtLevel: (upgradeId, requestedLevel) => {
-        // The requestedLevel parameter is optional. By default, use the current level from the store.
+        // The requestedLevel parameter is optional. By default, use the current level from the store. Fallback to zero if the upgrade doesn't exist.
         const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
         const fps = useGameStore.getState().TICKS_PER_SECOND;
         // The upgrade effects are hardcoded here. Fragile!

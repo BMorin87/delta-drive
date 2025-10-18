@@ -5,7 +5,7 @@ import PhysiologicalUpgrades from "./PhysiologicalUpgrades";
 import "../../styles/physiological/PhysiologicalPanel.css";
 
 const PhysiologicalPanel = () => {
-  const { volition, spendVolition, isUpgradePanelUnlocked } = useGameStore();
+  const { isUpgradePanelUnlocked } = useGameStore();
   const [activeView, setActiveView] = useState("drives");
   const [showToggleButtons, setShowToggleButtons] = useState(
     isUpgradePanelUnlocked
@@ -53,10 +53,7 @@ const PhysiologicalPanel = () => {
         {activeView === "drives" ? (
           <PhysiologicalNeeds />
         ) : (
-          <PhysiologicalUpgrades
-            currentVolition={volition}
-            onSpendVolition={spendVolition}
-          />
+          <PhysiologicalUpgrades />
         )}
       </div>
     </div>

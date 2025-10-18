@@ -138,7 +138,7 @@ function createUpdateFunctionKeys(
 }
 
 function createUpdateFunction(statKeys) {
-  const { stat, capacityName, rateName, initialRate } = statKeys;
+  const { stat, capacityName, upgradeRateName, initialRate } = statKeys;
   return (state) => {
     if (state[stat] == null) {
       return {};
@@ -146,7 +146,7 @@ function createUpdateFunction(statKeys) {
     // Calculate the total growth rate for the current stat by reading the upgradeStore's state.
     const totalGrowth =
       initialRate +
-      useUpgradeStore.getState().getUpgradeEffectAtLevel(rateName);
+      useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
     const cappedValue = Math.min(
       state[capacityName],
       state[stat] + totalGrowth
