@@ -10,11 +10,24 @@ import SettingsMenu from "./SettingsMenu";
 import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
-  const { isRunning, togglePause } = useGameStore();
+  const { isRunning, togglePause, isFirstLoad, markFirstLoadComplete } =
+    useGameStore();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Register the initial game systems with the game engine using a useEffect hook.
   useGameSystems();
+
+  // Wait a few seconds on first load, then mark it complete. Used for initial animations.
+  useEffect(() => {
+    if (isFirstLoad) {
+      const timer = setTimeout(() => {
+        markFirstLoadComplete();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFirstLoad, markFirstLoadComplete]);
+
+  const introClass = isFirstLoad ? "first-load" : "";
 
   const handleSettingsToggle = () => {
     if (!isSettingsOpen) {
@@ -41,10 +54,10 @@ const DeltaGame = () => {
 
       <SettingsMenu isOpen={isSettingsOpen} onClose={handleSettingsToggle} />
 
-      <div className="discovery-container">
+      <div className={`discovery-container ${introClass}`}>
         <DiscoveryPanel />
       </div>
-      <HierarchyNavigation />
+      <HierarchyNavigation introClass={introClass} />
       <DebugPanel />
     </div>
   );

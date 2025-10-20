@@ -78,10 +78,12 @@
   gap: 1rem;
   transition: opacity 0.5s ease-out;
   opacity: 0;
+  pointer-events: none;
 }
 
 .forage-section.is-unlocked {
   opacity: 1;
+  pointer-events: auto;
   margin-top: 24px;
   padding: 20px;
   border: 1px solid rgba(139, 92, 246, 0.2);

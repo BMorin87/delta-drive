@@ -8,6 +8,7 @@ export const useGameStore = create(
       // Game state variables are highly fragile to refactoring and prototyping! E.g. statusStore doesn't read TICKS_PER_SECOND from here. :-(
       TICKS_PER_SECOND: 12,
       isRunning: true,
+      isFirstLoad: true,
 
       // Actual canonical resource values.
       volition: 1,
@@ -54,6 +55,8 @@ export const useGameStore = create(
 
       // Called in App.jsx with useEffect and setInterval.
       tick: () => gameEngine.tick(),
+
+      markFirstLoadComplete: () => set({ isFirstLoad: false }),
 
       spendVolition: (amount) => {
         const state = get();
@@ -110,6 +113,7 @@ export const useGameStore = create(
       storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({
+        isFirstLoad: state.isFirstLoad,
         volition: state.volition,
         thirst: state.thirst,
         hunger: state.hunger,

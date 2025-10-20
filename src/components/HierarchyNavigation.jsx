@@ -4,7 +4,7 @@ import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
 import SecurityPanel from "./security/SecurityPanel";
 import "../styles/HierarchyNavigation.css";
 
-const HierarchyNavigation = () => {
+const HierarchyNavigation = ({ introClass = "" }) => {
   const [activeTier, setActiveTier] = useState("physiological");
   const { isNavigationUnlocked } = useGameStore();
 
@@ -107,7 +107,9 @@ const HierarchyNavigation = () => {
       )}
 
       {/* The currently active tier's content. */}
-      <div className="tier-content-container">{renderActivePanel()}</div>
+      <div className={`tier-content-container ${introClass}`}>
+        {renderActivePanel()}
+      </div>
     </>
   );
 };
