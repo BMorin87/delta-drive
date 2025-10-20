@@ -159,11 +159,13 @@ const PhysiologicalNeeds = () => {
         )}
       </div>
 
-      {isForageUnlocked && (
+      {isForageUnlocked ? (
         // An optional forage button.
-        <div className="forage-section">
+        <div className="forage-section is-unlocked">
           <ForageButton onOpenForage={() => setIsForagePanelOpen(true)} />
         </div>
+      ) : (
+        <div className="forage-section" />
       )}
 
       <ForagePanel

@@ -67,8 +67,8 @@ const HierarchyNavigation = () => {
 
   return (
     <>
-      {isNavigationUnlocked && (
-        <div className="pyramid-nav">
+      {isNavigationUnlocked ? (
+        <div className="pyramid-nav is-unlocked">
           <div className="pyramid-wrapper">
             {/* Render tiers from top to bottom for visual pyramid */}
             {tiers.map((tier, index) => {
@@ -102,9 +102,11 @@ const HierarchyNavigation = () => {
             <p>{tiers.find((t) => t.id === activeTier)?.description}</p>
           </div>
         </div>
+      ) : (
+        <div className="pyramid-nav" />
       )}
 
-      {/* Active Panel Content */}
+      {/* The currently active tier's content. */}
       <div className="tier-content-container">{renderActivePanel()}</div>
     </>
   );
