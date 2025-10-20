@@ -35,6 +35,7 @@ const PhysiologicalNeeds = () => {
   const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
   const getCooldownRemaining = (type) => cooldowns[type] || 0;
 
+  // Display action buttons when the appropriate discovery is unlocked.
   useEffect(() => {
     if (isAwarenessUnlocked) {
       setShowActionButtons(true);
@@ -117,6 +118,7 @@ const PhysiologicalNeeds = () => {
     <>
       <div className="bars-container">
         {needs.map((need) => {
+          // Render each physiological need's progress bar and optional action button.
           const buttonState = getButtonState(need.type);
 
           return (
@@ -149,8 +151,9 @@ const PhysiologicalNeeds = () => {
       </div>
 
       <div className="tier-note">
-        <p>Satisfying physiological needs generates Volition.</p>
+        <p>Satisfy physiological needs to generate more 👑 Volition.</p>
         {hasSynergyBonus ? (
+          // An optional synergy indicator.
           <p className="bonus-indicator is-active">
             🌟 Synergy Bonus Active! +20% efficiency
           </p>

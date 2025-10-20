@@ -37,15 +37,15 @@ const PhysiologicalPanel = () => {
             </button>
             <button
               className={`view-toggle-btn ${
-                activeView === "upgrades" ? "active" : ""
+                activeView === "improvements" ? "active" : ""
               }`}
-              onClick={() => setActiveView("upgrades")}
+              onClick={() => setActiveView("improvements")}
             >
-              Upgrades
+              Improvements
             </button>
           </div>
         ) : (
-          // Render a fixed-height placeholder if the upgrade is locked to stabilize the layout.
+          // Render a placeholder if the upgrade is locked to stabilize the layout.
           <div className="view-toggle-container" />
         )}
 
