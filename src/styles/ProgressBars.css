@@ -73,27 +73,9 @@
   background: linear-gradient(to top, #581c87, #8b5cf6);
 }
 
-.progress-values {
-  display: flex;
-  align-items: baseline;
-  font-weight: 600;
-  color: white;
-  font-size: 1rem;
-}
-
-.progress-current {
-  color: white;
-}
-
-.progress-max {
-  color: #9ca3af;
-  font-size: 0.875rem;
-  margin-left: 2px;
-}
-
 .progress-percentage {
-  font-size: 0.75rem;
-  color: #9ca3af;
+  font-size: 1rem;
+  color: white;
   text-align: center;
 }
 

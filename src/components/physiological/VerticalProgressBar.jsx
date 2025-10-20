@@ -22,11 +22,7 @@ const VerticalProgressBar = ({
           </div>
         </div>
       </div>
-      <div className="progress-values">
-        <div className="progress-current">{Math.round(current)}</div>
-        <div className="progress-max">/{max}</div>
-      </div>
-      <div className="progress-percentage">{percentage.toFixed(1)}% full</div>
+      <div className="progress-percentage">{percentage.toFixed(0)}%</div>
     </div>
   );
 };
