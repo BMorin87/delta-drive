@@ -20,7 +20,7 @@ const PhysiologicalPanel = () => {
   const unlockClass = showToggleButtons ? "is-unlocked" : "";
 
   return (
-    <div className="physiological-ui-container">
+    <>
       <div className="physiological-content">
         <h1 className="tier-title">Physiological Needs</h1>
 
@@ -56,7 +56,7 @@ const PhysiologicalPanel = () => {
           <PhysiologicalUpgrades />
         )}
       </div>
-    </div>
+    </>
   );
 };
 

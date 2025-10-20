@@ -1,11 +1,8 @@
-.physiological-ui-container {
-  width: 100%;
-}
-
 .physiological-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .tier-title {

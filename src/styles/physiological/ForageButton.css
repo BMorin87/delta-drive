@@ -1,0 +1,42 @@
+.forage-section h3 {
+  margin: 0 0 16px 0;
+  color: #e5e7eb;
+  font-size: 18px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.forage-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.forage-description {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.forage-button {
+  background-color: #a78bfa;
+  color: #111827;
+  font-weight: 600;
+}
+
+.forage-button:hover:not(:disabled) {
+  background-color: #c4b5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.4);
+}
+
+.forage-button:active {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.forage-button:disabled {
+  background-color: #374151;
+  color: #6b7280;
+  cursor: not-allowed;
+  transform: none;
+}

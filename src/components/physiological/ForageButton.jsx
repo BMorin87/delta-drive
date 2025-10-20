@@ -1,4 +1,5 @@
 import { useStatusStore } from "../statusStore";
+import "../../styles/physiological/ForageButton.css";
 
 const ForageButton = ({ onOpenForage }) => {
   const { activeStatuses, cooldowns, calculateVolitionCost } = useStatusStore();
@@ -16,20 +17,20 @@ const ForageButton = ({ onOpenForage }) => {
       return {
         text: `Foraging... ${Math.ceil(duration)}s`,
         disabled: false,
-        className: "action-button forage-button active",
+        className: "forage-button active",
       };
     } else if (cooldownRemaining > 0) {
       return {
         text: `Cooldown ${Math.ceil(cooldownRemaining)}s`,
         disabled: true,
-        className: "action-button forage-button cooldown",
+        className: "forage-button cooldown",
       };
     } else {
       const cost = calculateVolitionCost("forage");
       return {
-        text: `Forage (${cost} 💪)`,
+        text: `Forage (${cost} 👑)`,
         disabled: false,
-        className: "action-button forage-button",
+        className: "forage-button",
       };
     }
   };
@@ -37,13 +38,21 @@ const ForageButton = ({ onOpenForage }) => {
   const buttonState = getButtonState();
 
   return (
-    <button
-      className={buttonState.className}
-      onClick={onOpenForage}
-      disabled={buttonState.disabled}
-    >
-      {buttonState.text}
-    </button>
+    <>
+      <h3>Foraging</h3>
+      <div className="forage-button-container">
+        <button
+          className={buttonState.className}
+          onClick={onOpenForage}
+          disabled={buttonState.disabled}
+        >
+          {buttonState.text}
+        </button>
+      </div>
+      <p className="forage-description">
+        Explore your environment to find resources.
+      </p>
+    </>
   );
 };
 

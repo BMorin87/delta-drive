@@ -5,7 +5,6 @@ import VerticalProgressBar from "./VerticalProgressBar";
 import ForageButton from "./ForageButton";
 import ForagePanel from "./ForagePanel";
 import "../../styles/physiological/PhysiologicalNeeds.css";
-import "../../styles/ProgressBars.css";
 
 const PhysiologicalNeeds = () => {
   const {
@@ -55,6 +54,7 @@ const PhysiologicalNeeds = () => {
     const cooldownRemaining = getCooldownRemaining(actionType);
     const duration = getStatusDuration(actionType);
 
+    // Determine an action button's text, disabled state, and styling based on status.
     if (isActive) {
       return {
         text: `${
@@ -81,7 +81,7 @@ const PhysiologicalNeeds = () => {
     }
   };
 
-  // The physiological needs data organized for easy rendering.
+  // The physiological data organized for easy rendering.
   const needs = [
     {
       type: "drink",
@@ -119,58 +119,50 @@ const PhysiologicalNeeds = () => {
         {needs.map((need) => {
           const buttonState = getButtonState(need.type);
 
-          // If the forage window is open, cull the bars by returning a placeholder div. Otherwise render the bar with optional action button.
-          if (isForagePanelOpen) {
-            return <div key={need.type} style={{ height: 376 }} />;
-          } else {
-            return (
-              <div key={need.type} className="bar-with-action">
-                <VerticalProgressBar
-                  current={need.current}
-                  max={need.capacity}
-                  label={need.label}
-                  colorClass={need.colorClass}
-                  height={250}
-                />
+          return (
+            <div key={need.type} className="bar-with-action">
+              <VerticalProgressBar
+                current={need.current}
+                max={need.capacity}
+                label={need.label}
+                colorClass={need.colorClass}
+                height={250}
+              />
 
-                {need.unlocked ? (
-                  <div className={`action-button-wrapper ${unlockClass}`}>
-                    <button
-                      {...buttonState}
-                      onClick={() => handleAction(need.type)}
-                    >
-                      {buttonState.text}
-                    </button>
-                  </div>
-                ) : (
-                  // Placeholder to reserve space while actions are locked
-                  <div className="action-button-wrapper" />
-                )}
-              </div>
-            );
-          }
+              {need.unlocked ? (
+                // Render the action buttons if they're unlocked.
+                <div className={`action-button-wrapper ${unlockClass}`}>
+                  <button
+                    {...buttonState}
+                    onClick={() => handleAction(need.type)}
+                  >
+                    {buttonState.text}
+                  </button>
+                </div>
+              ) : (
+                // Otherwise render a placeholder to stabilize the layout.
+                <div className="action-button-wrapper" />
+              )}
+            </div>
+          );
         })}
       </div>
 
       <div className="tier-note">
         <p>Satisfying physiological needs generates Volition.</p>
-        {hasSynergyBonus && (
-          <p className="bonus-indicator">
+        {hasSynergyBonus ? (
+          <p className="bonus-indicator is-active">
             🌟 Synergy Bonus Active! +20% efficiency
           </p>
+        ) : (
+          <p className="bonus-indicator" />
         )}
       </div>
 
       {isForageUnlocked && (
-        // An optional forage button below the bars.
+        // An optional forage button.
         <div className="forage-section">
-          <h3>Exploration</h3>
-          <div className="forage-container">
-            <ForageButton onOpenForage={() => setIsForagePanelOpen(true)} />
-            <p className="forage-description">
-              Search for resources in the wilderness
-            </p>
-          </div>
+          <ForageButton onOpenForage={() => setIsForagePanelOpen(true)} />
         </div>
       )}
 

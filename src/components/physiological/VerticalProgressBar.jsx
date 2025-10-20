@@ -1,3 +1,5 @@
+import "../../styles/ProgressBars.css";
+
 const VerticalProgressBar = ({
   current,
   max,
