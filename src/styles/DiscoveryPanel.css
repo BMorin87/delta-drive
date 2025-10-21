@@ -1,4 +1,12 @@
 .discovery-panel {
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 0.5rem;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  margin-left: 0.125rem;
+  grid-area: discovery;
   width: 100%;
   margin: 0;
   box-sizing: border-box;
@@ -6,19 +14,15 @@
   flex-direction: column;
 }
 
-.discovery-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #c4b5fd;
-  margin-bottom: 0.5rem;
-  text-align: center;
+.first-load.discovery-container {
+  animation: fadeIn 0.6s ease-out 1s both;
 }
 
-.discovery-subtitle {
-  font-size: 0.875rem;
-  color: #9ca3af;
+.discovery-title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #c4b5fd;
   text-align: center;
-  margin-bottom: 1rem;
 }
 
 .discovery-grid {

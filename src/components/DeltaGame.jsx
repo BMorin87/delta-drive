@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import { gameEngine } from "./gameEngine";
@@ -10,6 +10,7 @@ import DebugPanel from "./DebugPanel";
 import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
   const { isFirstLoad, markFirstLoadComplete } = useGameStore();
 
   // Register the initial game systems with the game engine using a useEffect hook.
@@ -25,21 +26,30 @@ const DeltaGame = () => {
     }
   }, [isFirstLoad, markFirstLoadComplete]);
 
+  // Listen for Shift+D to toggle the debug panel display.
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.shiftKey && event.key.toLowerCase() === "d") {
+        event.preventDefault();
+        setShowDebugPanel((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   const introClass = isFirstLoad ? "first-load" : "";
 
   return (
     <div className="game-layout">
       <GameHeader />
-
-      <div className="volition-container">
-        <VolitionCrown />
-      </div>
-
-      <div className={`discovery-container ${introClass}`}>
-        <DiscoveryPanel />
-      </div>
+      <VolitionCrown />
+      <DiscoveryPanel introClass={introClass} />
       <HierarchyNavigation introClass={introClass} />
-      <DebugPanel />
+      {showDebugPanel && <DebugPanel />}
     </div>
   );
 };

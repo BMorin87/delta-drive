@@ -21,7 +21,7 @@ const HierarchyNavigation = ({ introClass = "" }) => {
       id: "security",
       name: "Security",
       description: "Safety and stability",
-      unlocked: true, // Add unlock conditions later
+      unlocked: true,
       color: "#ea580c",
     },
     {
@@ -106,7 +106,7 @@ const HierarchyNavigation = ({ introClass = "" }) => {
         <div className="pyramid-nav" />
       )}
 
-      {/* The currently active tier's content. */}
+      {/* The currently active tier's content. Displays even when the pyramid nav is locked. */}
       <div className={`tier-content-container ${introClass}`}>
         {renderActivePanel()}
       </div>

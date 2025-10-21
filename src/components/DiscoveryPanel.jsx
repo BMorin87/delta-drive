@@ -3,7 +3,7 @@ import { useUpgradeStore } from "./upgradeStore";
 import UpgradeItem from "./UpgradeItem";
 import "../styles/DiscoveryPanel.css";
 
-const DiscoveryPanel = () => {
+const DiscoveryPanel = ({ introClass = "" }) => {
   const {
     spendVolition,
     isAwarenessUnlocked,
@@ -18,9 +18,8 @@ const DiscoveryPanel = () => {
   };
 
   return (
-    <div className="discovery-panel">
-      <h2 className="discovery-title">Discovery</h2>
-      <p className="discovery-subtitle">Unlock new abilities and features</p>
+    <div className={`discovery-panel ${introClass}`}>
+      <h2 className="discovery-title">Upgrades</h2>
 
       <div className="discovery-grid">
         {!isAwarenessUnlocked && (

@@ -1,5 +1,16 @@
+.game-header {
+  grid-area: header;
+  padding-bottom: 0.5rem;
+}
+
+.header-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: space-around;
+  gap: 0.5rem;
+}
+
 .settings-btn {
-  margin-top: 1rem;
   padding: 0.5rem 1rem;
   background: #6366f1;
   color: #fff;
@@ -19,7 +30,6 @@
 }
 
 .pause-btn {
-  margin-top: 1rem;
   padding: 0.5rem 1rem;
   background: #ef4444;
   color: #fff;
@@ -36,11 +46,4 @@
   background: #dc2626;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
 }
