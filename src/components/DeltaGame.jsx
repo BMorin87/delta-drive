@@ -1,18 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import { gameEngine } from "./gameEngine";
+import GameHeader from "./GameHeader";
 import VolitionCrown from "./VolitionCrown";
 import DiscoveryPanel from "./DiscoveryPanel";
 import HierarchyNavigation from "./HierarchyNavigation";
 import DebugPanel from "./DebugPanel";
-import SettingsMenu from "./SettingsMenu";
 import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
-  const { isRunning, togglePause, isFirstLoad, markFirstLoadComplete } =
-    useGameStore();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { isFirstLoad, markFirstLoadComplete } = useGameStore();
 
   // Register the initial game systems with the game engine using a useEffect hook.
   useGameSystems();
@@ -29,30 +27,13 @@ const DeltaGame = () => {
 
   const introClass = isFirstLoad ? "first-load" : "";
 
-  const handleSettingsToggle = () => {
-    if (!isSettingsOpen) {
-      if (isRunning) {
-        togglePause();
-      }
-    }
-    setIsSettingsOpen(!isSettingsOpen);
-  };
-
   return (
     <div className="game-layout">
+      <GameHeader />
+
       <div className="volition-container">
         <VolitionCrown />
-        <div className="button-group">
-          <button onClick={togglePause} className="pause-btn">
-            {isRunning ? "Pause" : "Resume"}
-          </button>
-          <button onClick={handleSettingsToggle} className="settings-btn">
-            ⚙️ Settings
-          </button>
-        </div>
       </div>
-
-      <SettingsMenu isOpen={isSettingsOpen} onClose={handleSettingsToggle} />
 
       <div className={`discovery-container ${introClass}`}>
         <DiscoveryPanel />

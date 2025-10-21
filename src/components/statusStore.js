@@ -4,17 +4,21 @@ import { gameEngine } from "./gameEngine";
 import { useUpgradeStore } from "./upgradeStore";
 import { STATUS_CONFIGS } from "./statusConfigs";
 
+export const INITIAL_STATUS_STATE = {
+  activeStatuses: {},
+  cooldowns: {},
+  statusConfigs: STATUS_CONFIGS,
+};
+
 export const useStatusStore = create(
   persist(
     (set, get) => ({
-      // The state of temporary statuses.
-      activeStatuses: {},
-      cooldowns: {},
-      statusConfigs: STATUS_CONFIGS,
+      ...INITIAL_STATUS_STATE,
 
-      // ========================
-      // Actions
-      // ========================
+      resetStatuses: () => {
+        useStatusStore.persist.clearStorage();
+        set(INITIAL_STATUS_STATE, true);
+      },
 
       startStatus: (statusType) => {
         const myState = get();
@@ -213,7 +217,7 @@ export const useStatusStore = create(
     }),
     {
       name: "status-storage",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({

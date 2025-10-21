@@ -19,8 +19,8 @@ const PhysiologicalNeeds = () => {
   } = useGameStore();
 
   const {
-    activeStatuses,
-    cooldowns,
+    activeStatuses = {},
+    cooldowns = {},
     startStatus,
     cancelStatus,
     calculateVolitionCost,

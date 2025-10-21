@@ -2,55 +2,64 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { gameEngine } from "./gameEngine";
 
+export const INITIAL_GAME_STATE = {
+  // Game state variables are highly fragile to refactoring and prototyping! E.g. statusStore doesn't read TICKS_PER_SECOND from here. :-(
+  TICKS_PER_SECOND: 12,
+  isRunning: true,
+  isFirstLoad: true,
+
+  // Actual canonical resource values.
+  volition: 1,
+  thirst: 1,
+  hunger: 1,
+  fatigue: 1,
+
+  volitionCapacity: 100,
+  thirstCapacity: 100,
+  hungerCapacity: 100,
+  fatigueCapacity: 100,
+
+  // Volition's initial rate is 4 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
+  initialVolitionRate: 4 / 12,
+  initialThirstRate: 3 / 12,
+  initialHungerRate: 2 / 12,
+  initialFatigueRate: 1 / 12,
+
+  initialVolitionCapacity: 100,
+  initialThirstCapacity: 100,
+  initialHungerCapacity: 100,
+  initialFatigueCapacity: 100,
+
+  isAwarenessUnlocked: false,
+  isUpgradePanelUnlocked: false,
+  isNavigationUnlocked: false,
+  isForageUnlocked: false,
+
+  // Used by _updateResourceRates to store the per-second rate value, i.e. the change since last tick multiplied by the TICKS_PER_SECOND.
+  resourceRates: {
+    volition: 0,
+    thirst: 0,
+    hunger: 0,
+    fatigue: 0,
+  },
+
+  // The previous tick's resource values used for rate calculation.
+  _previousValues: {
+    volition: 1,
+    thirst: 1,
+    hunger: 1,
+    fatigue: 1,
+  },
+};
+
 export const useGameStore = create(
   persist(
     (set, get) => ({
-      // Game state variables are highly fragile to refactoring and prototyping! E.g. statusStore doesn't read TICKS_PER_SECOND from here. :-(
-      TICKS_PER_SECOND: 12,
-      isRunning: true,
-      isFirstLoad: true,
+      ...INITIAL_GAME_STATE,
 
-      // Actual canonical resource values.
-      volition: 1,
-      thirst: 1,
-      hunger: 1,
-      fatigue: 1,
-
-      volitionCapacity: 100,
-      thirstCapacity: 100,
-      hungerCapacity: 100,
-      fatigueCapacity: 100,
-
-      // Volition's initial rate is 4 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
-      initialVolitionRate: 4 / 12,
-      initialThirstRate: 3 / 12,
-      initialHungerRate: 2 / 12,
-      initialFatigueRate: 1 / 12,
-
-      initialVolitionCapacity: 100,
-      initialThirstCapacity: 100,
-      initialHungerCapacity: 100,
-      initialFatigueCapacity: 100,
-
-      isAwarenessUnlocked: false,
-      isUpgradePanelUnlocked: false,
-      isNavigationUnlocked: false,
-      isForageUnlocked: false,
-
-      // Used by _updateResourceRates to store the per-second rate value, i.e. the change since last tick multiplied by the TICKS_PER_SECOND.
-      resourceRates: {
-        volition: 0,
-        thirst: 0,
-        hunger: 0,
-        fatigue: 0,
-      },
-
-      // The previous tick's resource values used for rate calculation.
-      _previousValues: {
-        volition: 1,
-        thirst: 1,
-        hunger: 1,
-        fatigue: 1,
+      resetGame: () => {
+        useGameStore.persist.clearStorage();
+        set(INITIAL_GAME_STATE, true);
       },
 
       // Called in App.jsx with useEffect and setInterval.
@@ -109,7 +118,7 @@ export const useGameStore = create(
     // Persist the game state in localStorage. Other stores handle their own persistence.
     {
       name: "game-storage",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({

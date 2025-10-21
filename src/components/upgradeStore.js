@@ -2,58 +2,66 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useGameStore } from "./gameStore";
 
+export const INITIAL_UPGRADE_STATE = {
+  upgrades: {
+    volitionRate: { level: 0, baseCost: 10, type: "rate" },
+    volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
+    thirstReward: {
+      level: 0,
+      baseCost: 15,
+      type: "reward",
+      affects: "drink",
+    },
+    hungerReward: {
+      level: 0,
+      baseCost: 20,
+      type: "reward",
+      affects: "eat",
+    },
+    fatigueReward: {
+      level: 0,
+      baseCost: 25,
+      type: "reward",
+      affects: "rest",
+    },
+    basicNeeds: {
+      level: 0,
+      baseCost: 1,
+      type: "unlock",
+      unlocks: "awareness",
+    },
+    upgradePanel: {
+      level: 0,
+      baseCost: 2,
+      type: "unlock",
+      unlocks: "upgradePanel",
+    },
+    pyramidNav: {
+      level: 0,
+      baseCost: 3,
+      type: "unlock",
+      unlocks: "navigation",
+    },
+    foraging: {
+      level: 0,
+      baseCost: 4,
+      type: "unlock",
+      unlocks: "forage",
+    },
+  },
+};
+
 export const useUpgradeStore = create(
   persist(
     (set, get) => ({
-      // The state. Highly fragile to refactoring and prototyping!
-      upgrades: {
-        volitionRate: { level: 0, baseCost: 10, type: "rate" },
-        volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
-        thirstReward: {
-          level: 0,
-          baseCost: 15,
-          type: "reward",
-          affects: "drink",
-        },
-        hungerReward: {
-          level: 0,
-          baseCost: 20,
-          type: "reward",
-          affects: "eat",
-        },
-        fatigueReward: {
-          level: 0,
-          baseCost: 25,
-          type: "reward",
-          affects: "rest",
-        },
-        basicNeeds: {
-          level: 0,
-          baseCost: 1,
-          type: "unlock",
-          unlocks: "awareness",
-        },
-        upgradePanel: {
-          level: 0,
-          baseCost: 2,
-          type: "unlock",
-          unlocks: "upgradePanel",
-        },
-        pyramidNav: {
-          level: 0,
-          baseCost: 3,
-          type: "unlock",
-          unlocks: "navigation",
-        },
-        foraging: {
-          level: 0,
-          baseCost: 4,
-          type: "unlock",
-          unlocks: "forage",
-        },
-      },
+      ...INITIAL_UPGRADE_STATE,
 
       // Actions
+      resetUpgrades: () => {
+        useUpgradeStore.persist.clearStorage();
+        set(INITIAL_UPGRADE_STATE, true);
+      },
+
       getUpgradeCost: (upgradeId) => {
         const upgrade = get().upgrades[upgradeId];
         if (!upgrade) return 0;
@@ -162,7 +170,7 @@ export const useUpgradeStore = create(
     }),
     {
       name: "upgrade-storage",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({

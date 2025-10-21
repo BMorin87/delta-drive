@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useGameStore } from "./gameStore";
+import { useUpgradeStore } from "./upgradeStore";
+import { useStatusStore } from "./statusStore";
 import "../styles/SettingsMenu.css";
 
 const SettingsMenu = ({ isOpen, onClose }) => {
@@ -10,9 +13,10 @@ const SettingsMenu = ({ isOpen, onClose }) => {
         "Are you sure you want to reset the game? All progress will be lost."
       )
     ) {
-      localStorage.removeItem("game-storage");
-      localStorage.removeItem("upgrade-storage");
-      window.location.reload();
+      useGameStore.getState().resetGame();
+      useUpgradeStore.getState().resetUpgrades();
+      useStatusStore.getState().resetStatuses();
+      window.location.reload(true);
     }
   };
 
@@ -20,10 +24,12 @@ const SettingsMenu = ({ isOpen, onClose }) => {
     try {
       const gameData = localStorage.getItem("game-storage");
       const upgradeData = localStorage.getItem("upgrade-storage");
+      const statusData = localStorage.getItem("status-storage");
 
       const saveData = {
         game: gameData ? JSON.parse(gameData) : null,
         upgrades: upgradeData ? JSON.parse(upgradeData) : null,
+        statuses: statusData ? JSON.parse(statusData) : null,
         exportedAt: new Date().toISOString(),
       };
 
@@ -64,6 +70,12 @@ const SettingsMenu = ({ isOpen, onClose }) => {
           localStorage.setItem(
             "upgrade-storage",
             JSON.stringify(saveData.upgrades)
+          );
+        }
+        if (saveData.statuses) {
+          localStorage.setItem(
+            "status-storage",
+            JSON.stringify(saveData.statuses)
           );
         }
 
