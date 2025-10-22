@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
 import VerticalProgressBar from "./VerticalProgressBar";
@@ -7,6 +7,7 @@ import ForagePanel from "./ForagePanel";
 import "../../styles/physiological/PhysiologicalNeeds.css";
 
 const PhysiologicalNeeds = () => {
+  const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
   const {
     thirst,
     hunger,
@@ -17,7 +18,6 @@ const PhysiologicalNeeds = () => {
     isAwarenessUnlocked,
     isForageUnlocked,
   } = useGameStore();
-
   const {
     activeStatuses = {},
     cooldowns = {},
@@ -26,21 +26,10 @@ const PhysiologicalNeeds = () => {
     calculateVolitionCost,
   } = useStatusStore();
 
-  const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
-  const [showActionButtons, setShowActionButtons] =
-    useState(isAwarenessUnlocked);
-
   // Helper functions to manage state data from the statusStore.
   const isStatusActive = (type) => !!activeStatuses[type];
   const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
   const getCooldownRemaining = (type) => cooldowns[type] || 0;
-
-  // Display action buttons when the appropriate discovery is unlocked.
-  useEffect(() => {
-    if (isAwarenessUnlocked) {
-      setShowActionButtons(true);
-    }
-  }, [isAwarenessUnlocked]);
 
   const handleAction = (actionType) => {
     if (isStatusActive(actionType)) {
@@ -112,7 +101,7 @@ const PhysiologicalNeeds = () => {
 
   const hasSynergyBonus = isStatusActive("drink") && isStatusActive("eat");
 
-  const unlockClass = showActionButtons ? "is-unlocked" : "";
+  const unlockClass = isAwarenessUnlocked ? "is-unlocked" : "";
 
   return (
     <>
@@ -151,7 +140,7 @@ const PhysiologicalNeeds = () => {
       </div>
 
       <div className="tier-note">
-        <p>Satisfy physiological needs to generate more 👑 Volition.</p>
+        <p>Satisfy physiological needs to generate more 👑&nbsp;Volition.</p>
         {hasSynergyBonus ? (
           // An optional synergy indicator.
           <p className="bonus-indicator is-active">
