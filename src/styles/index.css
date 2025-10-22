@@ -10,8 +10,9 @@ a:hover {
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
+  background: #0a1120;
 }
 
 h1 {
@@ -41,7 +42,7 @@ button:focus-visible {
 #root {
   margin: 0;
   padding: 0;
-  background: #0a1120;
+  height: 100%;
 }
 
 @media (prefers-color-scheme: light) {

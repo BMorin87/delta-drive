@@ -12,7 +12,7 @@
     "volition discovery"
     "tier tier"
     "nav nav";
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto auto 1fr 1fr;
   grid-template-columns: 1fr 1fr;
 }
 
@@ -22,7 +22,7 @@
       "header header header"
       "volition tier discovery"
       "nav tier .";
-    grid-template-rows: auto 50% 50%;
+    grid-template-rows: auto 1fr 1fr;
     grid-template-columns: 17rem auto 17rem;
   }
 }
