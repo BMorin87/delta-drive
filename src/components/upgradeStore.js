@@ -6,19 +6,7 @@ export const INITIAL_UPGRADE_STATE = {
   upgrades: {
     volitionRate: { level: 0, baseCost: 10, type: "rate" },
     volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
-    thirstReward: {
-      level: 0,
-      baseCost: 15,
-      type: "reward",
-      affects: "drink",
-    },
-    hungerReward: {
-      level: 0,
-      baseCost: 20,
-      type: "reward",
-      affects: "eat",
-    },
-    fatigueReward: {
+    hedonicReward: {
       level: 0,
       baseCost: 25,
       type: "reward",
@@ -76,22 +64,19 @@ export const useUpgradeStore = create(
         return isAffordable;
       },
 
+      // The requestedLevel parameter is optional, so that the function can be easily used to preview the next level's effect.
       getUpgradeEffectAtLevel: (upgradeId, requestedLevel) => {
-        // The requestedLevel parameter is optional. By default, use the current level from the store. Fallback to zero if the upgrade doesn't exist.
+        // By default, use the upgrade's current level. Fallback to zero if the upgrade doesn't exist.
         const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
         const fps = useGameStore.getState().TICKS_PER_SECOND;
         // The upgrade effects are hardcoded here. Fragile!
         switch (upgradeId) {
           case "volitionRate":
-            return (level * 2) / fps; // +2 volition per second per level
+            return (level * 2) / fps; // +2 volition per second per level.
           case "volitionCapacity":
-            return level * 25; // +25 capacity per level
-          case "thirstReward":
-            return 1 + level * 0.1; // 1 at level zero, 10% base increase per level.
-          case "hungerReward":
-            return 1 + level * 0.1;
-          case "fatigueReward":
-            return 1 + level * 0.1;
+            return level * 25; // +25 capacity per level.
+          case "hedonicReward":
+            return 1 + level * 0.1; // The multiplier is 1 at level zero, 0.1 increase per level.
           default:
             return 0;
         }
@@ -99,14 +84,13 @@ export const useUpgradeStore = create(
 
       // Used by the statusStore to apply reward multipliers from temporary statuses.
       getRewardMultiplier: (statusType) => {
-        const store = get();
         let multiplier = 1.0;
-        if (statusType === "drink") {
-          multiplier = store.getUpgradeEffectAtLevel("thirstReward");
-        } else if (statusType === "eat") {
-          multiplier = store.getUpgradeEffectAtLevel("hungerReward");
-        } else if (statusType === "rest") {
-          multiplier = store.getUpgradeEffectAtLevel("fatigueReward");
+        if (
+          statusType === "drink" ||
+          statusType === "eat" ||
+          statusType === "rest"
+        ) {
+          multiplier = get().getUpgradeEffectAtLevel("hedonicReward");
         }
         return multiplier;
       },
@@ -162,7 +146,7 @@ export const useUpgradeStore = create(
             break;
           }
 
-          // "Rate" upgrades don't need special handling; their effect is calculated dynamically using getUpgradeEffectAtLevel.
+          // "Rate" upgrades don't need special handling; their effect is calculated generically using getUpgradeEffectAtLevel.
         }
 
         return true;

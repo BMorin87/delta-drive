@@ -1,18 +1,18 @@
 export const STATUS_CONFIGS = {
   drink: {
     duration: 5, // seconds
-    cooldown: 15,
+    cooldown: 10,
     cost: { base: 10, need: "thirst", capacity: "thirstCapacity" },
     effects: [
       {
-        target: "thirst",
-        rateKey: "initialThirstRate",
-        reductionMultiplier: 3,
+        targetStat: "thirst",
+        rateID: "initialThirstRate",
+        statDrainMultiplier: 3,
         rewards: [
           {
             resource: "volition",
             perUnit: 2,
-            capacityKey: "volitionCapacity",
+            capacityID: "volitionCapacity",
           },
         ],
         synergy: { with: "eat", multiplier: 1.2 },
@@ -21,18 +21,18 @@ export const STATUS_CONFIGS = {
   },
   eat: {
     duration: 8,
-    cooldown: 20,
+    cooldown: 15,
     cost: { base: 10, need: "hunger", capacity: "hungerCapacity" },
     effects: [
       {
-        target: "hunger",
-        rateKey: "initialHungerRate",
-        reductionMultiplier: 3,
+        targetStat: "hunger",
+        rateID: "initialHungerRate",
+        statDrainMultiplier: 3,
         rewards: [
           {
             resource: "volition",
             perUnit: 1.5,
-            capacityKey: "volitionCapacity",
+            capacityID: "volitionCapacity",
           },
         ],
         synergy: { with: "drink", multiplier: 1.2 },
@@ -40,19 +40,19 @@ export const STATUS_CONFIGS = {
     ],
   },
   rest: {
-    duration: 10,
+    duration: 25,
     cooldown: 25,
     cost: { base: 10, need: "fatigue", capacity: "fatigueCapacity" },
     effects: [
       {
-        target: "fatigue",
-        rateKey: "initialFatigueRate",
-        reductionMultiplier: 2,
+        targetStat: "fatigue",
+        rateID: "initialFatigueRate",
+        statDrainMultiplier: 2,
         rewards: [
           {
             resource: "volition",
             perUnit: 1,
-            capacityKey: "volitionCapacity",
+            capacityID: "volitionCapacity",
           },
         ],
       },
@@ -64,9 +64,9 @@ export const STATUS_CONFIGS = {
     cost: { base: 15, need: "volition", capacity: "volitionCapacity" },
     effects: [
       {
-        target: "volition",
-        rateKey: "initialVolitionRate",
-        reductionMultiplier: 0.5,
+        targetStat: "volition",
+        rateID: "initialVolitionRate",
+        statDrainMultiplier: 0.5,
         // No direct rewards. Items can be found while foraging.
         rewards: [],
       },

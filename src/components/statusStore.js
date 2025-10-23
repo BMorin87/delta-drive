@@ -52,13 +52,13 @@ export const useStatusStore = create(
         // Register the status update function with the game engine.
         gameEngine.registerSystem(
           `Status_${statusType}`,
-          get().createStatusUpdate(statusType)
+          myState.createStatusUpdate(statusType)
         );
 
-        // Register the cooldown system, but only if it's not already there.
+        // Register the cooldown system if it's not already there.
         const systems = gameEngine.getRegisteredSystems();
         if (!systems.includes("CooldownManager")) {
-          get().registerCooldownSystem();
+          myState.registerCooldownSystem();
         }
 
         return true;
@@ -94,23 +94,20 @@ export const useStatusStore = create(
         return Math.max(1, Math.floor(cost.base * costMultiplier));
       },
 
-      // ========================
-      // System Registration
-      // ========================
-
+      // System registration. This is the function that runs every tick for the active status!
       createStatusUpdate: (statusType) => {
         return (gameState) => {
-          const statusStoreState = get();
-          const status = statusStoreState.activeStatuses[statusType];
+          const myState = get();
+          const status = myState.activeStatuses[statusType];
           if (!status) return {};
 
           const deltaTime = 1 / 12;
           const newDuration = status.duration - deltaTime;
 
-          // If status duration has expired, clean up and set cooldown.
+          // If the status timer has expired, clean up and reset cooldown.
           if (newDuration <= 0) {
             gameEngine.unregisterSystem(`Status_${statusType}`);
-            const config = statusStoreState.statusConfigs[statusType];
+            const config = myState.statusConfigs[statusType];
             set((prev) => ({
               activeStatuses: {
                 ...prev.activeStatuses,
@@ -124,7 +121,7 @@ export const useStatusStore = create(
             return {};
           }
 
-          // Otherwise update the duration.
+          // Otherwise update the status's timer...
           set((prev) => ({
             activeStatuses: {
               ...prev.activeStatuses,
@@ -132,43 +129,49 @@ export const useStatusStore = create(
             },
           }));
 
-          // Apply effects generically.
+          // ...And return an update object for the gameEngine to apply.
           return status.effects.reduce((updates, effect) => {
+            // The stat to be drained by the effect.
+            const stat = gameState[effect.targetStat];
+            // Drain speed is calculated using the stat's initial fill rate and the config.
             const maxReduction =
-              effect.reductionMultiplier * (gameState[effect.rateKey] || 0);
-            const currentNeed = gameState[effect.target];
-
-            const actualReduction = Math.min(maxReduction, currentNeed);
-            const newValue = Math.max(0, currentNeed - actualReduction);
-            const satisfied = actualReduction;
+              (gameState[effect.rateID] || 0) * effect.statDrainMultiplier;
+            // Don't drain more than is available.
+            const actualDrain = Math.min(maxReduction, stat);
+            const newValue = Math.max(0, stat - actualDrain);
 
             let newUpdates = { ...updates };
 
-            if (actualReduction > 0) {
-              newUpdates[effect.target] = newValue;
+            // Apply the drain.
+            if (actualDrain > 0) {
+              newUpdates[stat] = newValue;
             }
 
-            let multiplier = 1.0;
+            // If there's an active synergic effect, get the synergy multiplier.
+            let synergyMultiplier = 1.0;
             if (
               effect.synergy?.with &&
-              statusStoreState.activeStatuses[effect.synergy.with]
+              myState.activeStatuses[effect.synergy.with]
             ) {
-              multiplier = effect.synergy.multiplier;
+              synergyMultiplier = effect.synergy.multiplier;
             }
 
+            // Now calculate the rewards from the status.
             if (effect.rewards) {
               const rewardMultiplier = useUpgradeStore
                 .getState()
                 .getRewardMultiplier(statusType);
+              // Statuses don't have more than one reward yet, but it's ready for extension.
               effect.rewards.forEach(({ resource, perUnit, capacityKey }) => {
                 const gain =
-                  satisfied * perUnit * rewardMultiplier * multiplier;
+                  actualDrain * perUnit * rewardMultiplier * synergyMultiplier;
                 const currentValue =
                   newUpdates[resource] ?? gameState[resource];
                 const capped = capacityKey
                   ? Math.min(gameState[capacityKey], currentValue + gain)
                   : currentValue + gain;
 
+                // Apply the reward.
                 newUpdates[resource] = capped;
               });
             }
@@ -239,6 +242,7 @@ export const useStatusStore = create(
             }
           });
 
+          // If there are some active cooldowns, create the Cooldown manager safely.
           const hasCooldowns = Object.values(state.cooldowns).some(
             (cd) => cd > 0
           );

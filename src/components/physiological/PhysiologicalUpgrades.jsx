@@ -10,31 +10,19 @@ const PhysiologicalUpgradesPanel = () => {
         <UpgradeItem
           upgradeId="volitionRate"
           title="Determination"
-          description="Increases volition generation rate"
+          description="Increases base volition generation rate"
         />
 
         <UpgradeItem
           upgradeId="volitionCapacity"
-          title="Resilience"
+          title="Reservoir"
           description="Increases volition capacity"
         />
 
         <UpgradeItem
-          upgradeId="thirstReward"
-          title="Hydration Reward"
-          description="Increases volition gained from drinking"
-        />
-
-        <UpgradeItem
-          upgradeId="hungerReward"
-          title="Nourishment Reward"
-          description="Increases volition gained from eating"
-        />
-
-        <UpgradeItem
-          upgradeId="fatigueReward"
-          title="Restoration Reward"
-          description="Increases volition gained from resting"
+          upgradeId="hedonicReward"
+          title="Hedonic Reward"
+          description="Increases volition rewarded from satisfying drives"
         />
       </div>
     </div>

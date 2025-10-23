@@ -34,7 +34,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
         {!isUpgradePanelUnlocked && (
           <UpgradeItem
             upgradeId="upgradePanel"
-            title="Upgrade Panel"
+            title="Mental Improvement"
             description="Enhance your mental qualities."
             onPurchase={handlePurchase}
           />
