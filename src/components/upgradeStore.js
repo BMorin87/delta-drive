@@ -4,11 +4,11 @@ import { useGameStore } from "./gameStore";
 
 export const INITIAL_UPGRADE_STATE = {
   upgrades: {
-    volitionRate: { level: 0, baseCost: 10, type: "rate" },
-    volitionCapacity: { level: 0, baseCost: 15, type: "capacity" },
+    volitionRate: { level: 0, baseCost: 25, type: "rate" },
+    volitionCapacity: { level: 0, baseCost: 50, type: "capacity" },
     hedonicReward: {
       level: 0,
-      baseCost: 25,
+      baseCost: 75,
       type: "reward",
       affects: "rest",
     },
@@ -74,7 +74,7 @@ export const useUpgradeStore = create(
           case "volitionRate":
             return (level * 2) / fps; // +2 volition per second per level.
           case "volitionCapacity":
-            return level * 25; // +25 capacity per level.
+            return level * 50; // A stacking +50 reward per level.
           case "hedonicReward":
             return 1 + level * 0.1; // The multiplier is 1 at level zero, 0.1 increase per level.
           default:

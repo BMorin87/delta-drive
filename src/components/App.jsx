@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     let interval;
     if (isRunning) {
-      // The interval duration in milliseconds. TICKS_PER_SECOND is read from the gameStore.
+      // The interval duration in milliseconds. TICKS_PER_SECOND is defined in the gameStore.
       const tickInterval = 1000 / TICKS_PER_SECOND;
       interval = setInterval(tick, tickInterval);
     }
@@ -18,7 +18,7 @@ function App() {
     };
   }, [TICKS_PER_SECOND, isRunning, tick]);
 
-  // DeltaGame contains top-level game UI components and handles registration of initial game systems with the gameEngine.
+  // DeltaGame contains top-level game UI components and also registers the initial game systems with the gameEngine.
   return <DeltaGame />;
 }
 

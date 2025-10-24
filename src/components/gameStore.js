@@ -19,11 +19,11 @@ export const INITIAL_GAME_STATE = {
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
-  // Volition's initial rate is 4 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
-  initialVolitionRate: 4 / 12,
-  initialThirstRate: 3 / 12,
-  initialHungerRate: 2 / 12,
-  initialFatigueRate: 1 / 12,
+  // Volition's initial rate is 2 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
+  initialVolitionRate: 2 / 12,
+  initialThirstRate: 1 / 12,
+  initialHungerRate: 0.5 / 12,
+  initialFatigueRate: 0.2 / 12,
 
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,

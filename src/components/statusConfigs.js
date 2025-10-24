@@ -1,13 +1,13 @@
 export const STATUS_CONFIGS = {
   drink: {
-    duration: 5, // seconds
+    duration: 4, // seconds
     cooldown: 10,
     cost: { base: 10, need: "thirst", capacity: "thirstCapacity" },
     effects: [
       {
         targetStat: "thirst",
         rateID: "initialThirstRate",
-        statDrainMultiplier: 3,
+        statDrainMultiplier: 12,
         rewards: [
           {
             resource: "volition",
@@ -20,14 +20,14 @@ export const STATUS_CONFIGS = {
     ],
   },
   eat: {
-    duration: 8,
-    cooldown: 15,
+    duration: 10,
+    cooldown: 20,
     cost: { base: 10, need: "hunger", capacity: "hungerCapacity" },
     effects: [
       {
         targetStat: "hunger",
         rateID: "initialHungerRate",
-        statDrainMultiplier: 3,
+        statDrainMultiplier: 6,
         rewards: [
           {
             resource: "volition",
@@ -40,14 +40,14 @@ export const STATUS_CONFIGS = {
     ],
   },
   rest: {
-    duration: 25,
-    cooldown: 25,
+    duration: 35,
+    cooldown: 55,
     cost: { base: 10, need: "fatigue", capacity: "fatigueCapacity" },
     effects: [
       {
         targetStat: "fatigue",
         rateID: "initialFatigueRate",
-        statDrainMultiplier: 2,
+        statDrainMultiplier: 3,
         rewards: [
           {
             resource: "volition",

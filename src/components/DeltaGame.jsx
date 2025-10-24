@@ -63,7 +63,7 @@ function useGameSystems() {
     initialFatigueRate,
   } = useGameStore();
 
-  // Hook the initial game systems to the engine once, and re-register if the base rates change.
+  // Hook the initial game systems to the engine, and re-register if the base rates change.
   useEffect(() => {
     registerGlobalGameSystems(
       initialThirstRate,
@@ -141,6 +141,7 @@ function createUpdateFunctionKeys(
   };
 }
 
+// This is the tick update function for each initial system!
 function createUpdateFunction(statKeys) {
   const { stat, capacityName, upgradeRateName, initialRate } = statKeys;
   return (state) => {

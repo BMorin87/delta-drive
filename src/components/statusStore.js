@@ -132,19 +132,19 @@ export const useStatusStore = create(
           // ...And return an update object for the gameEngine to apply.
           return status.effects.reduce((updates, effect) => {
             // The stat to be drained by the effect.
-            const stat = gameState[effect.targetStat];
+            const statValue = gameState[effect.targetStat];
             // Drain speed is calculated using the stat's initial fill rate and the config.
             const maxReduction =
               (gameState[effect.rateID] || 0) * effect.statDrainMultiplier;
             // Don't drain more than is available.
-            const actualDrain = Math.min(maxReduction, stat);
-            const newValue = Math.max(0, stat - actualDrain);
+            const actualDrain = Math.min(maxReduction, statValue);
+            const newValue = Math.max(0, statValue - actualDrain);
 
             let newUpdates = { ...updates };
 
             // Apply the drain.
             if (actualDrain > 0) {
-              newUpdates[stat] = newValue;
+              newUpdates[effect.targetStat] = newValue;
             }
 
             // If there's an active synergic effect, get the synergy multiplier.
