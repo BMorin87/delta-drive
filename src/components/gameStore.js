@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { gameEngine } from "./gameEngine";
 
+const INITIAL_BASE_VOLITION_RATE = 10 / 12;
+
 export const INITIAL_GAME_STATE = {
   // Game state variables are highly fragile to refactoring and prototyping! E.g. statusStore doesn't read TICKS_PER_SECOND from here. :-(
   TICKS_PER_SECOND: 12,
@@ -20,7 +22,7 @@ export const INITIAL_GAME_STATE = {
   fatigueCapacity: 100,
 
   // Volition's initial rate is 10 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
-  baseVolitionRate: 10 / 12,
+  baseVolitionRate: INITIAL_BASE_VOLITION_RATE,
   baseThirstRate: 1 / 12,
   baseHungerRate: 0.5 / 12,
   baseFatigueRate: 0.2 / 12,
@@ -60,7 +62,10 @@ export const useGameStore = create(
 
       resetGame: () => {
         useGameStore.persist.clearStorage();
-        set(INITIAL_GAME_STATE, true);
+        set(
+          { INITIAL_GAME_STATE, baseVolitionRate: INITIAL_BASE_VOLITION_RATE },
+          true
+        );
       },
 
       // Called in App.jsx with useEffect and setInterval.
@@ -122,6 +127,7 @@ export const useGameStore = create(
         thirst: state.thirst,
         hunger: state.hunger,
         fatigue: state.fatigue,
+        baseVolitionRate: state.baseVolitionRate,
         volitionCapacity: state.volitionCapacity,
         thirstCapacity: state.thirstCapacity,
         hungerCapacity: state.hungerCapacity,

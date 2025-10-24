@@ -5,11 +5,11 @@ import { useGameStore } from "./gameStore";
 export const INITIAL_UPGRADE_STATE = {
   upgrades: {
     baseVolitionRate: { level: 0, baseCost: 25, type: "intro" },
-    volitionRate: { level: 0, baseCost: 25, type: "rate" },
+    volitionRate: { level: 0, baseCost: 400, type: "rate" },
     volitionCapacity: { level: 0, baseCost: 50, type: "capacity" },
     hedonicReward: {
       level: 0,
-      baseCost: 75,
+      baseCost: 400,
       type: "rate",
     },
     basicNeeds: {
@@ -74,17 +74,16 @@ export const useUpgradeStore = create(
       getUpgradeEffectAtLevel: (upgradeId, requestedLevel) => {
         // By default, use the upgrade's current level. Fallback to zero if the upgrade doesn't exist.
         const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
-        const fps = useGameStore.getState().TICKS_PER_SECOND;
         // The upgrade effects are hardcoded here. Fragile!
         switch (upgradeId) {
           case "volitionRate":
-            return (level * 2) / fps; // +2 volition per second per level.
+            return 1.1 ^ level; // A multiplier of 1 at level zero, 0.1 increase per level.
+          case "hedonicReward":
+            return 1.1 ^ level;
           case "volitionCapacity":
             return level * 110; // A stacking +110 reward per level.
-          case "hedonicReward":
-            return 1 + level * 0.1; // The multiplier is 1 at level zero, 0.1 increase per level.
           default:
-            return 0;
+            return 1;
         }
       },
 
@@ -106,11 +105,9 @@ export const useUpgradeStore = create(
         const cost = upgradeStore.getUpgradeCost(upgradeId);
 
         if (!upgradeStore.canAffordUpgrade(upgradeId)) return false;
-
-        // Spend volition
         useGameStore.getState().spendVolition(cost);
 
-        // Increment upgrade level
+        // Increment the upgrade level.
         set((prev) => ({
           upgrades: {
             ...prev.upgrades,
@@ -124,6 +121,7 @@ export const useUpgradeStore = create(
         // Handle special upgrade types
         const upgrade = get().upgrades[upgradeId];
 
+        // "Rate" upgrades don't need special handling; their effect is calculated generically in the appropriate updateFunction.
         switch (upgrade.type) {
           case "intro": {
             if (upgradeId === "baseVolitionRate") {
@@ -164,8 +162,6 @@ export const useUpgradeStore = create(
             }
             break;
           }
-
-          // "Rate" upgrades don't need special handling; their effect is calculated generically using getUpgradeEffectAtLevel.
         }
 
         return true;
