@@ -162,13 +162,13 @@ export const useStatusStore = create(
                 .getState()
                 .getRewardMultiplier(statusType);
               // Statuses don't have more than one reward yet, but it's ready for extension.
-              effect.rewards.forEach(({ resource, perUnit, capacityKey }) => {
+              effect.rewards.forEach(({ resource, perUnit, capacityId }) => {
                 const gain =
                   actualDrain * perUnit * rewardMultiplier * synergyMultiplier;
                 const currentValue =
                   newUpdates[resource] ?? gameState[resource];
-                const capped = capacityKey
-                  ? Math.min(gameState[capacityKey], currentValue + gain)
+                const capped = capacityId
+                  ? Math.min(gameState[capacityId], currentValue + gain)
                   : currentValue + gain;
 
                 // Apply the reward.

@@ -4,6 +4,7 @@ import { useGameStore } from "./gameStore";
 
 export const INITIAL_UPGRADE_STATE = {
   upgrades: {
+    baseVolitionRate: { level: 0, baseCost: 25, type: "intro" },
     volitionRate: { level: 0, baseCost: 25, type: "rate" },
     volitionCapacity: { level: 0, baseCost: 50, type: "capacity" },
     hedonicReward: {
@@ -13,13 +14,19 @@ export const INITIAL_UPGRADE_STATE = {
     },
     basicNeeds: {
       level: 0,
-      baseCost: 1,
+      baseCost: 100,
       type: "unlock",
       unlocks: "awareness",
     },
+    basicActions: {
+      level: 0,
+      baseCost: 250,
+      type: "unlock",
+      unlocks: "agency",
+    },
     upgradePanel: {
       level: 0,
-      baseCost: 2,
+      baseCost: 100,
       type: "unlock",
       unlocks: "upgradePanel",
     },
@@ -52,7 +59,7 @@ export const useUpgradeStore = create(
       getUpgradeCost: (upgradeId) => {
         const upgrade = get().upgrades[upgradeId];
         if (!upgrade) return 0;
-        return Math.floor(upgrade.baseCost * Math.pow(1.5, upgrade.level));
+        return Math.floor(upgrade.baseCost * Math.pow(2, upgrade.level));
       },
 
       getUpgradeLevel: (upgradeId) => get().upgrades[upgradeId]?.level ?? 0,
@@ -73,7 +80,7 @@ export const useUpgradeStore = create(
           case "volitionRate":
             return (level * 2) / fps; // +2 volition per second per level.
           case "volitionCapacity":
-            return level * 50; // A stacking +50 reward per level.
+            return level * 110; // A stacking +110 reward per level.
           case "hedonicReward":
             return 1 + level * 0.1; // The multiplier is 1 at level zero, 0.1 increase per level.
           default:
@@ -118,6 +125,17 @@ export const useUpgradeStore = create(
         const upgrade = get().upgrades[upgradeId];
 
         switch (upgrade.type) {
+          case "intro": {
+            if (upgradeId === "baseVolitionRate") {
+              const fps = useGameStore.getState().TICKS_PER_SECOND;
+              useGameStore.setState((prev) => ({
+                ...prev,
+                baseVolitionRate: prev.baseVolitionRate + 2 / fps,
+              }));
+            }
+            break;
+          }
+
           case "capacity": {
             const newLevel = upgradeStore.getUpgradeLevel(upgradeId);
             const bonus = upgradeStore.getUpgradeEffectAtLevel(
@@ -135,6 +153,8 @@ export const useUpgradeStore = create(
           case "unlock": {
             if (upgrade.unlocks === "awareness") {
               useGameStore.setState({ isAwarenessUnlocked: true });
+            } else if (upgrade.unlocks === "agency") {
+              useGameStore.setState({ isAgencyUnlocked: true });
             } else if (upgrade.unlocks === "upgradePanel") {
               useGameStore.setState({ isUpgradePanelUnlocked: true });
             } else if (upgrade.unlocks === "navigation") {

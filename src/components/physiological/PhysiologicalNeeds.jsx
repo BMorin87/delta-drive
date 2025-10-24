@@ -15,7 +15,7 @@ const PhysiologicalNeeds = () => {
     thirstCapacity,
     hungerCapacity,
     fatigueCapacity,
-    isAwarenessUnlocked,
+    isAgencyUnlocked,
     isForageUnlocked,
   } = useGameStore();
   const {
@@ -79,7 +79,6 @@ const PhysiologicalNeeds = () => {
       capacity: thirstCapacity,
       label: "Thirst",
       colorClass: "thirst-bar",
-      unlocked: isAwarenessUnlocked,
     },
     {
       type: "eat",
@@ -87,7 +86,6 @@ const PhysiologicalNeeds = () => {
       capacity: hungerCapacity,
       label: "Hunger",
       colorClass: "hunger-bar",
-      unlocked: isAwarenessUnlocked,
     },
     {
       type: "rest",
@@ -95,13 +93,10 @@ const PhysiologicalNeeds = () => {
       capacity: fatigueCapacity,
       label: "Fatigue",
       colorClass: "fatigue-bar",
-      unlocked: isAwarenessUnlocked,
     },
   ];
 
   const hasSynergyBonus = isStatusActive("drink") && isStatusActive("eat");
-
-  const unlockClass = isAwarenessUnlocked ? "is-unlocked" : "";
 
   return (
     <>
@@ -120,9 +115,9 @@ const PhysiologicalNeeds = () => {
                 height={250}
               />
 
-              {need.unlocked ? (
+              {isAgencyUnlocked ? (
                 // Render the action buttons if they're unlocked.
-                <div className={`action-button-wrapper ${unlockClass}`}>
+                <div className={`action-button-wrapper is-unlocked`}>
                   <button
                     {...buttonState}
                     onClick={() => handleAction(need.type)}

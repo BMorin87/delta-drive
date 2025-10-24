@@ -1,17 +1,26 @@
+import { useUpgradeStore } from "../upgradeStore";
 import UpgradeItem from "../UpgradeItem";
 import "../../styles/physiological/PhysiologicalUpgrades.css";
 
 const PhysiologicalUpgradesPanel = () => {
+  // TODO: Only show the Hedonic Reward upgrade when forage resources are low.
+  const { getUpgradeLevel } = useUpgradeStore();
+
+  const introLevel = getUpgradeLevel("baseVolitionRate");
+  const isBelowLevelFive = introLevel < 5;
+
   return (
     <div className="physiological-upgrades-panel">
       <p className="upgrades-subtitle">Enhance your basic capabilities</p>
 
       <div className="upgrades-grid">
-        <UpgradeItem
-          upgradeId="volitionRate"
-          title="Determination"
-          description="Increases base volition generation rate"
-        />
+        {!isBelowLevelFive && (
+          <UpgradeItem
+            upgradeId="volitionRate"
+            title="Determination"
+            description="Increases base volition generation rate"
+          />
+        )}
 
         <UpgradeItem
           upgradeId="volitionCapacity"

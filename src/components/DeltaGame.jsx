@@ -21,7 +21,7 @@ const DeltaGame = () => {
     if (isFirstLoad) {
       const timer = setTimeout(() => {
         markFirstLoadComplete();
-      }, 3000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [isFirstLoad, markFirstLoadComplete]);
@@ -41,6 +41,7 @@ const DeltaGame = () => {
     };
   }, []);
 
+  // Animate the DiscoveryPanel's first load.
   const introClass = isFirstLoad ? "first-load" : "";
 
   return (
@@ -48,7 +49,7 @@ const DeltaGame = () => {
       <GameHeader />
       <VolitionCrown />
       <DiscoveryPanel introClass={introClass} />
-      <HierarchyNavigation introClass={introClass} />
+      <HierarchyNavigation />
       {showDebugPanel && <DebugPanel />}
     </div>
   );
@@ -56,20 +57,16 @@ const DeltaGame = () => {
 
 function useGameSystems() {
   // The "base" rates are consumed here in case the base values change via upgrades or other means.
-  const {
-    initialVolitionRate,
-    initialThirstRate,
-    initialHungerRate,
-    initialFatigueRate,
-  } = useGameStore();
+  const { baseVolitionRate, baseThirstRate, baseHungerRate, baseFatigueRate } =
+    useGameStore();
 
   // Hook the initial game systems to the engine, and re-register if the base rates change.
   useEffect(() => {
     registerGlobalGameSystems(
-      initialThirstRate,
-      initialHungerRate,
-      initialFatigueRate,
-      initialVolitionRate
+      baseThirstRate,
+      baseHungerRate,
+      baseFatigueRate,
+      baseVolitionRate
     );
 
     return () => {
@@ -78,26 +75,21 @@ function useGameSystems() {
       gameEngine.unregisterSystem("Fatigue");
       gameEngine.unregisterSystem("Volition");
     };
-  }, [
-    initialThirstRate,
-    initialHungerRate,
-    initialFatigueRate,
-    initialVolitionRate,
-  ]);
+  }, [baseThirstRate, baseHungerRate, baseFatigueRate, baseVolitionRate]);
 }
 
 function registerGlobalGameSystems(
-  initialThirstRate,
-  initialHungerRate,
-  initialFatigueRate,
-  initialVolitionRate
+  baseThirstRate,
+  baseHungerRate,
+  baseFatigueRate,
+  baseVolitionRate
 ) {
   // The keys have "magic words" to generate the update functions. This balances fragility with extensibility.
   const keys = createUpdateFunctionKeys(
-    initialThirstRate,
-    initialHungerRate,
-    initialFatigueRate,
-    initialVolitionRate
+    baseThirstRate,
+    baseHungerRate,
+    baseFatigueRate,
+    baseVolitionRate
   );
 
   // Hook the update functions to the game engine.
@@ -108,49 +100,49 @@ function registerGlobalGameSystems(
 }
 
 function createUpdateFunctionKeys(
-  initialThirstRate,
-  initialHungerRate,
-  initialFatigueRate,
-  initialVolitionRate
+  baseThirstRate,
+  baseHungerRate,
+  baseFatigueRate,
+  baseVolitionRate
 ) {
   return {
     thirst: {
       stat: "thirst",
       capacityName: "thirstCapacity",
       upgradeRateName: "thirstRate",
-      initialRate: initialThirstRate,
+      baseRate: baseThirstRate,
     },
     hunger: {
       stat: "hunger",
       capacityName: "hungerCapacity",
       upgradeRateName: "hungerRate",
-      initialRate: initialHungerRate,
+      baseRate: baseHungerRate,
     },
     fatigue: {
       stat: "fatigue",
       capacityName: "fatigueCapacity",
       upgradeRateName: "fatigueRate",
-      initialRate: initialFatigueRate,
+      baseRate: baseFatigueRate,
     },
     volition: {
       stat: "volition",
       capacityName: "volitionCapacity",
       upgradeRateName: "volitionRate",
-      initialRate: initialVolitionRate,
+      baseRate: baseVolitionRate,
     },
   };
 }
 
 // This is the tick update function for each initial system!
 function createUpdateFunction(statKeys) {
-  const { stat, capacityName, upgradeRateName, initialRate } = statKeys;
+  const { stat, capacityName, upgradeRateName, baseRate } = statKeys;
   return (state) => {
     if (state[stat] == null) {
       return {};
     }
     // Calculate the total growth rate for the current stat by reading the upgradeStore's state.
     const totalGrowth =
-      initialRate +
+      baseRate +
       useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
     const cappedValue = Math.min(
       state[capacityName],

@@ -19,11 +19,11 @@ export const INITIAL_GAME_STATE = {
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
-  // Volition's initial rate is 2 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
-  initialVolitionRate: 2 / 12,
-  initialThirstRate: 1 / 12,
-  initialHungerRate: 0.5 / 12,
-  initialFatigueRate: 0.2 / 12,
+  // Volition's initial rate is 10 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
+  baseVolitionRate: 10 / 12,
+  baseThirstRate: 1 / 12,
+  baseHungerRate: 0.5 / 12,
+  baseFatigueRate: 0.2 / 12,
 
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,
@@ -31,6 +31,7 @@ export const INITIAL_GAME_STATE = {
   initialFatigueCapacity: 100,
 
   isAwarenessUnlocked: false,
+  isAgencyUnlocked: false,
   isUpgradePanelUnlocked: false,
   isNavigationUnlocked: false,
   isForageUnlocked: false,
@@ -74,12 +75,6 @@ export const useGameStore = create(
           return true;
         }
         return false;
-      },
-
-      // Bad function name, this will actually set any property in the store. Initially used for the Volition capacity upgrade.
-      setCapacity: (prop, value) => {
-        if (!prop) return;
-        set((prev) => ({ ...prev, [prop]: value }));
       },
 
       togglePause: () =>
@@ -132,6 +127,7 @@ export const useGameStore = create(
         hungerCapacity: state.hungerCapacity,
         fatigueCapacity: state.fatigueCapacity,
         isAwarenessUnlocked: state.isAwarenessUnlocked,
+        isAgencyUnlocked: state.isAgencyUnlocked,
         isNavigationUnlocked: state.isNavigationUnlocked,
         isForageUnlocked: state.isForageUnlocked,
         isUpgradePanelUnlocked: state.isUpgradePanelUnlocked,

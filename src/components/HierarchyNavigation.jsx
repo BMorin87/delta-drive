@@ -4,9 +4,9 @@ import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
 import SecurityPanel from "./security/SecurityPanel";
 import "../styles/HierarchyNavigation.css";
 
-const HierarchyNavigation = ({ introClass = "" }) => {
+const HierarchyNavigation = () => {
   const [activeTier, setActiveTier] = useState("physiological");
-  const { isNavigationUnlocked } = useGameStore();
+  const { isAwarenessUnlocked, isNavigationUnlocked } = useGameStore();
 
   // Define the tiers in pyramid order (bottom to top)
   const tiers = [
@@ -106,10 +106,13 @@ const HierarchyNavigation = ({ introClass = "" }) => {
         <div className="pyramid-nav" />
       )}
 
-      {/* The currently active tier's content. Displays even when the pyramid nav is locked. */}
-      <div className={`tier-content-container ${introClass}`}>
-        {renderActivePanel()}
-      </div>
+      {isAwarenessUnlocked ? (
+        <div className={`tier-content-container is-unlocked`}>
+          {renderActivePanel()}
+        </div>
+      ) : (
+        <div className={`tier-content-container`} />
+      )}
     </>
   );
 };

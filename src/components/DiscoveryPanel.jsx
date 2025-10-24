@@ -5,56 +5,70 @@ import "../styles/DiscoveryPanel.css";
 
 const DiscoveryPanel = ({ introClass = "" }) => {
   const {
-    spendVolition,
     isAwarenessUnlocked,
+    isAgencyUnlocked,
     isUpgradePanelUnlocked,
     isNavigationUnlocked,
     isForageUnlocked,
   } = useGameStore();
-  const { purchaseUpgrade } = useUpgradeStore();
+  const { getUpgradeLevel } = useUpgradeStore();
 
-  const handlePurchase = (upgradeId) => {
-    return purchaseUpgrade(upgradeId, spendVolition);
-  };
+  const introLevel = getUpgradeLevel("baseVolitionRate");
+  const isAtLeastLevelTwo = introLevel >= 2;
+  const isBelowLevelFive = introLevel < 5;
 
   return (
     <div className={`discovery-panel ${introClass}`}>
       <h2 className="discovery-title">Upgrades</h2>
 
       <div className="discovery-grid">
-        {!isAwarenessUnlocked && (
+        {isBelowLevelFive && (
           <UpgradeItem
-            upgradeId="basicNeeds"
-            title="Awareness"
-            description="Satisfy your basic physiological needs."
-            onPurchase={handlePurchase}
+            upgradeId="baseVolitionRate"
+            title="Determination"
+            description="Grit your teeth and try harder."
           />
         )}
 
-        {!isUpgradePanelUnlocked && (
+        {!isAwarenessUnlocked && isAtLeastLevelTwo && (
+          <UpgradeItem
+            upgradeId="basicNeeds"
+            title="Awareness"
+            description="Notice your basic physiological needs."
+          />
+        )}
+
+        {!isUpgradePanelUnlocked && isAwarenessUnlocked && (
           <UpgradeItem
             upgradeId="upgradePanel"
             title="Mental Improvement"
             description="Enhance your mental qualities."
-            onPurchase={handlePurchase}
+          />
+        )}
+
+        {!isAgencyUnlocked && isAwarenessUnlocked && (
+          <UpgradeItem
+            upgradeId="basicActions"
+            title="Agency"
+            description="Form a plan to satisfy your needs"
           />
         )}
 
         {!isNavigationUnlocked && (
+          // TODO: Show for the first time when there's a threat active.
           <UpgradeItem
             upgradeId="pyramidNav"
             title="Hierarchy Navigation"
             description="Operate on multiple levels."
-            onPurchase={handlePurchase}
           />
         )}
 
         {!isForageUnlocked && (
+          // TODO: Show for the first time when
           <UpgradeItem
             upgradeId="foraging"
             title="Foraging"
             description="Explore your environment to find resources."
-            onPurchase={handlePurchase}
           />
         )}
 

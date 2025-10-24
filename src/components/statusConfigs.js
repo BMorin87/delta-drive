@@ -6,7 +6,7 @@ export const STATUS_CONFIGS = {
     effects: [
       {
         targetStat: "thirst",
-        rateID: "initialThirstRate",
+        rateID: "baseThirstRate",
         statDrainMultiplier: 12,
         rewards: [
           {
@@ -26,7 +26,7 @@ export const STATUS_CONFIGS = {
     effects: [
       {
         targetStat: "hunger",
-        rateID: "initialHungerRate",
+        rateID: "baseHungerRate",
         statDrainMultiplier: 6,
         rewards: [
           {
@@ -46,7 +46,7 @@ export const STATUS_CONFIGS = {
     effects: [
       {
         targetStat: "fatigue",
-        rateID: "initialFatigueRate",
+        rateID: "baseFatigueRate",
         statDrainMultiplier: 3,
         rewards: [
           {
@@ -65,7 +65,7 @@ export const STATUS_CONFIGS = {
     effects: [
       {
         targetStat: "volition",
-        rateID: "initialVolitionRate",
+        rateID: "baseVolitionRate",
         statDrainMultiplier: 0.5,
         // No direct rewards. Items can be found while foraging.
         rewards: [],
