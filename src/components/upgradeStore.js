@@ -9,8 +9,7 @@ export const INITIAL_UPGRADE_STATE = {
     hedonicReward: {
       level: 0,
       baseCost: 75,
-      type: "reward",
-      affects: "rest",
+      type: "rate",
     },
     basicNeeds: {
       level: 0,
