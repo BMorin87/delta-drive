@@ -77,9 +77,9 @@ export const useUpgradeStore = create(
         // The upgrade effects are hardcoded here. Fragile!
         switch (upgradeId) {
           case "volitionRate":
-            return 1.1 ^ level; // A multiplier of 1 at level zero, 0.1 increase per level.
+            return 1.1 ** level; // A multiplier of 1 at level zero, 0.1 increase per level.
           case "hedonicReward":
-            return 1.1 ^ level;
+            return 1.1 ** level;
           case "volitionCapacity":
             return level * 110; // A stacking +110 reward per level.
           default:

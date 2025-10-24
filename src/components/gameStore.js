@@ -82,10 +82,7 @@ export const useGameStore = create(
         return false;
       },
 
-      togglePause: () =>
-        set((state) => ({
-          isRunning: !state.isRunning,
-        })),
+      togglePause: () => set((state) => ({ isRunning: !state.isRunning })),
 
       // Internal function used by the gameEngine to update resource rates used by UI components.
       _updateResourceRates: (oldState, newState) => {

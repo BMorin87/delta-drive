@@ -11,12 +11,13 @@ import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
   const [showDebugPanel, setShowDebugPanel] = useState(false);
-  const { isFirstLoad, markFirstLoadComplete } = useGameStore();
+  const isFirstLoad = useGameStore((state) => state.isFirstLoad);
+  const markFirstLoadComplete = useGameStore((state) => state.markFirstLoadComplete);
 
   // Register the initial game systems with the game engine using a useEffect hook.
   useGameSystems();
 
-  // Wait a few seconds on first load, then mark it complete. Used for initial animations.
+  // Wait a couple seconds on first load, then mark it complete. Used for initial animations.
   useEffect(() => {
     if (isFirstLoad) {
       const timer = setTimeout(() => {
@@ -56,101 +57,39 @@ const DeltaGame = () => {
 };
 
 function useGameSystems() {
-  // The "base" rates are consumed here in case the base values change via upgrades or other means.
-  const { baseVolitionRate, baseThirstRate, baseHungerRate, baseFatigueRate } =
-    useGameStore();
+  const baseVolitionRate = useGameStore((state) => state.baseVolitionRate);
+  const baseThirstRate = useGameStore((state) => state.baseThirstRate);
+  const baseHungerRate = useGameStore((state) => state.baseHungerRate);
+  const baseFatigueRate = useGameStore((state) => state.baseFatigueRate);
 
-  // Hook the initial game systems to the engine, and re-register if the base rates change.
+  // Register the systems individually.
+  useRegisterSystem("volition", "volitionCapacity", "volitionRate", baseVolitionRate);
+  useRegisterSystem("thirst", "thirstCapacity", "thirstRate", baseThirstRate);
+  useRegisterSystem("hunger", "hungerCapacity", "hungerRate", baseHungerRate);
+  useRegisterSystem("fatigue", "fatigueCapacity", "fatigueRate", baseFatigueRate);
+}
+
+function useRegisterSystem(statName, capacityName, upgradeRateName, baseRate) {
   useEffect(() => {
-    registerGlobalGameSystems(
-      baseThirstRate,
-      baseHungerRate,
-      baseFatigueRate,
-      baseVolitionRate
+    const systemName = statName.charAt(0).toUpperCase() + statName.slice(1);
+    gameEngine.registerSystem(
+      systemName,
+      createUpdateFunction(statName, capacityName, upgradeRateName, baseRate)
     );
-
-    return () => {
-      gameEngine.unregisterSystem("Thirst");
-      gameEngine.unregisterSystem("Hunger");
-      gameEngine.unregisterSystem("Fatigue");
-      gameEngine.unregisterSystem("Volition");
-    };
-  }, [baseThirstRate, baseHungerRate, baseFatigueRate, baseVolitionRate]);
+    return () => gameEngine.unregisterSystem(systemName);
+    // Only the baseRate can actually change at the moment. Being explicit kept the linter happy though.
+  }, [statName, capacityName, upgradeRateName, baseRate]);
 }
 
-function registerGlobalGameSystems(
-  baseThirstRate,
-  baseHungerRate,
-  baseFatigueRate,
-  baseVolitionRate
-) {
-  // The keys have "magic words" to generate the update functions. This balances fragility with extensibility.
-  const keys = createUpdateFunctionKeys(
-    baseThirstRate,
-    baseHungerRate,
-    baseFatigueRate,
-    baseVolitionRate
-  );
-
-  // Hook the update functions to the game engine.
-  gameEngine.registerSystem("Thirst", createUpdateFunction(keys.thirst));
-  gameEngine.registerSystem("Hunger", createUpdateFunction(keys.hunger));
-  gameEngine.registerSystem("Fatigue", createUpdateFunction(keys.fatigue));
-  gameEngine.registerSystem("Volition", createUpdateFunction(keys.volition));
-}
-
-function createUpdateFunctionKeys(
-  baseThirstRate,
-  baseHungerRate,
-  baseFatigueRate,
-  baseVolitionRate
-) {
-  return {
-    thirst: {
-      stat: "thirst",
-      capacityName: "thirstCapacity",
-      upgradeRateName: "thirstRate",
-      baseRate: baseThirstRate,
-    },
-    hunger: {
-      stat: "hunger",
-      capacityName: "hungerCapacity",
-      upgradeRateName: "hungerRate",
-      baseRate: baseHungerRate,
-    },
-    fatigue: {
-      stat: "fatigue",
-      capacityName: "fatigueCapacity",
-      upgradeRateName: "fatigueRate",
-      baseRate: baseFatigueRate,
-    },
-    volition: {
-      stat: "volition",
-      capacityName: "volitionCapacity",
-      upgradeRateName: "volitionRate",
-      baseRate: baseVolitionRate,
-    },
-  };
-}
-
-// This is the tick update function for each initial system!
-function createUpdateFunction(statKeys) {
-  const { stat, capacityName, upgradeRateName, baseRate } = statKeys;
+function createUpdateFunction(statName, capacityName, upgradeRateName, baseRate) {
   return (state) => {
-    if (state[stat] == null) {
+    if (state[statName] == null) {
       return {};
     }
-    // Calculate the total growth rate for the current stat by reading the upgradeStore's state.
     const totalGrowth =
-      baseRate +
-      useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
-    const cappedValue = Math.min(
-      state[capacityName],
-      state[stat] + totalGrowth
-    );
-    return {
-      [stat]: cappedValue,
-    };
+      baseRate * useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
+    const cappedValue = Math.min(state[capacityName], state[statName] + totalGrowth);
+    return { [statName]: cappedValue };
   };
 }
 
