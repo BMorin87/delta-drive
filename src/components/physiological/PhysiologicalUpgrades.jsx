@@ -4,37 +4,32 @@ import UpgradeItem from "../UpgradeItem";
 import "../../styles/physiological/PhysiologicalUpgrades.css";
 
 const PhysiologicalUpgradesPanel = () => {
-  // TODO: Only show the Hedonic Reward upgrade when forage resources are low.
-  const { getUpgradeLevel } = useUpgradeStore();
   const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
-
-  const introLevel = getUpgradeLevel("baseVolitionRate");
+  const introLevel = useUpgradeStore((state) => state.getUpgradeLevel("baseVolitionRate"));
   const isBelowLevelFive = introLevel < 5;
 
   return (
     <div className="physiological-upgrades-panel">
-      <p className="upgrades-subtitle">Enhance your basic capabilities</p>
-
       <div className="upgrades-grid">
         {!isBelowLevelFive && (
           <UpgradeItem
             upgradeId="volitionRate"
-            title="Determination"
-            description="Increases base volition generation rate"
+            title="True Grit"
+            description="Increases 👑 volition generation rate ever further."
           />
         )}
 
         <UpgradeItem
           upgradeId="volitionCapacity"
-          title="Reservoir"
-          description="Increases volition capacity"
+          title="Reserves"
+          description="Increases 👑 volition capacity"
         />
 
         {isAgencyUnlocked && (
           <UpgradeItem
             upgradeId="hedonicReward"
-            title="Hedonic Reward"
-            description="Increases volition rewarded from satisfying drives"
+            title="Hedonism"
+            description="Increases 👑 volition rewarded from satisfying drives."
           />
         )}
       </div>

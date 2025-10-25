@@ -10,12 +10,15 @@ import DebugPanel from "./DebugPanel";
 import "../styles/DeltaGame.css";
 
 const DeltaGame = () => {
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
   const isFirstLoad = useGameStore((state) => state.isFirstLoad);
   const markFirstLoadComplete = useGameStore((state) => state.markFirstLoadComplete);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
 
-  // Register the initial game systems with the game engine using a useEffect hook.
-  useGameSystems();
+  // Register the initial game systems with the engine.
+  useRegisterGameSystem("volition", "baseVolitionRate", "volitionCapacity", "volitionRate");
+  useRegisterGameSystem("thirst", "baseThirstRate", "thirstCapacity", "thirstRate");
+  useRegisterGameSystem("hunger", "baseHungerRate", "hungerCapacity", "hungerRate");
+  useRegisterGameSystem("fatigue", "baseFatigueRate", "fatigueCapacity", "fatigueRate");
 
   // Wait a couple seconds on first load, then mark it complete. Used for initial animations.
   useEffect(() => {
@@ -30,7 +33,7 @@ const DeltaGame = () => {
   // Listen for Shift+D to toggle the debug panel display.
   useEffect(() => {
     const handleKeyPress = (event) => {
-      if (event.shiftKey && event.key.toLowerCase() === "d") {
+      if (event.shiftKey && event.key === "D") {
         event.preventDefault();
         setShowDebugPanel((prev) => !prev);
       }
@@ -56,38 +59,24 @@ const DeltaGame = () => {
   );
 };
 
-function useGameSystems() {
-  const baseVolitionRate = useGameStore((state) => state.baseVolitionRate);
-  const baseThirstRate = useGameStore((state) => state.baseThirstRate);
-  const baseHungerRate = useGameStore((state) => state.baseHungerRate);
-  const baseFatigueRate = useGameStore((state) => state.baseFatigueRate);
-
-  // Register the systems individually.
-  useRegisterSystem("volition", "volitionCapacity", "volitionRate", baseVolitionRate);
-  useRegisterSystem("thirst", "thirstCapacity", "thirstRate", baseThirstRate);
-  useRegisterSystem("hunger", "hungerCapacity", "hungerRate", baseHungerRate);
-  useRegisterSystem("fatigue", "fatigueCapacity", "fatigueRate", baseFatigueRate);
-}
-
-function useRegisterSystem(statName, capacityName, upgradeRateName, baseRate) {
+function useRegisterGameSystem(statName, baseRateName, capacityName, upgradeRateName) {
   useEffect(() => {
-    const systemName = statName.charAt(0).toUpperCase() + statName.slice(1);
-    gameEngine.registerSystem(
-      systemName,
-      createUpdateFunction(statName, capacityName, upgradeRateName, baseRate)
-    );
-    return () => gameEngine.unregisterSystem(systemName);
-    // Only the baseRate can actually change at the moment. Being explicit kept the linter happy though.
-  }, [statName, capacityName, upgradeRateName, baseRate]);
+    const update = createUpdateFunction(statName, baseRateName, capacityName, upgradeRateName);
+    gameEngine.registerSystem(statName, update);
+    return () => gameEngine.unregisterSystem(statName);
+    // These are strings but the linter requires the dependency array.
+  }, [statName, baseRateName, capacityName, upgradeRateName]);
 }
 
-function createUpdateFunction(statName, capacityName, upgradeRateName, baseRate) {
+// The function called for each system (volition, thirst, etc.) when the gameEngine ticks.
+function createUpdateFunction(statName, baseRateName, capacityName, upgradeRateName) {
   return (state) => {
-    if (state[statName] == null) {
-      return {};
-    }
-    const totalGrowth =
-      baseRate * useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
+    if (state[statName] == null) return {};
+
+    const baseRate = useGameStore.getState()[baseRateName];
+    const upgradeEffect = useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
+
+    const totalGrowth = baseRate * upgradeEffect;
     const cappedValue = Math.min(state[capacityName], state[statName] + totalGrowth);
     return { [statName]: cappedValue };
   };

@@ -2,11 +2,14 @@ import { useStatusStore } from "../statusStore";
 import "../../styles/physiological/ForageButton.css";
 
 const ForageButton = ({ onOpenForage }) => {
-  const { activeStatuses, cooldowns, calculateVolitionCost } = useStatusStore();
+  // This subscribes to all statuses and cooldowns instead of just Forage, but it's not very expensive to render.
+  const activeStatuses = useStatusStore((state) => state.activeStatuses ?? {});
+  const cooldowns = useStatusStore((state) => state.cooldowns ?? {});
+  const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
 
   const isStatusActive = (type) => !!activeStatuses[type];
-  const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
-  const getCooldownRemaining = (type) => cooldowns[type] || 0;
+  const getStatusDuration = (type) => activeStatuses[type]?.duration ?? 0;
+  const getCooldownRemaining = (type) => cooldowns[type] ?? 0;
 
   const getButtonState = () => {
     const isActive = isStatusActive("forage");
@@ -49,9 +52,7 @@ const ForageButton = ({ onOpenForage }) => {
           {buttonState.text}
         </button>
       </div>
-      <p className="forage-description">
-        Explore your environment to find resources.
-      </p>
+      <p className="forage-description">Explore your environment to find resources.</p>
     </>
   );
 };

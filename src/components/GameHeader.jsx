@@ -4,7 +4,8 @@ import SettingsMenu from "./SettingsMenu";
 import "../styles/GameHeader.css";
 
 const GameHeader = () => {
-  const { isRunning, togglePause } = useGameStore();
+  const isRunning = useGameStore((state) => state.isRunning);
+  const togglePause = useGameStore((state) => state.togglePause);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleSettingsToggle = () => {
@@ -17,12 +18,9 @@ const GameHeader = () => {
         <div className="header-content">
           <div className="header-controls">
             <button onClick={togglePause} className="header-btn pause-btn">
-              {isRunning ? "⏸️ Pause" : "▶️ Resume"}
+              {isRunning ? "⏸️" : "▶️"}
             </button>
-            <button
-              onClick={handleSettingsToggle}
-              className="header-btn settings-btn"
-            >
+            <button onClick={handleSettingsToggle} className="header-btn settings-btn">
               ⚙️ Settings
             </button>
           </div>

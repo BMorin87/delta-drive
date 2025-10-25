@@ -2,7 +2,9 @@ import { useGameStore } from "./gameStore";
 import "../styles/VolitionCrown.css";
 
 const VolitionCrown = () => {
-  const { volition, volitionCapacity, resourceRates } = useGameStore();
+  const volition = useGameStore((state) => state.volition);
+  const volitionCapacity = useGameStore((state) => state.volitionCapacity);
+  const resourceRates = useGameStore((state) => state.resourceRates);
 
   const safeCurrent = Number.isFinite(volition) ? volition : 0;
   const isPositive = Number.isFinite(volitionCapacity) && volitionCapacity > 0;
@@ -19,20 +21,9 @@ const VolitionCrown = () => {
     <div className="volition-crown-container">
       <h2 className="volition-label">👑 Volition</h2>
       <div className="crown-wrapper">
-        <svg
-          width="150"
-          height="140"
-          viewBox="0 0 150 140"
-          className="crown-svg"
-        >
+        <svg width="150" height="140" viewBox="0 0 150 140" className="crown-svg">
           <defs>
-            <linearGradient
-              id="crownGradient"
-              x1="0%"
-              y1="100%"
-              x2="0%"
-              y2="0%"
-            >
+            <linearGradient id="crownGradient" x1="0%" y1="100%" x2="0%" y2="0%">
               <stop offset="0%" stopColor="#581c87" />
               <stop offset={`${percentFull}%`} stopColor="#8b5cf6" />
               <stop offset={`${percentFull}%`} stopColor="#374151" />

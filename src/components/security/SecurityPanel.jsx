@@ -4,9 +4,10 @@ import { useGameStore } from "../gameStore";
 const SecurityPanel = () => {
   const [activeView, setActiveView] = useState("progress");
 
-  const { volition, spendVolition } = useGameStore();
+  const volition = useGameStore((state) => state.volition);
+  const spendVolition = useGameStore((state) => state.spendVolition);
 
-  // Placeholder security-related stats - you'll want to add these to your game store
+  // Placeholder security-related stats - add these to the gameStore if desired.
   const [shelter, setShelter] = useState(50);
   const [income, setIncome] = useState(25);
   const [health, setHealth] = useState(75);
@@ -16,7 +17,7 @@ const SecurityPanel = () => {
   const healthCapacity = 100;
 
   const handleImproveAction = (type) => {
-    const cost = 10; // Example cost
+    const cost = 10;
     if (volition >= cost) {
       spendVolition(cost);
 
@@ -38,24 +39,18 @@ const SecurityPanel = () => {
     <div className="security-panel">
       <div className="security-content">
         <h1 className="tier-title">Security & Safety</h1>
-        <p className="tier-subtitle">
-          Build stability and protection in your life
-        </p>
+        <p className="tier-subtitle">Build stability and protection in your life</p>
 
         {/* Toggle buttons */}
         <div className="view-toggle-container">
           <button
-            className={`view-toggle-btn ${
-              activeView === "progress" ? "active" : ""
-            }`}
+            className={`view-toggle-btn ${activeView === "progress" ? "active" : ""}`}
             onClick={() => setActiveView("progress")}
           >
             Progress
           </button>
           <button
-            className={`view-toggle-btn ${
-              activeView === "upgrades" ? "active" : ""
-            }`}
+            className={`view-toggle-btn ${activeView === "upgrades" ? "active" : ""}`}
             onClick={() => setActiveView("upgrades")}
           >
             Improvements
@@ -130,14 +125,8 @@ const SecurityPanel = () => {
             </div>
 
             <div className="tier-note">
-              <p>
-                Establish security and stability to unlock higher tiers of
-                growth.
-              </p>
-              <p>
-                Current Security Level:{" "}
-                {Math.floor((shelter + income + health) / 3)}%
-              </p>
+              <p>Establish security and stability to unlock higher tiers of growth.</p>
+              <p>Current Security Level: {Math.floor((shelter + income + health) / 3)}%</p>
             </div>
           </>
         ) : (

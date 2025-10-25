@@ -7,29 +7,25 @@ import ForagePanel from "./ForagePanel";
 import "../../styles/physiological/PhysiologicalNeeds.css";
 
 const PhysiologicalNeeds = () => {
+  const thirst = useGameStore((state) => state.thirst);
+  const hunger = useGameStore((state) => state.hunger);
+  const fatigue = useGameStore((state) => state.fatigue);
+  const thirstCapacity = useGameStore((state) => state.thirstCapacity);
+  const hungerCapacity = useGameStore((state) => state.hungerCapacity);
+  const fatigueCapacity = useGameStore((state) => state.fatigueCapacity);
+  const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
+  const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
+  const activeStatuses = useStatusStore((state) => state.activeStatuses ?? {});
+  const cooldowns = useStatusStore((state) => state.cooldowns ?? {});
+  const startStatus = useStatusStore((state) => state.startStatus);
+  const cancelStatus = useStatusStore((state) => state.cancelStatus);
+  const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
   const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
-  const {
-    thirst,
-    hunger,
-    fatigue,
-    thirstCapacity,
-    hungerCapacity,
-    fatigueCapacity,
-    isAgencyUnlocked,
-    isForageUnlocked,
-  } = useGameStore();
-  const {
-    activeStatuses = {},
-    cooldowns = {},
-    startStatus,
-    cancelStatus,
-    calculateVolitionCost,
-  } = useStatusStore();
 
   // Helper functions to manage state data from the statusStore.
   const isStatusActive = (type) => !!activeStatuses[type];
-  const getStatusDuration = (type) => activeStatuses[type]?.duration || 0;
-  const getCooldownRemaining = (type) => cooldowns[type] || 0;
+  const getStatusDuration = (type) => activeStatuses[type]?.duration ?? 0;
+  const getCooldownRemaining = (type) => cooldowns[type] ?? 0;
 
   const handleAction = (actionType) => {
     if (isStatusActive(actionType)) {
@@ -41,15 +37,14 @@ const PhysiologicalNeeds = () => {
 
   const getButtonState = (actionType) => {
     const isActive = isStatusActive(actionType);
-    const cooldownRemaining = getCooldownRemaining(actionType);
     const duration = getStatusDuration(actionType);
+    const cooldownRemaining = getCooldownRemaining(actionType);
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
     // Determine an action button's text, disabled state, and styling based on status.
     if (isActive) {
       return {
-        text: `${
-          actionType.charAt(0).toUpperCase() + actionType.slice(1)
-        }ing... ${Math.ceil(duration)}s`,
+        text: `${capitalize(actionType)}ing... ${Math.ceil(duration)}s`,
         disabled: false,
         className: `action-button ${actionType}-button active`,
       };
@@ -62,9 +57,7 @@ const PhysiologicalNeeds = () => {
     } else {
       const cost = calculateVolitionCost(actionType);
       return {
-        text: `${
-          actionType.charAt(0).toUpperCase() + actionType.slice(1)
-        } (${cost} 👑)`,
+        text: `${capitalize(actionType)} (${cost} 👑)`,
         disabled: false,
         className: `action-button ${actionType}-button`,
       };
@@ -118,10 +111,7 @@ const PhysiologicalNeeds = () => {
               {isAgencyUnlocked ? (
                 // Render the action buttons if they're unlocked.
                 <div className={`action-button-wrapper is-unlocked`}>
-                  <button
-                    {...buttonState}
-                    onClick={() => handleAction(need.type)}
-                  >
+                  <button {...buttonState} onClick={() => handleAction(need.type)}>
                     {buttonState.text}
                   </button>
                 </div>
@@ -138,9 +128,7 @@ const PhysiologicalNeeds = () => {
         <p>Satisfy physiological needs to generate more 👑&nbsp;Volition.</p>
         {hasSynergyBonus ? (
           // An optional synergy indicator.
-          <p className="bonus-indicator is-active">
-            🌟 Synergy Bonus Active! +20% efficiency
-          </p>
+          <p className="bonus-indicator is-active">🌟 Synergy Bonus Active! +20% efficiency</p>
         ) : (
           <p className="bonus-indicator" />
         )}
@@ -155,10 +143,7 @@ const PhysiologicalNeeds = () => {
         <div className="forage-section" />
       )}
 
-      <ForagePanel
-        isOpen={isForagePanelOpen}
-        onClose={() => setIsForagePanelOpen(false)}
-      />
+      <ForagePanel isOpen={isForagePanelOpen} onClose={() => setIsForagePanelOpen(false)} />
     </>
   );
 };

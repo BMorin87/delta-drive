@@ -3,13 +3,14 @@ import { useGameStore } from "./gameStore";
 import DeltaGame from "./DeltaGame";
 
 function App() {
-  const { TICKS_PER_SECOND, isRunning, tick } = useGameStore();
+  const TICKS_PER_SECOND = useGameStore((state) => state.TICKS_PER_SECOND);
+  const isRunning = useGameStore((state) => state.isRunning);
+  const tick = useGameStore((state) => state.tick);
 
   // The game loop. Tells the gameEngine to tick at the desired interval. Can be paused.
   useEffect(() => {
     let interval;
     if (isRunning) {
-      // The interval duration in milliseconds. TICKS_PER_SECOND is defined in the gameStore.
       const tickInterval = 1000 / TICKS_PER_SECOND;
       interval = setInterval(tick, tickInterval);
     }

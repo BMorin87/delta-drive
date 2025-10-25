@@ -1,21 +1,17 @@
+import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import "../styles/UpgradeItem.css";
 
 const UpgradeItem = ({ upgradeId, title, description }) => {
-  const {
-    upgrades,
-    getUpgradeCost,
-    canAffordUpgrade,
-    getUpgradeEffectAtLevel,
-    purchaseUpgrade,
-  } = useUpgradeStore();
+  const upgrade = useUpgradeStore((state) => state.upgrades[upgradeId]);
+  const cost = useUpgradeStore((state) => state.getUpgradeCost(upgradeId));
+  const effect = useUpgradeStore((state) =>
+    state.getUpgradeEffectAtLevel(upgradeId, state.upgrades[upgradeId].level)
+  );
+  const purchaseUpgrade = useUpgradeStore((state) => state.purchaseUpgrade);
 
-  const upgrade = upgrades[upgradeId];
-  const cost = getUpgradeCost(upgradeId);
-  const canAfford = canAffordUpgrade(upgradeId);
-  const effect = getUpgradeEffectAtLevel(upgradeId, upgrade.level);
-
-  // TODO: Create dictionary for upgrade costs and effects based on upgradeId.
+  // Subscribe to volition and calculate affordability
+  const canAfford = useGameStore((state) => state.volition >= cost);
 
   const handlePurchase = () => {
     if (canAfford) {
@@ -47,18 +43,7 @@ const UpgradeItem = ({ upgradeId, title, description }) => {
         </p>
         <p>
           Next Level:{" "}
-          <strong>
-            +
-            {/* TODO: Use a lookup table to get upgrade effects. This is not extensible. */}
-            {getUpgradeEffectAtLevel(upgradeId, upgrade.level) +
-              (upgradeId === "volitionRate"
-                ? 2
-                : upgradeId === "volitionCapacity"
-                ? 25
-                : upgradeId === "fatigueRate"
-                ? 0.5
-                : 1)}
-          </strong>
+          <strong>+{/* TODO: Display sensible information about the next level. */}</strong>
         </p>
         <p>Level: {upgrade.level}</p>
       </div>

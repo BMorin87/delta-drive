@@ -10,11 +10,8 @@ const GameDebugPanel = () => {
   const gameState = useGameStore();
   const statusState = useStatusStore();
 
-  // Subscribe to the rates from gameStore instead of calculating our own
-  const resourceRates = useGameStore((state) => state.resourceRates);
-
   const getSystemType = (systemName) => {
-    const alwaysOnSystems = ["Thirst", "Hunger", "Fatigue", "Volition"];
+    const alwaysOnSystems = ["thirst", "hunger", "fatigue", "volition"];
     if (alwaysOnSystems.includes(systemName)) return "always-on";
     if (systemName.startsWith("Status_")) return "temporary-status";
     return "other";
@@ -67,17 +64,12 @@ const GameDebugPanel = () => {
       {isOpen && (
         <div className="debug-panel-content">
           <div className="debug-systems-list">
-            <h4 className="debug-section-title">
-              Registered Systems ({registeredSystems.length})
-            </h4>
+            <h4 className="debug-section-title">Registered Systems ({registeredSystems.length})</h4>
             <div>
               {registeredSystems.map((name) => (
                 <div
                   key={name}
-                  className={`debug-system-item ${getSystemType(name).replace(
-                    "-",
-                    "-"
-                  )}`}
+                  className={`debug-system-item ${getSystemType(name).replace("-", "-")}`}
                 >
                   • {name} ({getSystemType(name)})
                 </div>
@@ -87,15 +79,11 @@ const GameDebugPanel = () => {
 
           {/* Resource Rates from Game Store */}
           <div className="debug-outputs-section">
-            <h4 className="debug-section-title">
-              Resource Rates (from Game Store)
-            </h4>
+            <h4 className="debug-section-title">Resource Rates (from Game Store)</h4>
 
             <div style={{ marginBottom: "12px" }}>
-              <h5 className="debug-subsection-title always-on">
-                Always-On Resource Rates
-              </h5>
-              {Object.entries(resourceRates).map(([resource, rate]) => (
+              <h5 className="debug-subsection-title always-on">Always-On Resource Rates</h5>
+              {Object.entries(gameState.resourceRates).map(([resource, rate]) => (
                 <div key={resource} className="debug-system-output always-on">
                   <div className="debug-system-name">{resource}</div>
                   <div className="debug-output-value">
@@ -116,9 +104,7 @@ const GameDebugPanel = () => {
 
             {/* Active Status Systems */}
             <div>
-              <h5 className="debug-subsection-title temporary-status">
-                Active Status Systems
-              </h5>
+              <h5 className="debug-subsection-title temporary-status">Active Status Systems</h5>
               {Object.entries(statusState.activeStatuses || {})
                 .filter(([, status]) => status && status.duration > 0)
                 .map(([statusType, status]) => {
@@ -126,10 +112,7 @@ const GameDebugPanel = () => {
                   const statusInfo = getStatusInfo(systemName);
 
                   return (
-                    <div
-                      key={systemName}
-                      className="debug-system-output temporary-status"
-                    >
+                    <div key={systemName} className="debug-system-output temporary-status">
                       <div className="debug-system-name">
                         {systemName}
                         <span className="debug-system-duration">
@@ -137,17 +120,14 @@ const GameDebugPanel = () => {
                         </span>
                       </div>
 
-                      {/* Status cost info */}
+                      {/* TODO: Display the drain effect rather than the volition cost. */}
                       {statusInfo && (
                         <div className="debug-system-cost">
-                          Cost: {statusInfo.cost.volition} volition, Need:{" "}
-                          {statusInfo.cost.need} (
-                          {statusInfo.cost.needLevel.toFixed(1)}/
-                          {statusInfo.cost.maxNeed})
+                          Cost: {statusInfo.cost.volition} volition, Need: {statusInfo.cost.need} (
+                          {statusInfo.cost.needLevel.toFixed(1)}/{statusInfo.cost.maxNeed})
                         </div>
                       )}
 
-                      {/* Note: Individual system outputs would require tick interception */}
                       <div className="debug-output-value">
                         System active - contributing to resource rates above
                       </div>
@@ -157,18 +137,13 @@ const GameDebugPanel = () => {
 
               {Object.keys(statusState.activeStatuses || {}).filter(
                 (key) => statusState.activeStatuses[key]?.duration > 0
-              ).length === 0 && (
-                <div className="debug-helper-text">
-                  No active status systems
-                </div>
-              )}
+              ).length === 0 && <div className="debug-helper-text">No active status systems</div>}
             </div>
           </div>
 
           <div className="debug-helper-text">
-            Resource rates are calculated by the game engine and stored in the
-            game state. This shows the true combined rate from all systems
-            including temporary statuses.
+            Resource rates are calculated by the game engine and stored in the game state. This
+            shows the true combined rate from all systems including temporary statuses.
           </div>
         </div>
       )}

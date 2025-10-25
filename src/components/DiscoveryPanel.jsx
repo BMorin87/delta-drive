@@ -4,18 +4,15 @@ import UpgradeItem from "./UpgradeItem";
 import "../styles/DiscoveryPanel.css";
 
 const DiscoveryPanel = ({ introClass = "" }) => {
-  const {
-    isAwarenessUnlocked,
-    isAgencyUnlocked,
-    isUpgradePanelUnlocked,
-    isNavigationUnlocked,
-    isForageUnlocked,
-  } = useGameStore();
-  const { getUpgradeLevel } = useUpgradeStore();
-
-  const introLevel = getUpgradeLevel("baseVolitionRate");
-  const isAtLeastLevelTwo = introLevel >= 2;
-  const isBelowLevelFive = introLevel < 5;
+  const isAwarenessUnlocked = useGameStore((state) => state.isAwarenessUnlocked);
+  const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
+  const isUpgradePanelUnlocked = useGameStore((state) => state.isUpgradePanelUnlocked);
+  const isNavigationUnlocked = useGameStore((state) => state.isNavigationUnlocked);
+  const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
+  // Subscribe to the intro upgrade's level.
+  const introUpgradeLevel = useUpgradeStore((state) => state.getUpgradeLevel("baseVolitionRate"));
+  const isAtLeastLevelTwo = introUpgradeLevel >= 2;
+  const isBelowLevelFive = introUpgradeLevel < 5;
 
   return (
     <div className={`discovery-panel ${introClass}`}>
@@ -64,7 +61,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
         )}
 
         {!isForageUnlocked && (
-          // TODO: Show for the first time when
+          // TODO: Show for the first time when materials run low.
           <UpgradeItem
             upgradeId="foraging"
             title="Foraging"
@@ -74,6 +71,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
 
         {/* Show message when all discoveries are unlocked */}
         {isAwarenessUnlocked &&
+          isAgencyUnlocked &&
           isForageUnlocked &&
           isNavigationUnlocked &&
           isUpgradePanelUnlocked && (

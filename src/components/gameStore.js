@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { gameEngine } from "./gameEngine";
 
-// We need this reference to reset the game now that there's a base rate upgrade for volition.
+// This reference is to help reset the game now that there's a base rate upgrade for volition.
 const INITIAL_BASE_VOLITION_RATE = 10 / 12;
 
 export const INITIAL_GAME_STATE = {
@@ -21,7 +21,7 @@ export const INITIAL_GAME_STATE = {
   food: 5,
   fibers: 5,
 
-  // Volition's initial rate is 10 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
+  // TODO: Remove "magic numbers" by referencing TICKS_PER_SECOND. Possibly outside the store itself?
   baseVolitionRate: INITIAL_BASE_VOLITION_RATE,
   baseThirstRate: 1 / 12,
   baseHungerRate: 0.5 / 12,
@@ -32,6 +32,7 @@ export const INITIAL_GAME_STATE = {
   hungerCapacity: 100,
   fatigueCapacity: 100,
 
+  // TODO: Refactor to remove these and use an INITIAL_BASE_... constant if needed as I did for the volition rate.
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,
   initialHungerCapacity: 100,

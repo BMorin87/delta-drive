@@ -195,7 +195,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
           ) : (
             <>
               <div className="resource-counter">
-                <span>🎃 Food: {foundResources.food}</span>
+                <span>🍃 Food: {foundResources.food}</span>
                 <span>💧 Water: {foundResources.water}</span>
                 <span>🪵 Wood: {foundResources.wood}</span>
               </div>
