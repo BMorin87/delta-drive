@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useGameStore } from "./gameStore";
+import ResourcePanel from "./physiological/ResourcePanel";
 import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
 import SecurityPanel from "./security/SecurityPanel";
 import "../styles/HierarchyNavigation.css";
 
 const HierarchyNavigation = () => {
+  const isAwarenessUnlocked = useGameStore((state) => state.isAwarenessUnlocked);
+  const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
+  const isNavigationUnlocked = useGameStore((state) => state.isNavigationUnlocked);
   const [activeTier, setActiveTier] = useState("physiological");
-  const { isAwarenessUnlocked, isNavigationUnlocked } = useGameStore();
 
-  // Define the tiers in pyramid order (bottom to top)
+  // Define the tiers in pyramid order (bottom to top).
   const tiers = [
     {
       id: "physiological",
@@ -54,7 +57,7 @@ const HierarchyNavigation = () => {
     }
   };
 
-  const renderActivePanel = () => {
+  const renderActiveContent = () => {
     switch (activeTier) {
       case "physiological":
         return <PhysiologicalPanel />;
@@ -78,18 +81,12 @@ const HierarchyNavigation = () => {
               return (
                 <div
                   key={tier.id}
-                  className={`pyramid-tier tier-${tier.id} ${
-                    isActive ? "active" : ""
-                  } ${tier.unlocked ? "unlocked" : "locked"}`}
-                  style={{
-                    order: displayOrder,
-                  }}
+                  className={`pyramid-tier tier-${tier.id} ${isActive ? "active" : ""} ${
+                    tier.unlocked ? "unlocked" : "locked"
+                  }`}
+                  style={{ order: displayOrder }}
                   onClick={() => handleTierClick(tier.id)}
-                  title={
-                    tier.unlocked
-                      ? tier.description
-                      : "Locked - progress further to unlock"
-                  }
+                  title={tier.unlocked ? tier.description : "Locked - progress further to unlock"}
                 >
                   <div className="tier-name">{tier.name}</div>
                   {!tier.unlocked && <div className="lock-icon">🔒</div>}
@@ -107,12 +104,12 @@ const HierarchyNavigation = () => {
       )}
 
       {isAwarenessUnlocked ? (
-        <div className={`tier-content-container is-unlocked`}>
-          {renderActivePanel()}
-        </div>
+        <div className={`tier-content-container is-unlocked`}>{renderActiveContent()}</div>
       ) : (
         <div className={`tier-content-container`} />
       )}
+
+      {isAgencyUnlocked && <ResourcePanel />}
     </>
   );
 };

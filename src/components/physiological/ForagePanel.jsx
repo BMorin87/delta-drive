@@ -3,14 +3,15 @@ import { useStatusStore } from "../statusStore";
 import "../../styles/physiological/ForagePanel.css";
 
 const RESOURCE_TYPES = {
-  FOOD: { emoji: "🎃", name: "food" },
+  FOOD: { emoji: "🍎", name: "food" },
   WATER: { emoji: "💧", name: "water" },
-  WOOD: { emoji: "🪵", name: "wood" },
-  NOTHING: { emoji: "🍃", name: "nothing" },
+  WOOD: { emoji: "🌿", name: "fibers" },
+  NOTHING: { emoji: "🤷", name: "nothing" },
 };
 
 const ForagePanel = ({ isOpen, onClose }) => {
-  const { calculateVolitionCost, startStatus } = useStatusStore();
+  const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
+  const startStatus = useStatusStore((state) => state.startStatus);
   const [gameStarted, setGameStarted] = useState(false);
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
@@ -89,11 +90,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
 
   const handleCardClick = (cardId) => {
     // Prevent clicking if already checking, card is matched, or card is already flipped
-    if (
-      isChecking ||
-      matchedCards.has(cardId) ||
-      flippedCards.includes(cardId)
-    ) {
+    if (isChecking || matchedCards.has(cardId) || flippedCards.includes(cardId)) {
       return;
     }
 
@@ -177,9 +174,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
           {!gameStarted ? (
             <>
               <div className="forage-description">
-                <p>
-                  Venture into the wilderness to search for valuable resources.
-                </p>
+                <p>Venture into the wilderness to search for valuable resources.</p>
                 <p>Match pairs of cards to find food, water, and wood!</p>
               </div>
 
@@ -189,10 +184,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
               </div>
 
               <div className="forage-actions">
-                <button
-                  className="start-forage-btn"
-                  onClick={handleStartForage}
-                >
+                <button className="start-forage-btn" onClick={handleStartForage}>
                   Start Foraging
                 </button>
                 <button className="cancel-btn" onClick={onClose}>
@@ -212,9 +204,9 @@ const ForagePanel = ({ isOpen, onClose }) => {
                 {cards.map((card) => (
                   <div
                     key={card.id}
-                    className={`memory-card ${
-                      isCardFlipped(card.id) ? "flipped" : ""
-                    } ${matchedCards.has(card.id) ? "matched" : ""}`}
+                    className={`memory-card ${isCardFlipped(card.id) ? "flipped" : ""} ${
+                      matchedCards.has(card.id) ? "matched" : ""
+                    }`}
                     onClick={() => handleCardClick(card.id)}
                   >
                     <div className="card-inner">

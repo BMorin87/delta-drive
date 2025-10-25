@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { gameEngine } from "./gameEngine";
 
+// We need this reference to reset the game now that there's a base rate upgrade for volition.
 const INITIAL_BASE_VOLITION_RATE = 10 / 12;
 
 export const INITIAL_GAME_STATE = {
@@ -16,16 +17,20 @@ export const INITIAL_GAME_STATE = {
   hunger: 1,
   fatigue: 1,
 
-  volitionCapacity: 100,
-  thirstCapacity: 100,
-  hungerCapacity: 100,
-  fatigueCapacity: 100,
+  water: 5,
+  food: 5,
+  fibers: 5,
 
   // Volition's initial rate is 10 per second. Another fragile piece! Can't read another part of the store here, so no TICKS_PER_SECOND.
   baseVolitionRate: INITIAL_BASE_VOLITION_RATE,
   baseThirstRate: 1 / 12,
   baseHungerRate: 0.5 / 12,
   baseFatigueRate: 0.2 / 12,
+
+  volitionCapacity: 100,
+  thirstCapacity: 100,
+  hungerCapacity: 100,
+  fatigueCapacity: 100,
 
   initialVolitionCapacity: 100,
   initialThirstCapacity: 100,
@@ -62,10 +67,7 @@ export const useGameStore = create(
 
       resetGame: () => {
         useGameStore.persist.clearStorage();
-        set(
-          { INITIAL_GAME_STATE, baseVolitionRate: INITIAL_BASE_VOLITION_RATE },
-          true
-        );
+        set({ INITIAL_GAME_STATE, baseVolitionRate: INITIAL_BASE_VOLITION_RATE }, true);
       },
 
       // Called in App.jsx with useEffect and setInterval.
@@ -124,6 +126,9 @@ export const useGameStore = create(
         thirst: state.thirst,
         hunger: state.hunger,
         fatigue: state.fatigue,
+        water: state.water,
+        food: state.food,
+        fibers: state.fibers,
         baseVolitionRate: state.baseVolitionRate,
         volitionCapacity: state.volitionCapacity,
         thirstCapacity: state.thirstCapacity,

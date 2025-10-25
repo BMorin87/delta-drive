@@ -11,6 +11,7 @@
     "header header"
     "volition discovery"
     "tier tier"
+    "resource resource"
     "nav nav";
   grid-template-rows: auto auto 1fr 1fr;
   grid-template-columns: 1fr 1fr;
@@ -21,7 +22,7 @@
     grid-template-areas:
       "header header header"
       "volition tier discovery"
-      "nav tier .";
+      "nav tier resource";
     grid-template-rows: auto 1fr 1fr;
     grid-template-columns: 17rem auto 17rem;
   }

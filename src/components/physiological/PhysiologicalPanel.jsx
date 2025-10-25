@@ -1,44 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import PhysiologicalNeeds from "./PhysiologicalNeeds";
 import PhysiologicalUpgrades from "./PhysiologicalUpgrades";
 import "../../styles/physiological/PhysiologicalPanel.css";
 
 const PhysiologicalPanel = () => {
-  const { isUpgradePanelUnlocked } = useGameStore();
+  const isUpgradePanelUnlocked = useGameStore((state) => state.isUpgradePanelUnlocked);
   const [activeView, setActiveView] = useState("drives");
-  const [showToggleButtons, setShowToggleButtons] = useState(
-    isUpgradePanelUnlocked
-  );
 
-  useEffect(() => {
-    if (isUpgradePanelUnlocked) {
-      setShowToggleButtons(true);
-    }
-  }, [isUpgradePanelUnlocked]);
-
-  const unlockClass = showToggleButtons ? "is-unlocked" : "";
+  const unlockClass = isUpgradePanelUnlocked ? "is-unlocked" : "";
 
   return (
     <>
       <div className="physiological-content">
         <h1 className="tier-title">Physiological Needs</h1>
 
-        {/* The toggle buttons display conditionally depending on the upgrade being unlocked. */}
-        {showToggleButtons ? (
+        {isUpgradePanelUnlocked ? (
+          // The toggle buttons are displayed if the upgrade has been purchased.
           <div className={`view-toggle-container ${unlockClass}`}>
             <button
-              className={`view-toggle-btn ${
-                activeView === "drives" ? "active" : ""
-              }`}
+              className={`view-toggle-btn ${activeView === "drives" ? "active" : ""}`}
               onClick={() => setActiveView("drives")}
             >
               Drives
             </button>
             <button
-              className={`view-toggle-btn ${
-                activeView === "improvements" ? "active" : ""
-              }`}
+              className={`view-toggle-btn ${activeView === "improvements" ? "active" : ""}`}
               onClick={() => setActiveView("improvements")}
             >
               Improvements
@@ -49,12 +36,8 @@ const PhysiologicalPanel = () => {
           <div className="view-toggle-container" />
         )}
 
-        {/* Conditional content view based on active toggle. */}
-        {activeView === "drives" ? (
-          <PhysiologicalNeeds />
-        ) : (
-          <PhysiologicalUpgrades />
-        )}
+        {/* The content view is conditional on the active toggle button. */}
+        {activeView === "drives" ? <PhysiologicalNeeds /> : <PhysiologicalUpgrades />}
       </div>
     </>
   );
