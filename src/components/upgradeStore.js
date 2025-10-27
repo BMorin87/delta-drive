@@ -5,11 +5,11 @@ import { useGameStore } from "./gameStore";
 export const INITIAL_UPGRADE_STATE = {
   upgrades: {
     baseVolitionRate: { level: 0, baseCost: 25, type: "intro" },
-    volitionRate: { level: 0, baseCost: 400, type: "rate" },
+    volitionRate: { level: 0, baseCost: 500, type: "rate" },
     volitionCapacity: { level: 0, baseCost: 50, type: "capacity" },
     hedonicReward: {
       level: 0,
-      baseCost: 400,
+      baseCost: 450,
       type: "rate",
     },
     basicNeeds: {
@@ -65,8 +65,7 @@ export const useUpgradeStore = create(
       getUpgradeLevel: (upgradeId) => get().upgrades[upgradeId]?.level ?? 0,
 
       canAffordUpgrade: (upgradeId) => {
-        const isAffordable =
-          useGameStore.getState().volition >= get().getUpgradeCost(upgradeId);
+        const isAffordable = useGameStore.getState().volition >= get().getUpgradeCost(upgradeId);
         return isAffordable;
       },
 
@@ -90,11 +89,7 @@ export const useUpgradeStore = create(
       // Used by the statusStore to apply reward multipliers from temporary statuses.
       getRewardMultiplier: (statusType) => {
         let multiplier = 1.0;
-        if (
-          statusType === "drink" ||
-          statusType === "eat" ||
-          statusType === "rest"
-        ) {
+        if (statusType === "drink" || statusType === "eat" || statusType === "rest") {
           multiplier = get().getUpgradeEffectAtLevel("hedonicReward");
         }
         return multiplier;
@@ -136,10 +131,7 @@ export const useUpgradeStore = create(
 
           case "capacity": {
             const newLevel = upgradeStore.getUpgradeLevel(upgradeId);
-            const bonus = upgradeStore.getUpgradeEffectAtLevel(
-              upgradeId,
-              newLevel
-            );
+            const bonus = upgradeStore.getUpgradeEffectAtLevel(upgradeId, newLevel);
 
             useGameStore.setState((prev) => ({
               ...prev,

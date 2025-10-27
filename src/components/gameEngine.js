@@ -19,22 +19,25 @@ class GameEngine {
 
     const oldState = this.store.getState();
     const updates = {};
+    let freshestState = { ...oldState };
 
-    // Run all registered systems.
+    // Run all registered update functions.
     this.systems.forEach((updateFunction, name) => {
       try {
-        // Use latest game state, including any updates from the current tick.
-        const newStateUpdate = updateFunction({ ...oldState, ...updates });
+        // Update functions return objects with key-value pairs that will get assigned to the gameStore's canonical state.
+        const newStateUpdate = updateFunction(freshestState);
         if (newStateUpdate && typeof newStateUpdate === "object") {
+          // Keep track of the updates performed this tick.
           Object.assign(updates, newStateUpdate);
+          Object.assign(freshestState, newStateUpdate);
         }
       } catch (error) {
         console.error(`Error in system ${name}:`, error);
       }
     });
 
+    // Calculate resource rates, then apply this tick's updates to the gameStore.
     if (Object.keys(updates).length > 0) {
-      // Calculate resource rates and then update the state.
       const newState = { ...oldState, ...updates };
       const rateUpdates = oldState._updateResourceRates(oldState, newState);
 

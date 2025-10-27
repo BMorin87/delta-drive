@@ -16,14 +16,14 @@ const DiscoveryPanel = ({ introClass = "" }) => {
 
   return (
     <div className={`discovery-panel ${introClass}`}>
-      <h2 className="discovery-title">Upgrades</h2>
+      <h2 className="discovery-title">Discovery</h2>
 
       <div className="discovery-grid">
         {isBelowLevelFive && (
           <UpgradeItem
             upgradeId="baseVolitionRate"
-            title="Determination"
-            description="Grit your teeth and try harder."
+            title="Motivation"
+            description="Increase your base&nbsp;👑Volition generation rate."
           />
         )}
 
@@ -47,7 +47,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
           <UpgradeItem
             upgradeId="basicActions"
             title="Agency"
-            description="Form a plan to satisfy your needs"
+            description="Form a plan to satisfy your needs."
           />
         )}
 
@@ -56,7 +56,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
           <UpgradeItem
             upgradeId="pyramidNav"
             title="Hierarchy Navigation"
-            description="Operate on multiple levels."
+            description="Rise to meet new challenges."
           />
         )}
 
@@ -65,7 +65,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
           <UpgradeItem
             upgradeId="foraging"
             title="Foraging"
-            description="Explore your environment to find resources."
+            description="Explore your environment to find materials."
           />
         )}
 

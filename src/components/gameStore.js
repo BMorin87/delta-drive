@@ -21,7 +21,7 @@ export const INITIAL_GAME_STATE = {
   food: 5,
   fibers: 5,
 
-  // TODO: Remove "magic numbers" by referencing TICKS_PER_SECOND. Possibly outside the store itself?
+  // TODO: Remove "magic numbers" by referencing TICKS_PER_SECOND in all rate definitions. Possibly outside the store itself?
   baseVolitionRate: INITIAL_BASE_VOLITION_RATE,
   baseThirstRate: 1 / 12,
   baseHungerRate: 0.5 / 12,

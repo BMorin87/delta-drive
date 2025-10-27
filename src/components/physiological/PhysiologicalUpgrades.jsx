@@ -14,22 +14,22 @@ const PhysiologicalUpgradesPanel = () => {
         {!isBelowLevelFive && (
           <UpgradeItem
             upgradeId="volitionRate"
-            title="True Grit"
-            description="Increases 👑 volition generation rate ever further."
+            title="Determination"
+            description="Increases 👑 Volition generation rate ever further."
           />
         )}
 
         <UpgradeItem
           upgradeId="volitionCapacity"
-          title="Reserves"
-          description="Increases 👑 volition capacity"
+          title="Resilience"
+          description="Increases 👑 Volition capacity."
         />
 
         {isAgencyUnlocked && (
           <UpgradeItem
             upgradeId="hedonicReward"
             title="Hedonism"
-            description="Increases 👑 volition rewarded from satisfying drives."
+            description="Increases 👑 Volition rewarded from satisfying physiological drives."
           />
         )}
       </div>

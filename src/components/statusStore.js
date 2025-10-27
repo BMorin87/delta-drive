@@ -27,7 +27,7 @@ export const useStatusStore = create(
         if (!config) return false;
         if (myState.cooldowns[statusType] > 0) return false;
 
-        // TODO: Make dependency on gameStore more explicit and move calculateVolitionCost to gameStore.
+        // TODO: Import useGameStore directly, don't get it indirectly through the engine, and move calculateVolitionCost to gameStore.
         const gameStore = gameEngine.store;
         const cost = myState.calculateVolitionCost(statusType);
         if (!gameStore.getState().spendVolition(cost)) return false;
@@ -37,7 +37,7 @@ export const useStatusStore = create(
           myState.cancelStatus(statusType);
         }
 
-        // Initialize the now-active status.
+        // Start tracking the status locally.
         set((prev) => ({
           activeStatuses: {
             ...prev.activeStatuses,
@@ -49,6 +49,7 @@ export const useStatusStore = create(
           },
         }));
 
+        // Register the status so it'll update tick.
         gameEngine.registerSystem(`Status_${statusType}`, myState.createStatusUpdate(statusType));
 
         // Register the cooldown system if it's not already there.
@@ -64,6 +65,7 @@ export const useStatusStore = create(
         gameEngine.unregisterSystem(`Status_${statusType}`);
         const config = get().statusConfigs[statusType];
         set((prev) => ({
+          // Stop tracking the status locally.
           activeStatuses: { ...prev.activeStatuses, [statusType]: undefined },
           cooldowns: {
             ...prev.cooldowns,

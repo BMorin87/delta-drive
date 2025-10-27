@@ -38,11 +38,9 @@ const DeltaGame = () => {
         setShowDebugPanel((prev) => !prev);
       }
     };
-    window.addEventListener("keydown", handleKeyPress);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
   // Animate the DiscoveryPanel's first load.
@@ -64,19 +62,19 @@ function useRegisterGameSystem(statName, baseRateName, capacityName, upgradeRate
     const update = createUpdateFunction(statName, baseRateName, capacityName, upgradeRateName);
     gameEngine.registerSystem(statName, update);
     return () => gameEngine.unregisterSystem(statName);
-    // These are strings but the linter requires the dependency array.
+    // These are hardcoded strings but the linter requires the dependency array.
   }, [statName, baseRateName, capacityName, upgradeRateName]);
 }
 
-// The function called for each system (volition, thirst, etc.) when the gameEngine ticks.
+// This is the function called for each system (volition, thirst, etc.) when the gameEngine ticks.
 function createUpdateFunction(statName, baseRateName, capacityName, upgradeRateName) {
   return (state) => {
     if (state[statName] == null) return {};
 
     const baseRate = useGameStore.getState()[baseRateName];
     const upgradeEffect = useUpgradeStore.getState().getUpgradeEffectAtLevel(upgradeRateName);
-
     const totalGrowth = baseRate * upgradeEffect;
+
     const cappedValue = Math.min(state[capacityName], state[statName] + totalGrowth);
     return { [statName]: cappedValue };
   };
