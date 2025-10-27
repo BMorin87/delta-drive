@@ -74,6 +74,8 @@ export const useGameStore = create(
       // Called in App.jsx with useEffect and setInterval.
       tick: () => gameEngine.tick(),
 
+      togglePause: () => set((state) => ({ isRunning: !state.isRunning })),
+
       markFirstLoadComplete: () => set({ isFirstLoad: false }),
 
       spendVolition: (amount) => {
@@ -85,7 +87,17 @@ export const useGameStore = create(
         return false;
       },
 
-      togglePause: () => set((state) => ({ isRunning: !state.isRunning })),
+      awardMaterials: (resources) => {
+        set((state) => {
+          // Destructure the keys with zero as the default value.
+          const { water = 0, food = 0, fibers = 0 } = resources;
+          return {
+            water: state.water + water,
+            food: state.food + food,
+            fibers: state.fibers + fibers,
+          };
+        });
+      },
 
       // Internal function used by the gameEngine to update resource rates used by UI components.
       _updateResourceRates: (oldState, newState) => {
