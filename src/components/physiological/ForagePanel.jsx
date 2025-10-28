@@ -3,12 +3,24 @@ import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
 import "../../styles/physiological/ForagePanel.css";
 
+const PAIR_COUNT = 3;
+const EXTRA_CARD_COUNT = 1;
+
 const RESOURCE_TYPES = {
   WATER: { emoji: "💧", name: "water" },
   FOOD: { emoji: "🍎", name: "food" },
   FIBERS: { emoji: "🌿", name: "fibers" },
   NOTHING: { emoji: "🤷", name: "nothing" },
 };
+
+const RESOURCE_CONFIG = [
+  { type: RESOURCE_TYPES.WATER, pairs: PAIR_COUNT },
+  { type: RESOURCE_TYPES.FOOD, pairs: PAIR_COUNT },
+  { type: RESOURCE_TYPES.FIBERS, pairs: PAIR_COUNT },
+  { type: RESOURCE_TYPES.NOTHING, pairs: PAIR_COUNT },
+];
+
+const INITIAL_RESOURCES_STATE = { water: 0, food: 0, fibers: 0 };
 
 const ForagePanel = ({ isOpen, onClose }) => {
   const awardMaterials = useGameStore((state) => state.awardMaterials);
@@ -26,38 +38,39 @@ const ForagePanel = ({ isOpen, onClose }) => {
     fibers: 0,
   });
 
-  const forageCost = calculateVolitionCost("forage");
+  // The game's done when all but one cards are matched.
+  const gameComplete = matchedCards.size === cards.length - 1;
+  useEffect(() => {
+    if (gameComplete && gameStarted) {
+      setTimeout(() => {
+        finishForaging();
+      }, 1500);
+    }
+  }, [gameComplete, gameStarted, finishForaging]);
 
-  // Initialize the game board
+  const finishForaging = useCallback(() => {
+    awardMaterials(foundResources);
+    setGameStarted(false);
+    onClose();
+  }, [foundResources, awardMaterials, onClose]);
+
+  if (!isOpen) return null;
+
   const initializeGame = () => {
-    const resourcePool = [];
+    // Add pairs of resources to the pool based on the config.
+    const resourcePool = RESOURCE_CONFIG.reduce((pool, config) => {
+      for (let i = 0; i < config.pairs; i++) {
+        pool.push(config.type, config.type);
+      }
+      return pool;
+    }, []);
 
-    // Create pairs of resources (3 pairs each)
-    const waterPairs = 3;
-    const foodPairs = 3;
-    const fibersPairs = 3;
-    const nothingPairs = 3; // 3 pairs of nothing (bad luck!)
-
-    for (let i = 0; i < waterPairs; i++) {
-      resourcePool.push(RESOURCE_TYPES.WATER, RESOURCE_TYPES.WATER);
-    }
-    for (let i = 0; i < foodPairs; i++) {
-      resourcePool.push(RESOURCE_TYPES.FOOD, RESOURCE_TYPES.FOOD);
-    }
-    for (let i = 0; i < fibersPairs; i++) {
-      resourcePool.push(RESOURCE_TYPES.FIBERS, RESOURCE_TYPES.FIBERS);
-    }
-    for (let i = 0; i < nothingPairs; i++) {
-      resourcePool.push(RESOURCE_TYPES.NOTHING, RESOURCE_TYPES.NOTHING);
+    // Add an extra card to make resourcePool.count a pleasant 25 for the 5x5 display.
+    for (let i = 0; i < EXTRA_CARD_COUNT; i++) {
+      resourcePool.push(RESOURCE_TYPES.NOTHING);
     }
 
-    // Add one extra card to fill the 5x5 grid
-    resourcePool.push(RESOURCE_TYPES.NOTHING);
-
-    // Shuffle the cards
     const shuffled = resourcePool.sort(() => Math.random() - 0.5);
-
-    // Create card objects with unique IDs
     const gameCards = shuffled.map((resource, index) => ({
       id: index,
       resource: resource,
@@ -65,10 +78,11 @@ const ForagePanel = ({ isOpen, onClose }) => {
       isMatched: false,
     }));
 
+    // Initialize the board state.
     setCards(gameCards);
     setFlippedCards([]);
     setMatchedCards(new Set());
-    setFoundResources({ water: 0, food: 0, fibers: 0 });
+    setFoundResources(INITIAL_RESOURCES_STATE);
   };
 
   const handleStartForage = () => {
@@ -79,13 +93,6 @@ const ForagePanel = ({ isOpen, onClose }) => {
       console.log("Foraging could not start: Not enough volition or other requirement failed.");
     }
   };
-
-  // Wrap the function in useCallback to avoid re-creation on each render.
-  const finishForaging = useCallback(() => {
-    awardMaterials(foundResources);
-    setGameStarted(false);
-    onClose();
-  }, [foundResources, awardMaterials, onClose]);
 
   const handleCardClick = (cardId) => {
     // Prevent clicking if already checking, card is matched, or card is already flipped
@@ -117,11 +124,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
           // Award resources
           const resourceType = firstCard.resource.name;
           if (resourceType !== "nothing") {
-            // Update the running tally of resources found.
-            setFoundResources((prev) => ({
-              ...prev,
-              [resourceType]: prev[resourceType] + 1,
-            }));
+            setFoundResources((prev) => ({ ...prev, [resourceType]: prev[resourceType] + 1 }));
           }
 
           setFlippedCards([]);
@@ -137,27 +140,17 @@ const ForagePanel = ({ isOpen, onClose }) => {
     }
   };
 
-  const isCardFlipped = (cardId) => {
-    return flippedCards.includes(cardId) || matchedCards.has(cardId);
-  };
-
-  const gameComplete = matchedCards.size === cards.length - 1; // -1 because one card has no pair
-
-  useEffect(() => {
-    if (gameComplete && gameStarted) {
-      setTimeout(() => {
-        finishForaging();
-      }, 1500);
-    }
-  }, [gameComplete, gameStarted, finishForaging]);
-
-  if (!isOpen) return null;
-
   const handleOverlayClick = () => {
     if (!gameStarted) {
       onClose();
     }
   };
+
+  const isCardFlipped = (cardId) => {
+    return flippedCards.includes(cardId) || matchedCards.has(cardId);
+  };
+
+  const forageCost = calculateVolitionCost("forage");
 
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
@@ -194,9 +187,9 @@ const ForagePanel = ({ isOpen, onClose }) => {
           ) : (
             <>
               <div className="resource-counter">
-                <span>🍃 Food: {foundResources.food}</span>
                 <span>💧 Water: {foundResources.water}</span>
-                <span>🌿 Fibers: {foundResources.wood}</span>
+                <span>🍎 Food: {foundResources.food}</span>
+                <span>🌿 Fibers: {foundResources.fibers}</span>
               </div>
 
               <div className="memory-game-grid">
