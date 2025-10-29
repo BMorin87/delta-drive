@@ -73,10 +73,10 @@ const PhysiologicalNeeds = () => {
         const icon = MATERIAL_ICONS[costDisplay.material] || "";
         costText = `${icon}${costDisplay.materialAmount}`;
         if (costDisplay.volition > 0) {
-          costText += ` + 💪${costDisplay.volition}`;
+          costText += ` + 👑${costDisplay.volition}`;
         }
       } else if (costDisplay.volition > 0) {
-        costText = `💪${costDisplay.volition}`;
+        costText = `👑${costDisplay.volition}`;
       }
 
       return {
@@ -148,7 +148,7 @@ const PhysiologicalNeeds = () => {
       </div>
 
       <div className="tier-note">
-        <p>Satisfy physiological needs to generate more 💪&nbsp;Volition.</p>
+        <p>Satisfy physiological needs to generate more 👑&nbsp;Volition.</p>
         {hasSynergyBonus ? (
           // An optional synergy indicator.
           <p className="bonus-indicator is-active">🌟 Synergy Bonus Active! +20% efficiency</p>
