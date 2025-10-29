@@ -1,10 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
 import "../../styles/physiological/ForagePanel.css";
 
 const PAIR_COUNT = 3;
 const EXTRA_CARD_COUNT = 1;
+const MATCH_ANIMATION_DELAY = 600;
+const MISMATCH_FLIP_DELAY = 1000;
+const GAME_COMPLETE_DELAY = 1500;
 
 const RESOURCE_TYPES = {
   WATER: { emoji: "💧", name: "water" },
@@ -26,27 +29,16 @@ const ForagePanel = ({ isOpen, onClose }) => {
   const awardMaterials = useGameStore((state) => state.awardMaterials);
   const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
   const startStatus = useStatusStore((state) => state.startStatus);
+
   const [gameStarted, setGameStarted] = useState(false);
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedCards, setMatchedCards] = useState(new Set());
+  const [revealedNothingCards, setRevealedNothingCards] = useState(new Set());
   const [isChecking, setIsChecking] = useState(false);
-  // A running tally of all the materials found this foraging session.
-  const [foundResources, setFoundResources] = useState({
-    water: 0,
-    food: 0,
-    fibers: 0,
-  });
+  const [foundResources, setFoundResources] = useState(INITIAL_RESOURCES_STATE);
 
-  // The game's done when all but one cards are matched.
-  const gameComplete = matchedCards.size === cards.length - 1;
-  useEffect(() => {
-    if (gameComplete && gameStarted) {
-      setTimeout(() => {
-        finishForaging();
-      }, 1500);
-    }
-  }, [gameComplete, gameStarted, finishForaging]);
+  const completionHandledRef = useRef(false);
 
   const finishForaging = useCallback(() => {
     awardMaterials(foundResources);
@@ -54,10 +46,16 @@ const ForagePanel = ({ isOpen, onClose }) => {
     onClose();
   }, [foundResources, awardMaterials, onClose]);
 
-  if (!isOpen) return null;
+  const gameComplete = matchedCards.size + revealedNothingCards.size === cards.length;
 
-  const initializeGame = () => {
-    // Add pairs of resources to the pool based on the config.
+  useEffect(() => {
+    if (gameComplete && gameStarted && !completionHandledRef.current) {
+      completionHandledRef.current = true;
+      setTimeout(finishForaging, GAME_COMPLETE_DELAY);
+    }
+  }, [gameComplete, gameStarted, finishForaging]);
+
+  const createShuffledDeck = () => {
     const resourcePool = RESOURCE_CONFIG.reduce((pool, config) => {
       for (let i = 0; i < config.pairs; i++) {
         pool.push(config.type, config.type);
@@ -65,24 +63,25 @@ const ForagePanel = ({ isOpen, onClose }) => {
       return pool;
     }, []);
 
-    // Add an extra card to make resourcePool.count a pleasant 25 for the 5x5 display.
+    // Add extra cards to reach desired total
     for (let i = 0; i < EXTRA_CARD_COUNT; i++) {
       resourcePool.push(RESOURCE_TYPES.NOTHING);
     }
 
     const shuffled = resourcePool.sort(() => Math.random() - 0.5);
-    const gameCards = shuffled.map((resource, index) => ({
+    return shuffled.map((resource, index) => ({
       id: index,
       resource: resource,
-      isFlipped: false,
-      isMatched: false,
     }));
+  };
 
-    // Initialize the board state.
-    setCards(gameCards);
+  const initializeGame = () => {
+    setCards(createShuffledDeck());
     setFlippedCards([]);
     setMatchedCards(new Set());
+    setRevealedNothingCards(new Set());
     setFoundResources(INITIAL_RESOURCES_STATE);
+    completionHandledRef.current = false;
   };
 
   const handleStartForage = () => {
@@ -94,49 +93,84 @@ const ForagePanel = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleCardClick = (cardId) => {
-    // Prevent clicking if already checking, card is matched, or card is already flipped
-    if (isChecking || matchedCards.has(cardId) || flippedCards.includes(cardId)) {
-      return;
-    }
+  const isNothingCard = (card) => card.resource.name === "nothing";
 
-    // Flip the card
+  const handleNothingMatch = (firstCardId, secondCardId) => {
+    const newRevealedNothing = new Set(revealedNothingCards);
+    newRevealedNothing.add(firstCardId);
+    newRevealedNothing.add(secondCardId);
+    setRevealedNothingCards(newRevealedNothing);
+    setFlippedCards([]);
+    setIsChecking(false);
+  };
+
+  const handleResourceMatch = (firstCardId, secondCardId, resourceType) => {
+    setTimeout(() => {
+      const newMatchedCards = new Set(matchedCards);
+      newMatchedCards.add(firstCardId);
+      newMatchedCards.add(secondCardId);
+      setMatchedCards(newMatchedCards);
+
+      setFoundResources((prev) => ({
+        ...prev,
+        [resourceType]: prev[resourceType] + 1,
+      }));
+
+      setFlippedCards([]);
+      setIsChecking(false);
+    }, MATCH_ANIMATION_DELAY);
+  };
+
+  const handleMismatch = (firstCard, secondCard) => {
+    setTimeout(() => {
+      const newRevealedNothing = new Set(revealedNothingCards);
+
+      if (isNothingCard(firstCard)) {
+        newRevealedNothing.add(firstCard.id);
+      }
+      if (isNothingCard(secondCard)) {
+        newRevealedNothing.add(secondCard.id);
+      }
+
+      setRevealedNothingCards(newRevealedNothing);
+      setFlippedCards([]);
+      setIsChecking(false);
+    }, MISMATCH_FLIP_DELAY);
+  };
+
+  const processCardPair = (firstCard, secondCard) => {
+    const isMatch = firstCard.resource.name === secondCard.resource.name;
+
+    if (isMatch) {
+      if (isNothingCard(firstCard)) {
+        handleNothingMatch(firstCard.id, secondCard.id);
+      } else {
+        handleResourceMatch(firstCard.id, secondCard.id, firstCard.resource.name);
+      }
+    } else {
+      handleMismatch(firstCard, secondCard);
+    }
+  };
+
+  const handleCardClick = (cardId) => {
+    const isCardInteractable =
+      !isChecking &&
+      !matchedCards.has(cardId) &&
+      !revealedNothingCards.has(cardId) &&
+      !flippedCards.includes(cardId);
+
+    if (!isCardInteractable) return;
+
     const newFlippedCards = [...flippedCards, cardId];
     setFlippedCards(newFlippedCards);
 
-    // Check if we have two cards flipped
+    // Process pair when two cards are flipped
     if (newFlippedCards.length === 2) {
       setIsChecking(true);
-
       const [firstCardId, secondCardId] = newFlippedCards;
       const firstCard = cards.find((c) => c.id === firstCardId);
       const secondCard = cards.find((c) => c.id === secondCardId);
-
-      // Check for match
-      if (firstCard.resource.name === secondCard.resource.name) {
-        // Match found!
-        setTimeout(() => {
-          const newMatchedCards = new Set(matchedCards);
-          newMatchedCards.add(firstCardId);
-          newMatchedCards.add(secondCardId);
-          setMatchedCards(newMatchedCards);
-
-          // Award resources
-          const resourceType = firstCard.resource.name;
-          if (resourceType !== "nothing") {
-            setFoundResources((prev) => ({ ...prev, [resourceType]: prev[resourceType] + 1 }));
-          }
-
-          setFlippedCards([]);
-          setIsChecking(false);
-        }, 600);
-      } else {
-        // No match - flip back after delay
-        setTimeout(() => {
-          setFlippedCards([]);
-          setIsChecking(false);
-        }, 1000);
-      }
+      processCardPair(firstCard, secondCard);
     }
   };
 
@@ -147,8 +181,12 @@ const ForagePanel = ({ isOpen, onClose }) => {
   };
 
   const isCardFlipped = (cardId) => {
-    return flippedCards.includes(cardId) || matchedCards.has(cardId);
+    return (
+      flippedCards.includes(cardId) || matchedCards.has(cardId) || revealedNothingCards.has(cardId)
+    );
   };
+
+  if (!isOpen) return null;
 
   const forageCost = calculateVolitionCost("forage");
 
