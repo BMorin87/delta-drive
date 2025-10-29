@@ -6,6 +6,12 @@ import ForageButton from "./ForageButton";
 import ForagePanel from "./ForagePanel";
 import "../../styles/physiological/PhysiologicalNeeds.css";
 
+const MATERIAL_ICONS = {
+  water: "💧",
+  food: "🍎",
+  fibers: "🌿",
+};
+
 const PhysiologicalNeeds = () => {
   const thirst = useGameStore((state) => state.thirst);
   const hunger = useGameStore((state) => state.hunger);
@@ -13,13 +19,17 @@ const PhysiologicalNeeds = () => {
   const thirstCapacity = useGameStore((state) => state.thirstCapacity);
   const hungerCapacity = useGameStore((state) => state.hungerCapacity);
   const fatigueCapacity = useGameStore((state) => state.fatigueCapacity);
+  const water = useGameStore((state) => state.water);
+  const food = useGameStore((state) => state.food);
+  const fibers = useGameStore((state) => state.fibers);
   const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
   const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
   const activeStatuses = useStatusStore((state) => state.activeStatuses ?? {});
   const cooldowns = useStatusStore((state) => state.cooldowns ?? {});
   const startStatus = useStatusStore((state) => state.startStatus);
   const cancelStatus = useStatusStore((state) => state.cancelStatus);
-  const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
+  const getCostDisplay = useStatusStore((state) => state.getCostDisplay);
+  const canAfford = useStatusStore((state) => state.canAfford);
   const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
 
   // Helper functions to manage state data from the statusStore.
@@ -39,6 +49,8 @@ const PhysiologicalNeeds = () => {
     const isActive = isStatusActive(actionType);
     const duration = getStatusDuration(actionType);
     const cooldownRemaining = getCooldownRemaining(actionType);
+    const costDisplay = getCostDisplay(actionType);
+    const affordable = canAfford(actionType);
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
     // Determine an action button's text, disabled state, and styling based on status.
@@ -55,11 +67,22 @@ const PhysiologicalNeeds = () => {
         className: `action-button ${actionType}-button cooldown`,
       };
     } else {
-      const cost = calculateVolitionCost(actionType);
+      // Build cost display text
+      let costText = "";
+      if (costDisplay.material) {
+        const icon = MATERIAL_ICONS[costDisplay.material] || "";
+        costText = `${icon}${costDisplay.materialAmount}`;
+        if (costDisplay.volition > 0) {
+          costText += ` + 💪${costDisplay.volition}`;
+        }
+      } else if (costDisplay.volition > 0) {
+        costText = `💪${costDisplay.volition}`;
+      }
+
       return {
-        text: `${capitalize(actionType)} (${cost} 👑)`,
-        disabled: false,
-        className: `action-button ${actionType}-button`,
+        text: `${capitalize(actionType)} (${costText})`,
+        disabled: !affordable,
+        className: `action-button ${actionType}-button${!affordable ? " insufficient" : ""}`,
       };
     }
   };
@@ -125,7 +148,7 @@ const PhysiologicalNeeds = () => {
       </div>
 
       <div className="tier-note">
-        <p>Satisfy physiological needs to generate more 👑&nbsp;Volition.</p>
+        <p>Satisfy physiological needs to generate more 💪&nbsp;Volition.</p>
         {hasSynergyBonus ? (
           // An optional synergy indicator.
           <p className="bonus-indicator is-active">🌟 Synergy Bonus Active! +20% efficiency</p>
@@ -133,6 +156,14 @@ const PhysiologicalNeeds = () => {
           <p className="bonus-indicator" />
         )}
       </div>
+
+      {isAgencyUnlocked && (
+        <div className="materials-display">
+          <span>💧 Water: {water}</span>
+          <span>🍎 Food: {food}</span>
+          <span>🌿 Fibers: {fibers}</span>
+        </div>
+      )}
 
       {isForageUnlocked ? (
         // An optional forage button.

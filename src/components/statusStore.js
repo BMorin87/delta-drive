@@ -27,10 +27,32 @@ export const useStatusStore = create(
         if (!config) return false;
         if (myState.cooldowns[statusType] > 0) return false;
 
-        // TODO: Import useGameStore directly, don't get it indirectly through the engine, and move calculateVolitionCost to gameStore.
         const gameStore = gameEngine.store;
-        const cost = myState.calculateVolitionCost(statusType);
-        if (!gameStore.getState().spendVolition(cost)) return false;
+        const gameState = gameStore.getState();
+
+        // Check and spend material cost if applicable
+        if (config.cost.material) {
+          const materialAmount = gameState[config.cost.material] || 0;
+          if (materialAmount < config.cost.amount) {
+            console.log(`Not enough ${config.cost.material} to ${statusType}`);
+            return false;
+          }
+        }
+
+        // Check and spend volition cost if applicable
+        if (config.cost.volition) {
+          if (!gameStore.getState().spendVolition(config.cost.volition)) {
+            console.log(`Not enough volition to ${statusType}`);
+            return false;
+          }
+        }
+
+        // Spend the material cost
+        if (config.cost.material) {
+          gameStore.setState((state) => ({
+            [config.cost.material]: state[config.cost.material] - config.cost.amount,
+          }));
+        }
 
         // If the status is already active, reset it.
         if (myState.activeStatuses[statusType]) {
@@ -74,22 +96,67 @@ export const useStatusStore = create(
         }));
       },
 
-      // This accesses game state through the gameEngine and should be moved to gameStore.
+      // Get the display cost for UI - returns both material and volition costs
+      getCostDisplay: (statusType) => {
+        const config = get().statusConfigs[statusType];
+        if (!config) {
+          console.error(`Status config for "${statusType}" is undefined.`);
+          return { material: null, volition: 0 };
+        }
+
+        return {
+          material: config.cost.material || null,
+          materialAmount: config.cost.amount || 0,
+          volition: config.cost.volition || 0,
+        };
+      },
+
+      // Check if player can afford the action
+      canAfford: (statusType) => {
+        const config = get().statusConfigs[statusType];
+        if (!config) return false;
+
+        const gameState = gameEngine.store.getState();
+
+        // Check material cost
+        if (config.cost.material) {
+          const materialAmount = gameState[config.cost.material] || 0;
+          if (materialAmount < config.cost.amount) return false;
+        }
+
+        // Check volition cost
+        if (config.cost.volition) {
+          if (gameState.volition < config.cost.volition) return false;
+        }
+
+        return true;
+      },
+
+      // Legacy function - kept for backward compatibility with forage
       calculateVolitionCost: (statusType) => {
         const config = get().statusConfigs[statusType];
         if (!config) {
           console.error(`Status config for "${statusType}" is undefined.`);
           return 0;
         }
-        const { cost } = config;
-        const gameState = gameEngine.store.getState();
 
-        const needLevel = gameState[cost.need];
-        const maxNeed = gameState[cost.capacity];
-        const needRatio = needLevel / maxNeed;
+        // For actions with volition costs, return the flat cost
+        if (config.cost.volition) {
+          return config.cost.volition;
+        }
 
-        const costMultiplier = 1.0 - needRatio * 0.8;
-        return Math.max(1, Math.floor(cost.base * costMultiplier));
+        // Legacy behavior for old cost structure (shouldn't be used anymore)
+        if (config.cost.base) {
+          const { cost } = config;
+          const gameState = gameEngine.store.getState();
+          const needLevel = gameState[cost.need];
+          const maxNeed = gameState[cost.capacity];
+          const needRatio = needLevel / maxNeed;
+          const costMultiplier = 1.0 - needRatio * 0.8;
+          return Math.max(1, Math.floor(cost.base * costMultiplier));
+        }
+
+        return 0;
       },
 
       // System registration. This is the function that runs every tick for the active status!

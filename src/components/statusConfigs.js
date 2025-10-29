@@ -2,7 +2,12 @@ export const STATUS_CONFIGS = {
   drink: {
     duration: 4, // seconds
     cooldown: 10,
-    cost: { base: 10, need: "thirst", capacity: "thirstCapacity" },
+    cost: {
+      material: "water",
+      amount: 1,
+      // Optional volition cost - set to 0 or remove if you don't want it
+      volition: 0,
+    },
     effects: [
       {
         targetStat: "thirst",
@@ -22,7 +27,11 @@ export const STATUS_CONFIGS = {
   eat: {
     duration: 10,
     cooldown: 20,
-    cost: { base: 10, need: "hunger", capacity: "hungerCapacity" },
+    cost: {
+      material: "food",
+      amount: 1,
+      volition: 0,
+    },
     effects: [
       {
         targetStat: "hunger",
@@ -42,7 +51,11 @@ export const STATUS_CONFIGS = {
   rest: {
     duration: 35,
     cooldown: 55,
-    cost: { base: 10, need: "fatigue", capacity: "fatigueCapacity" },
+    cost: {
+      material: "fibers",
+      amount: 1,
+      volition: 0,
+    },
     effects: [
       {
         targetStat: "fatigue",
@@ -61,13 +74,14 @@ export const STATUS_CONFIGS = {
   forage: {
     duration: 12,
     cooldown: 30,
-    cost: { base: 15, need: "volition", capacity: "volitionCapacity" },
+    cost: {
+      volition: 15,
+    },
     effects: [
       {
         targetStat: "volition",
         rateID: "baseVolitionRate",
         statDrainMultiplier: 0.5,
-        // No direct rewards. Items can be found while foraging.
         rewards: [],
       },
     ],
