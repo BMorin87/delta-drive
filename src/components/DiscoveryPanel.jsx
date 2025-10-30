@@ -4,16 +4,18 @@ import UpgradeItem from "./UpgradeItem";
 import "../styles/DiscoveryPanel.css";
 
 const DiscoveryPanel = ({ introClass = "" }) => {
+  const water = useGameStore((state) => state.water);
+  const food = useGameStore((state) => state.food);
+  const fibers = useGameStore((state) => state.fibers);
   const isAwarenessUnlocked = useGameStore((state) => state.isAwarenessUnlocked);
   const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
   const isUpgradePanelUnlocked = useGameStore((state) => state.isUpgradePanelUnlocked);
   const isNavigationUnlocked = useGameStore((state) => state.isNavigationUnlocked);
   const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
-  // Subscribe to the intro upgrade's level.
+  const hasLowResources = water === 0 || food === 0 || fibers === 0;
   const introUpgradeLevel = useUpgradeStore((state) => state.getUpgradeLevel("baseVolitionRate"));
   const isAtLeastLevelTwo = introUpgradeLevel >= 2;
   const isBelowLevelFive = introUpgradeLevel < 5;
-
   return (
     <div className={`discovery-panel ${introClass}`}>
       <h2 className="discovery-title">Discovery</h2>
@@ -60,7 +62,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
           />
         )}
 
-        {!isForageUnlocked && (
+        {!isForageUnlocked && hasLowResources && (
           // TODO: Show for the first time when materials run low.
           <UpgradeItem
             upgradeId="foraging"
