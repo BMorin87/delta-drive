@@ -19,9 +19,6 @@ const PhysiologicalNeeds = () => {
   const thirstCapacity = useGameStore((state) => state.thirstCapacity);
   const hungerCapacity = useGameStore((state) => state.hungerCapacity);
   const fatigueCapacity = useGameStore((state) => state.fatigueCapacity);
-  const water = useGameStore((state) => state.water);
-  const food = useGameStore((state) => state.food);
-  const fibers = useGameStore((state) => state.fibers);
   const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
   const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
   const activeStatuses = useStatusStore((state) => state.activeStatuses ?? {});
@@ -156,14 +153,6 @@ const PhysiologicalNeeds = () => {
           <p className="bonus-indicator" />
         )}
       </div>
-
-      {isAgencyUnlocked && (
-        <div className="materials-display">
-          <span>💧 Water: {water}</span>
-          <span>🍎 Food: {food}</span>
-          <span>🌿 Fibers: {fibers}</span>
-        </div>
-      )}
 
       {isForageUnlocked ? (
         // An optional forage button.
