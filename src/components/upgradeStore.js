@@ -2,47 +2,75 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useGameStore } from "./gameStore";
 
+// Helper function to scale costs based on upgrade level.
+const computeScaledCost = (upgrade) => {
+  if (!upgrade?.costs) return {};
+
+  const multiplier = Math.pow(2, upgrade.level);
+  const scaledCosts = {};
+
+  for (const [resource, baseCost] of Object.entries(upgrade.costs)) {
+    scaledCosts[resource] = Math.floor(baseCost * multiplier);
+  }
+
+  return scaledCosts;
+};
+
 export const INITIAL_UPGRADE_STATE = {
   upgrades: {
-    baseVolitionRate: { level: 0, baseCost: 25, type: "intro" },
-    volitionRate: { level: 0, baseCost: 500, type: "rate" },
-    volitionCapacity: { level: 0, baseCost: 50, type: "capacity" },
+    baseVolitionRate: {
+      level: 0,
+      type: "intro",
+      costs: { volition: 25 },
+    },
+    volitionRate: {
+      level: 0,
+      type: "rate",
+      costs: { volition: 500 },
+    },
+    volitionCapacity: {
+      level: 0,
+      type: "capacity",
+      costs: { volition: 50 },
+    },
     hedonicReward: {
       level: 0,
-      baseCost: 450,
       type: "rate",
+      costs: { water: 2, food: 2, fibers: 2 },
     },
     basicNeeds: {
       level: 0,
-      baseCost: 100,
       type: "unlock",
       unlocks: "awareness",
+      costs: { volition: 100 },
     },
     basicActions: {
       level: 0,
-      baseCost: 250,
       type: "unlock",
       unlocks: "agency",
+      costs: { volition: 250 },
     },
     upgradePanel: {
       level: 0,
-      baseCost: 100,
       type: "unlock",
       unlocks: "upgradePanel",
+      costs: { volition: 100 },
     },
     pyramidNav: {
       level: 0,
-      baseCost: 3,
       type: "unlock",
       unlocks: "navigation",
+      costs: { volition: 3 },
     },
     foraging: {
       level: 0,
-      baseCost: 4,
       type: "unlock",
       unlocks: "forage",
+      costs: { volition: 600 },
     },
   },
+  // Provides stable objects for current upgrade costs. Stable objects prevent render loops on cost displays.
+  _costCache: {},
 };
 
 export const useUpgradeStore = create(
@@ -50,59 +78,87 @@ export const useUpgradeStore = create(
     (set, get) => ({
       ...INITIAL_UPGRADE_STATE,
 
-      // Actions
       resetUpgrades: () => {
         useUpgradeStore.persist.clearStorage();
         set(INITIAL_UPGRADE_STATE, true);
       },
 
       getUpgradeCost: (upgradeId) => {
+        // Return cached cost if available (provides stable reference).
+        const cached = get()._costCache[upgradeId];
+        if (cached) return cached;
+
+        // Compute and cache the cost.
         const upgrade = get().upgrades[upgradeId];
-        if (!upgrade) return 0;
-        return Math.floor(upgrade.baseCost * Math.pow(2, upgrade.level));
+        const cost = computeScaledCost(upgrade);
+
+        set((state) => ({
+          _costCache: {
+            ...state._costCache,
+            [upgradeId]: cost,
+          },
+        }));
+
+        return cost;
       },
 
-      getUpgradeLevel: (upgradeId) => get().upgrades[upgradeId]?.level ?? 0,
+      getUpgradeLevel: (upgradeId) => {
+        return get().upgrades[upgradeId]?.level ?? 0;
+      },
 
       canAffordUpgrade: (upgradeId) => {
-        const isAffordable = useGameStore.getState().volition >= get().getUpgradeCost(upgradeId);
-        return isAffordable;
+        const cost = get().getUpgradeCost(upgradeId);
+        const gameState = useGameStore.getState();
+
+        // Check player has enough of every required resource
+        for (const [resource, amount] of Object.entries(cost)) {
+          if ((gameState[resource] ?? 0) < amount) {
+            return false;
+          }
+        }
+
+        return true;
       },
 
-      // The requestedLevel parameter is optional, so that the function can be easily used to preview the next level's effect.
       getUpgradeEffectAtLevel: (upgradeId, requestedLevel) => {
-        // By default, use the upgrade's current level. Fallback to zero if the upgrade doesn't exist.
-        const level = requestedLevel ?? get().upgrades[upgradeId]?.level ?? 0;
-        // The upgrade effects are hardcoded here. Fragile!
+        const level = requestedLevel ?? get().getUpgradeLevel(upgradeId);
+
         switch (upgradeId) {
           case "volitionRate":
-            return 1.1 ** level; // A multiplier of 1 at level zero, 0.1 increase per level.
+            return 1.1 ** level;
           case "hedonicReward":
             return 1.1 ** level;
           case "volitionCapacity":
-            return level * 110; // A stacking +110 reward per level.
+            return level * 110;
           default:
             return 1;
         }
       },
 
-      // Used by the statusStore to apply reward multipliers from temporary statuses.
       getRewardMultiplier: (statusType) => {
-        let multiplier = 1.0;
         if (statusType === "drink" || statusType === "eat" || statusType === "rest") {
-          multiplier = get().getUpgradeEffectAtLevel("hedonicReward");
+          return get().getUpgradeEffectAtLevel("hedonicReward");
         }
-        return multiplier;
+        return 1.0;
       },
 
       purchaseUpgrade: (upgradeId) => {
-        const upgradeStore = get();
-        const cost = upgradeStore.getUpgradeCost(upgradeId);
+        const cost = get().getUpgradeCost(upgradeId);
 
-        if (!upgradeStore.canAffordUpgrade(upgradeId)) return false;
-        useGameStore.getState().spendVolition(cost);
+        if (!get().canAffordUpgrade(upgradeId)) {
+          return false;
+        }
 
-        // Increment the upgrade level.
+        // TODO: Don't set game state directly, do it through a gameStore function.
+        useGameStore.setState((prev) => {
+          const updates = {};
+          for (const [resource, amount] of Object.entries(cost)) {
+            updates[resource] = (prev[resource] ?? 0) - amount;
+          }
+          return updates;
+        });
+
+        // Increment the upgrade's level.
         set((prev) => ({
           upgrades: {
             ...prev.upgrades,
@@ -113,16 +169,32 @@ export const useUpgradeStore = create(
           },
         }));
 
+        // Update the cost cache with the new level.
+        const upgrade = get().upgrades[upgradeId];
+        const newCost = computeScaledCost(upgrade);
+        set((state) => ({
+          _costCache: {
+            ...state._costCache,
+            [upgradeId]: newCost,
+          },
+        }));
+
         // Handle special upgrade types
+        get()._applySpecialEffects(upgradeId);
+
+        return true;
+      },
+
+      // Internal helper to apply upgrade effects based on type.
+      _applySpecialEffects: (upgradeId) => {
         const upgrade = get().upgrades[upgradeId];
 
-        // "Rate" upgrades don't need special handling; their effect is calculated generically in the appropriate updateFunction.
         switch (upgrade.type) {
           case "intro": {
             if (upgradeId === "baseVolitionRate") {
               const fps = useGameStore.getState().TICKS_PER_SECOND;
               useGameStore.setState((prev) => ({
-                ...prev,
+                // Increase the per-second rate by 2.
                 baseVolitionRate: prev.baseVolitionRate + 2 / fps,
               }));
             }
@@ -130,42 +202,41 @@ export const useUpgradeStore = create(
           }
 
           case "capacity": {
-            const newLevel = upgradeStore.getUpgradeLevel(upgradeId);
-            const bonus = upgradeStore.getUpgradeEffectAtLevel(upgradeId, newLevel);
+            const level = get().getUpgradeLevel(upgradeId);
+            const bonus = get().getUpgradeEffectAtLevel(upgradeId, level);
 
             useGameStore.setState((prev) => ({
-              ...prev,
               [upgradeId]: (prev[upgradeId] ?? 100) + bonus,
             }));
             break;
           }
 
           case "unlock": {
-            if (upgrade.unlocks === "awareness") {
-              useGameStore.setState({ isAwarenessUnlocked: true });
-            } else if (upgrade.unlocks === "agency") {
-              useGameStore.setState({ isAgencyUnlocked: true });
-            } else if (upgrade.unlocks === "upgradePanel") {
-              useGameStore.setState({ isUpgradePanelUnlocked: true });
-            } else if (upgrade.unlocks === "navigation") {
-              useGameStore.setState({ isNavigationUnlocked: true });
-            } else if (upgrade.unlocks === "forage") {
-              useGameStore.setState({ isForageUnlocked: true });
+            // The possible UI "unlocks" so far.
+            const unlockMap = {
+              awareness: "isAwarenessUnlocked",
+              agency: "isAgencyUnlocked",
+              upgradePanel: "isUpgradePanelUnlocked",
+              navigation: "isNavigationUnlocked",
+              forage: "isForageUnlocked",
+            };
+
+            const stateKey = unlockMap[upgrade.unlocks];
+            if (stateKey) {
+              useGameStore.setState({ [stateKey]: true });
             }
             break;
           }
         }
-
-        return true;
       },
     }),
     {
       name: "upgrade-storage",
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
-
       partialize: (state) => ({
         upgrades: state.upgrades,
+        // Cost cache is intentionally not persisted - rebuilt on load
       }),
     }
   )

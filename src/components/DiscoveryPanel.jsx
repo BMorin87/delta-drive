@@ -12,7 +12,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
   const isUpgradePanelUnlocked = useGameStore((state) => state.isUpgradePanelUnlocked);
   const isNavigationUnlocked = useGameStore((state) => state.isNavigationUnlocked);
   const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
-  const hasLowResources = water === 0 || food === 0 || fibers === 0;
+  const hasLowResources = water <= 1 || food <= 1 || fibers <= 1;
   const introUpgradeLevel = useUpgradeStore((state) => state.getUpgradeLevel("baseVolitionRate"));
   const isAtLeastLevelTwo = introUpgradeLevel >= 2;
   const isBelowLevelFive = introUpgradeLevel < 5;
@@ -63,7 +63,6 @@ const DiscoveryPanel = ({ introClass = "" }) => {
         )}
 
         {!isForageUnlocked && hasLowResources && (
-          // TODO: Show for the first time when materials run low.
           <UpgradeItem
             upgradeId="foraging"
             title="Foraging"
