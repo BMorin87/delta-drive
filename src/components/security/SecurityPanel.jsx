@@ -1,157 +1,248 @@
-import { useState } from "react";
+import { useThreatStore } from "../threatStore";
 import { useGameStore } from "../gameStore";
+import "../../styles/security/SecurityPanel.css";
 
 const SecurityPanel = () => {
-  const [activeView, setActiveView] = useState("progress");
+  const activeThreats = useThreatStore((state) => state.activeThreats);
+  const shelters = useThreatStore((state) => state.shelters);
+  const threatConfigs = useThreatStore((state) => state.threatConfigs);
+  const shelterConfigs = useThreatStore((state) => state.shelterConfigs);
+  const craftShelter = useThreatStore((state) => state.craftShelter);
+  const repairShelter = useThreatStore((state) => state.repairShelter);
+  const canAffordShelter = useThreatStore((state) => state.canAffordShelter);
+  const canAffordRepair = useThreatStore((state) => state.canAffordRepair);
+  const calculateProtection = useThreatStore((state) => state.calculateProtection);
+  const getActiveThreatInfo = useThreatStore((state) => state.getActiveThreatInfo);
 
   const volition = useGameStore((state) => state.volition);
-  const spendVolition = useGameStore((state) => state.spendVolition);
+  const water = useGameStore((state) => state.water);
+  const food = useGameStore((state) => state.food);
+  const fibers = useGameStore((state) => state.fibers);
 
-  // Placeholder security-related stats - add these to the gameStore if desired.
-  const [shelter, setShelter] = useState(50);
-  const [income, setIncome] = useState(25);
-  const [health, setHealth] = useState(75);
+  const handleCraft = (shelterType) => {
+    craftShelter(shelterType);
+  };
 
-  const shelterCapacity = 100;
-  const incomeCapacity = 100;
-  const healthCapacity = 100;
+  const handleRepair = (shelterType) => {
+    repairShelter(shelterType);
+  };
 
-  const handleImproveAction = (type) => {
-    const cost = 10;
-    if (volition >= cost) {
-      spendVolition(cost);
+  const formatTime = (seconds) => {
+    if (seconds < 60) return `${Math.floor(seconds)}s`;
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}m ${secs}s`;
+  };
 
-      switch (type) {
-        case "shelter":
-          setShelter((prev) => Math.min(shelterCapacity, prev + 15));
-          break;
-        case "income":
-          setIncome((prev) => Math.min(incomeCapacity, prev + 10));
-          break;
-        case "health":
-          setHealth((prev) => Math.min(healthCapacity, prev + 12));
-          break;
-      }
+  const getResourceIcon = (resource) => {
+    switch (resource) {
+      case "water":
+        return "💧";
+      case "food":
+        return "🍎";
+      case "fibers":
+        return "🌾";
+      case "volition":
+        return "✨";
+      default:
+        return "";
     }
   };
 
   return (
     <div className="security-panel">
-      <div className="security-content">
-        <h1 className="tier-title">Security & Safety</h1>
-        <p className="tier-subtitle">Build stability and protection in your life</p>
+      <div className="security-header">
+        <h2>Security</h2>
+        <p className="tier-description">Protect your resources from environmental threats</p>
+      </div>
 
-        {/* Toggle buttons */}
-        <div className="view-toggle-container">
-          <button
-            className={`view-toggle-btn ${activeView === "progress" ? "active" : ""}`}
-            onClick={() => setActiveView("progress")}
-          >
-            Progress
-          </button>
-          <button
-            className={`view-toggle-btn ${activeView === "upgrades" ? "active" : ""}`}
-            onClick={() => setActiveView("upgrades")}
-          >
-            Improvements
-          </button>
-        </div>
-
-        {activeView === "progress" ? (
-          <>
-            <div className="security-stats-container">
-              {/* Shelter Security */}
-              <div className="security-stat-item">
-                <h3>🏠 Shelter</h3>
-                <div className="progress-bar-horizontal">
-                  <div
-                    className="progress-fill shelter-fill"
-                    style={{ width: `${(shelter / shelterCapacity) * 100}%` }}
-                  />
-                </div>
-                <div className="stat-value">
-                  {shelter}/{shelterCapacity}
-                </div>
-                <button
-                  className="improve-button"
-                  onClick={() => handleImproveAction("shelter")}
-                  disabled={volition < 10}
-                >
-                  Improve Housing (10 💭)
-                </button>
-              </div>
-
-              {/* Financial Security */}
-              <div className="security-stat-item">
-                <h3>💰 Financial Stability</h3>
-                <div className="progress-bar-horizontal">
-                  <div
-                    className="progress-fill income-fill"
-                    style={{ width: `${(income / incomeCapacity) * 100}%` }}
-                  />
-                </div>
-                <div className="stat-value">
-                  {income}/{incomeCapacity}
-                </div>
-                <button
-                  className="improve-button"
-                  onClick={() => handleImproveAction("income")}
-                  disabled={volition < 10}
-                >
-                  Seek Opportunities (10 💭)
-                </button>
-              </div>
-
-              {/* Health Security */}
-              <div className="security-stat-item">
-                <h3>⚕️ Health & Wellness</h3>
-                <div className="progress-bar-horizontal">
-                  <div
-                    className="progress-fill health-fill"
-                    style={{ width: `${(health / healthCapacity) * 100}%` }}
-                  />
-                </div>
-                <div className="stat-value">
-                  {health}/{healthCapacity}
-                </div>
-                <button
-                  className="improve-button"
-                  onClick={() => handleImproveAction("health")}
-                  disabled={volition < 10}
-                >
-                  Health Check (10 💭)
-                </button>
-              </div>
-            </div>
-
-            <div className="tier-note">
-              <p>Establish security and stability to unlock higher tiers of growth.</p>
-              <p>Current Security Level: {Math.floor((shelter + income + health) / 3)}%</p>
-            </div>
-          </>
+      {/* Active Threats Section */}
+      <div className="threats-section">
+        <h3>Active Threats</h3>
+        {Object.keys(activeThreats).filter((t) => activeThreats[t]).length === 0 ? (
+          <div className="no-threats">
+            <p>No active threats. Enjoy the peace while it lasts...</p>
+          </div>
         ) : (
-          <div className="security-upgrades">
-            <h3>Security Improvements</h3>
-            <p>Upgrade options coming soon...</p>
-            <div className="upgrade-placeholder">
-              <div className="upgrade-item-placeholder">
-                <h4>🔒 Enhanced Security</h4>
-                <p>Improve your overall safety measures</p>
-                <button disabled>Coming Soon</button>
-              </div>
-              <div className="upgrade-item-placeholder">
-                <h4>📊 Financial Planning</h4>
-                <p>Better manage your resources</p>
-                <button disabled>Coming Soon</button>
-              </div>
-              <div className="upgrade-item-placeholder">
-                <h4>🏥 Health Insurance</h4>
-                <p>Protect against unexpected health costs</p>
-                <button disabled>Coming Soon</button>
-              </div>
-            </div>
+          <div className="threats-list">
+            {Object.entries(activeThreats)
+              .filter(([_, threat]) => threat)
+              .map(([threatType, _]) => {
+                const info = getActiveThreatInfo(threatType);
+                if (!info) return null;
+
+                const protection = calculateProtection(threatType);
+                const effectiveDrain = info.effects[0].drainPerSecond * (1 - protection);
+
+                return (
+                  <div key={threatType} className="threat-card active">
+                    <div className="threat-header">
+                      <span className="threat-icon">⚠️</span>
+                      <div className="threat-info">
+                        <h4>{info.name}</h4>
+                        <p className="threat-description">{info.description}</p>
+                      </div>
+                    </div>
+                    <div className="threat-effects">
+                      {info.effects.map((effect, idx) => (
+                        <div key={idx} className="effect-item">
+                          <span className="resource-drain">
+                            {getResourceIcon(effect.targetResource)}{" "}
+                            <span className={protection > 0 ? "reduced" : ""}>
+                              -{effectiveDrain.toFixed(2)}/s
+                            </span>
+                            {protection > 0 && (
+                              <span className="protection-indicator">
+                                {" "}
+                                ({(protection * 100).toFixed(0)}% protected)
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         )}
+      </div>
+
+      {/* Shelters Section */}
+      <div className="shelters-section">
+        <h3>Shelters</h3>
+        <div className="shelters-grid">
+          {Object.entries(shelterConfigs).map(([shelterType, config]) => {
+            const shelter = shelters[shelterType];
+            const isBuilt = !!shelter;
+            const canAfford = canAffordShelter(shelterType);
+            const canRepair = canAffordRepair(shelterType);
+            const needsRepair = isBuilt && shelter.durability < config.durability;
+            const isBroken = isBuilt && shelter.durability === 0;
+
+            return (
+              <div
+                key={shelterType}
+                className={`shelter-card ${isBuilt ? "built" : ""} ${isBroken ? "broken" : ""}`}
+              >
+                <div className="shelter-header">
+                  <h4>{config.name}</h4>
+                  <span className="shelter-icon">🏠</span>
+                </div>
+
+                <p className="shelter-description">{config.description}</p>
+
+                <div className="shelter-stats">
+                  <div className="stat-row">
+                    <span className="stat-label">Protects against:</span>
+                    <span className="stat-value">
+                      {config.protectsAgainst.map((t) => threatConfigs[t]?.name).join(", ")}
+                    </span>
+                  </div>
+                  <div className="stat-row">
+                    <span className="stat-label">Protection:</span>
+                    <span className="stat-value">
+                      {(config.protectionAmount * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  {isBuilt && (
+                    <div className="stat-row">
+                      <span className="stat-label">Durability:</span>
+                      <div className="durability-bar">
+                        <div
+                          className="durability-fill"
+                          style={{
+                            width: `${(shelter.durability / config.durability) * 100}%`,
+                          }}
+                        />
+                        <span className="durability-text">
+                          {formatTime(shelter.durability)} / {formatTime(config.durability)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {!isBuilt ? (
+                  <>
+                    <div className="cost-display">
+                      <span className="cost-label">Cost:</span>
+                      <div className="cost-items">
+                        {Object.entries(config.cost).map(([resource, amount]) => (
+                          <span
+                            key={resource}
+                            className={`cost-item ${
+                              resource === "volition"
+                                ? volition >= amount
+                                  ? "affordable"
+                                  : "unaffordable"
+                                : (resource === "water"
+                                    ? water
+                                    : resource === "food"
+                                    ? food
+                                    : fibers) >= amount
+                                ? "affordable"
+                                : "unaffordable"
+                            }`}
+                          >
+                            {getResourceIcon(resource)} {amount}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <button
+                      className="craft-button"
+                      onClick={() => handleCraft(shelterType)}
+                      disabled={!canAfford}
+                    >
+                      Build
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {needsRepair && (
+                      <>
+                        <div className="cost-display">
+                          <span className="cost-label">Repair cost:</span>
+                          <div className="cost-items">
+                            {Object.entries(config.repairCost).map(([resource, amount]) => (
+                              <span
+                                key={resource}
+                                className={`cost-item ${
+                                  resource === "volition"
+                                    ? volition >= amount
+                                      ? "affordable"
+                                      : "unaffordable"
+                                    : (resource === "water"
+                                        ? water
+                                        : resource === "food"
+                                        ? food
+                                        : fibers) >= amount
+                                    ? "affordable"
+                                    : "unaffordable"
+                                }`}
+                              >
+                                {getResourceIcon(resource)} {amount}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <button
+                          className="repair-button"
+                          onClick={() => handleRepair(shelterType)}
+                          disabled={!canRepair}
+                        >
+                          {isBroken ? "Rebuild" : "Repair"}
+                        </button>
+                      </>
+                    )}
+                    {!needsRepair && <div className="shelter-status">✓ Fully maintained</div>}
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

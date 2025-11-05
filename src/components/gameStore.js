@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { useThreatStore } from "./threatStore";
 import { gameEngine } from "./gameEngine";
 
 // This reference is to help reset the game now that there's a base rate upgrade for volition.
@@ -68,6 +69,7 @@ export const useGameStore = create(
 
       resetGame: () => {
         useGameStore.persist.clearStorage();
+        useThreatStore.getState().resetThreats();
         set({ INITIAL_GAME_STATE, baseVolitionRate: INITIAL_BASE_VOLITION_RATE }, true);
       },
 

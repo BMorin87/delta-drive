@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
+import { useThreatStore } from "./threatStore";
 import { gameEngine } from "./gameEngine";
 import GameHeader from "./GameHeader";
 import VolitionCrown from "./VolitionCrown";
@@ -20,7 +21,14 @@ const DeltaGame = () => {
   useRegisterGameSystem("hunger", "baseHungerRate", "hungerCapacity", "hungerRate");
   useRegisterGameSystem("fatigue", "baseFatigueRate", "fatigueCapacity", "fatigueRate");
 
-  // Wait a couple seconds on first load, then mark it complete. Used for initial animations.
+  // Register the threatManager.
+  useEffect(() => {
+    const threatManager = useThreatStore.getState().updateThreatManager;
+    gameEngine.registerSystem("ThreatManager", threatManager);
+    return () => gameEngine.unregisterSystem("ThreatManager");
+  }, []);
+
+  // Wait a couple seconds on first load, then mark the load complete. Used for initial animations.
   useEffect(() => {
     if (isFirstLoad) {
       const timer = setTimeout(() => {
