@@ -98,9 +98,7 @@ export const INITIAL_THREAT_STATE = {
   shelters: {},
   threatConfigs: THREAT_CONFIGS,
   shelterConfigs: SHELTER_CONFIGS,
-  timeSinceLastSpawn: 0,
-  spawnInterval: 45, // seconds between threat spawn attempts
-  maxActiveThreats: 2,
+  maxActiveThreats: 3, // Allow multiple threats to stack
 };
 
 export const useThreatStore = create(
@@ -113,37 +111,26 @@ export const useThreatStore = create(
         set(INITIAL_THREAT_STATE, true);
       },
 
-      // Called by gameEngine - manages threat spawning
-      updateThreatManager: () => {
+      // Spawns a random threat (called from ForagePanel)
+      spawnRandomThreat: () => {
         const state = get();
-        const deltaTime = 1 / 12; // Match TICKS_PER_SECOND
-        const newTime = state.timeSinceLastSpawn + deltaTime;
-
-        set({ timeSinceLastSpawn: newTime });
-
-        // Check if it's time to spawn a threat
-        if (newTime >= state.spawnInterval) {
-          set({ timeSinceLastSpawn: 0 });
-          state.attemptThreatSpawn();
-        }
-
-        return {};
-      },
-
-      // Attempts to spawn a random threat
-      attemptThreatSpawn: () => {
-        const state = get();
-        const activeCount = Object.keys(state.activeThreats).length;
+        const activeCount = Object.keys(state.activeThreats).filter(
+          (key) => state.activeThreats[key]
+        ).length;
 
         // Don't spawn if at max capacity
-        if (activeCount >= state.maxActiveThreats) return;
+        if (activeCount >= state.maxActiveThreats) {
+          return null;
+        }
 
         // Get available threats (not currently active)
         const availableThreats = Object.keys(state.threatConfigs).filter(
           (threatType) => !state.activeThreats[threatType]
         );
 
-        if (availableThreats.length === 0) return;
+        if (availableThreats.length === 0) {
+          return null;
+        }
 
         // Weighted random selection
         const weights = availableThreats.map((t) => state.threatConfigs[t].spawnWeight);
@@ -159,7 +146,7 @@ export const useThreatStore = create(
           }
         }
 
-        state.spawnThreat(selectedThreat);
+        return state.spawnThreat(selectedThreat);
       },
 
       // Spawns a specific threat
@@ -167,8 +154,8 @@ export const useThreatStore = create(
         const state = get();
         const config = state.threatConfigs[threatType];
 
-        if (!config) return false;
-        if (state.activeThreats[threatType]) return false;
+        if (!config) return null;
+        if (state.activeThreats[threatType]) return null;
 
         // Add to active threats
         set((prev) => ({
@@ -184,7 +171,7 @@ export const useThreatStore = create(
         // Register with game engine
         gameEngine.registerSystem(`Threat_${threatType}`, state.createThreatUpdate(threatType));
 
-        return true;
+        return threatType;
       },
 
       // Removes a threat (used for testing or special events)
@@ -345,7 +332,6 @@ export const useThreatStore = create(
       registerDurabilitySystem: () => {
         const durabilitySystem = () => {
           const deltaTime = 1 / 12;
-          const state = get();
 
           set((prev) => {
             const updatedShelters = {};
@@ -429,7 +415,6 @@ export const useThreatStore = create(
       partialize: (state) => ({
         activeThreats: state.activeThreats,
         shelters: state.shelters,
-        timeSinceLastSpawn: state.timeSinceLastSpawn,
       }),
 
       // Re-register active threats and systems after rehydration
@@ -453,12 +438,6 @@ export const useThreatStore = create(
             if (!systems.includes("ShelterDurability")) {
               state.registerDurabilitySystem();
             }
-          }
-
-          // Register threat manager
-          const systems = gameEngine.getRegisteredSystems();
-          if (!systems.includes("ThreatManager")) {
-            gameEngine.registerSystem("ThreatManager", state.updateThreatManager);
           }
         };
       },

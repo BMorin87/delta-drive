@@ -1,5 +1,6 @@
 import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
+import { useThreatStore } from "./threatStore";
 import UpgradeItem from "./UpgradeItem";
 import "../styles/DiscoveryPanel.css";
 
@@ -16,6 +17,8 @@ const DiscoveryPanel = ({ introClass = "" }) => {
   const introUpgradeLevel = useUpgradeStore((state) => state.getUpgradeLevel("baseVolitionRate"));
   const isAtLeastLevelTwo = introUpgradeLevel >= 2;
   const isBelowLevelFive = introUpgradeLevel < 5;
+  const activeThreats = useThreatStore((state) => state.activeThreats);
+  const isThreatActive = Object.keys(activeThreats).length > 0;
   return (
     <div className={`discovery-panel ${introClass}`}>
       <h2 className="discovery-title">Discovery</h2>
@@ -53,8 +56,7 @@ const DiscoveryPanel = ({ introClass = "" }) => {
           />
         )}
 
-        {!isNavigationUnlocked && (
-          // TODO: Show for the first time when there's a threat active.
+        {!isNavigationUnlocked && isThreatActive && (
           <UpgradeItem
             upgradeId="pyramidNav"
             title="Hierarchy Navigation"
