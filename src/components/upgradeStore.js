@@ -60,7 +60,7 @@ export const INITIAL_UPGRADE_STATE = {
       level: 0,
       type: "unlock",
       unlocks: "navigation",
-      costs: { volition: 3 },
+      costs: { volition: 800 },
     },
     foraging: {
       level: 0,

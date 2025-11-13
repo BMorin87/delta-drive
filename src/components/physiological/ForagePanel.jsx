@@ -1,19 +1,23 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useGameStore } from "../gameStore";
 import { useStatusStore } from "../statusStore";
+import { useThreatStore } from "../threatStore";
 import "../../styles/physiological/ForagePanel.css";
 
 const PAIR_COUNT = 3;
-const EXTRA_CARD_COUNT = 1;
+const TOTAL_CARD_COUNT = 25;
+const THREAT_SPAWN_CHANCE = 0.5; // 50% chance to spawn a threat card
 const MATCH_ANIMATION_DELAY = 600;
 const MISMATCH_FLIP_DELAY = 1000;
 const GAME_COMPLETE_DELAY = 1500;
+const THREAT_REVEAL_DELAY = 800;
 
 const RESOURCE_TYPES = {
   WATER: { emoji: "💧", name: "water" },
   FOOD: { emoji: "🍎", name: "food" },
   FIBERS: { emoji: "🌿", name: "fibers" },
   NOTHING: { emoji: "🤷", name: "nothing" },
+  THREAT: { emoji: "⚠️", name: "threat" },
 };
 
 const RESOURCE_CONFIG = [
@@ -29,24 +33,30 @@ const ForagePanel = ({ isOpen, onClose }) => {
   const awardMaterials = useGameStore((state) => state.awardMaterials);
   const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
   const startStatus = useStatusStore((state) => state.startStatus);
+  const spawnRandomThreat = useThreatStore((state) => state.spawnRandomThreat);
+  const threatConfigs = useThreatStore((state) => state.threatConfigs);
 
   const [gameStarted, setGameStarted] = useState(false);
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedCards, setMatchedCards] = useState(new Set());
   const [revealedNothingCards, setRevealedNothingCards] = useState(new Set());
+  const [revealedThreatCard, setRevealedThreatCard] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
   const [foundResources, setFoundResources] = useState(INITIAL_RESOURCES_STATE);
+  const [encounteredThreat, setEncounteredThreat] = useState(null);
 
   const completionHandledRef = useRef(false);
 
   const finishForaging = useCallback(() => {
     awardMaterials(foundResources);
     setGameStarted(false);
+    setEncounteredThreat(null);
     onClose();
   }, [foundResources, awardMaterials, onClose]);
 
-  const gameComplete = matchedCards.size + revealedNothingCards.size === cards.length;
+  const gameComplete =
+    matchedCards.size + revealedNothingCards.size + (revealedThreatCard ? 1 : 0) === cards.length;
 
   useEffect(() => {
     if (gameComplete && gameStarted && !completionHandledRef.current) {
@@ -63,8 +73,15 @@ const ForagePanel = ({ isOpen, onClose }) => {
       return pool;
     }, []);
 
-    // Add extra cards to reach desired total
-    for (let i = 0; i < EXTRA_CARD_COUNT; i++) {
+    // Randomly decide if a threat card should spawn
+    const shouldSpawnThreat = Math.random() < THREAT_SPAWN_CHANCE;
+    if (shouldSpawnThreat) {
+      resourcePool.push(RESOURCE_TYPES.THREAT);
+    }
+
+    // Fill remaining slots with "nothing" cards to reach TOTAL_CARD_COUNT
+    const remainingSlots = TOTAL_CARD_COUNT - resourcePool.length;
+    for (let i = 0; i < remainingSlots; i++) {
       resourcePool.push(RESOURCE_TYPES.NOTHING);
     }
 
@@ -80,7 +97,9 @@ const ForagePanel = ({ isOpen, onClose }) => {
     setFlippedCards([]);
     setMatchedCards(new Set());
     setRevealedNothingCards(new Set());
+    setRevealedThreatCard(null);
     setFoundResources(INITIAL_RESOURCES_STATE);
+    setEncounteredThreat(null);
     completionHandledRef.current = false;
   };
 
@@ -94,6 +113,21 @@ const ForagePanel = ({ isOpen, onClose }) => {
   };
 
   const isNothingCard = (card) => card.resource.name === "nothing";
+  const isThreatCard = (card) => card.resource.name === "threat";
+
+  const handleThreatReveal = (cardId) => {
+    setTimeout(() => {
+      setRevealedThreatCard(cardId);
+      setFlippedCards([]);
+      setIsChecking(false);
+
+      // Spawn a random threat
+      const threatType = spawnRandomThreat();
+      if (threatType) {
+        setEncounteredThreat(threatConfigs[threatType].name);
+      }
+    }, THREAT_REVEAL_DELAY);
+  };
 
   const handleNothingMatch = (firstCardId, secondCardId) => {
     const newRevealedNothing = new Set(revealedNothingCards);
@@ -139,6 +173,24 @@ const ForagePanel = ({ isOpen, onClose }) => {
   };
 
   const processCardPair = (firstCard, secondCard) => {
+    // If either card is a threat, reveal it immediately
+    if (isThreatCard(firstCard)) {
+      handleThreatReveal(firstCard.id);
+      // The second card gets flipped back
+      setTimeout(() => {
+        setFlippedCards([]);
+      }, THREAT_REVEAL_DELAY);
+      return;
+    }
+    if (isThreatCard(secondCard)) {
+      handleThreatReveal(secondCard.id);
+      // The first card gets flipped back
+      setTimeout(() => {
+        setFlippedCards([]);
+      }, THREAT_REVEAL_DELAY);
+      return;
+    }
+
     const isMatch = firstCard.resource.name === secondCard.resource.name;
 
     if (isMatch) {
@@ -157,6 +209,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
       !isChecking &&
       !matchedCards.has(cardId) &&
       !revealedNothingCards.has(cardId) &&
+      revealedThreatCard !== cardId &&
       !flippedCards.includes(cardId);
 
     if (!isCardInteractable) return;
@@ -182,7 +235,10 @@ const ForagePanel = ({ isOpen, onClose }) => {
 
   const isCardFlipped = (cardId) => {
     return (
-      flippedCards.includes(cardId) || matchedCards.has(cardId) || revealedNothingCards.has(cardId)
+      flippedCards.includes(cardId) ||
+      matchedCards.has(cardId) ||
+      revealedNothingCards.has(cardId) ||
+      revealedThreatCard === cardId
     );
   };
 
@@ -205,7 +261,8 @@ const ForagePanel = ({ isOpen, onClose }) => {
             <>
               <div className="forage-description">
                 <p>Venture into the wilderness to search for valuable resources.</p>
-                <p>Match pairs of cards to find food, water, and wood!</p>
+                <p>Match pairs of cards to find food, water, and fibers!</p>
+                <p className="warning-text">⚠️ Beware: you may encounter threats...</p>
               </div>
 
               <div className="forage-cost">
@@ -230,21 +287,30 @@ const ForagePanel = ({ isOpen, onClose }) => {
                 <span>🌿 Fibers: {foundResources.fibers}</span>
               </div>
 
+              {encounteredThreat && (
+                <div className="threat-encounter-banner">
+                  <span className="threat-icon">⚠️</span>
+                  <span>Threat encountered: {encounteredThreat}!</span>
+                </div>
+              )}
+
               <div className="memory-game-grid">
-                {cards.map((card) => (
-                  <div
-                    key={card.id}
-                    className={`memory-card ${isCardFlipped(card.id) ? "flipped" : ""} ${
-                      matchedCards.has(card.id) ? "matched" : ""
-                    }`}
-                    onClick={() => handleCardClick(card.id)}
-                  >
-                    <div className="card-inner">
-                      <div className="card-front">?</div>
-                      <div className="card-back">{card.resource.emoji}</div>
+                {cards.map((card) => {
+                  return (
+                    <div
+                      key={card.id}
+                      className={`memory-card ${isCardFlipped(card.id) ? "flipped" : ""} ${
+                        matchedCards.has(card.id) ? "matched" : ""
+                      } ${revealedThreatCard === card.id ? "threat-revealed" : ""}`}
+                      onClick={() => handleCardClick(card.id)}
+                    >
+                      <div className="card-inner">
+                        <div className="card-front">?</div>
+                        <div className="card-back">{card.resource.emoji}</div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="forage-actions">
