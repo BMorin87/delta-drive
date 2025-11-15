@@ -68,6 +68,12 @@ export const INITIAL_UPGRADE_STATE = {
       unlocks: "forage",
       costs: { volition: 600 },
     },
+    crafting: {
+      level: 0,
+      type: "unlock",
+      unlocks: "crafting",
+      costs: { volition: 1200 },
+    },
   },
   // Provides stable objects for current upgrade costs. Stable objects prevent render loops on cost displays.
   _costCache: {},
@@ -219,6 +225,7 @@ export const useUpgradeStore = create(
               upgradePanel: "isUpgradePanelUnlocked",
               navigation: "isNavigationUnlocked",
               forage: "isForageUnlocked",
+              crafting: "isCraftingUnlocked",
             };
 
             const stateKey = unlockMap[upgrade.unlocks];

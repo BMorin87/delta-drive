@@ -44,6 +44,7 @@ export const INITIAL_GAME_STATE = {
   isUpgradePanelUnlocked: false,
   isNavigationUnlocked: false,
   isForageUnlocked: false,
+  isCraftingUnlocked: false,
 
   // Used by _updateResourceRates to store the per-second rate value, i.e. the change since last tick multiplied by the TICKS_PER_SECOND.
   resourceRates: {
