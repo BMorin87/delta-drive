@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGameStore } from "./gameStore";
 import ResourcePanel from "./physiological/ResourcePanel";
+import DiscoveryPanel from "./DiscoveryPanel";
 import PhysiologicalPanel from "./physiological/PhysiologicalPanel";
 import SecurityPanel from "./security/SecurityPanel";
 import "../styles/HierarchyNavigation.css";
@@ -9,6 +10,8 @@ const HierarchyNavigation = () => {
   const isAwarenessUnlocked = useGameStore((state) => state.isAwarenessUnlocked);
   const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
   const isNavigationUnlocked = useGameStore((state) => state.isNavigationUnlocked);
+  const isFirstLoad = useGameStore((state) => state.isFirstLoad);
+  const markFirstLoadComplete = useGameStore((state) => state.markFirstLoadComplete);
   const [activeTier, setActiveTier] = useState("physiological");
 
   // Define the tiers in pyramid order (bottom to top).
@@ -57,6 +60,16 @@ const HierarchyNavigation = () => {
     }
   };
 
+  // Wait a couple seconds on first load, then mark the load complete. Used for initial animations.
+  useEffect(() => {
+    if (isFirstLoad) {
+      const timer = setTimeout(() => {
+        markFirstLoadComplete();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFirstLoad, markFirstLoadComplete]);
+
   const renderActiveContent = () => {
     switch (activeTier) {
       case "physiological":
@@ -67,6 +80,9 @@ const HierarchyNavigation = () => {
         return <PhysiologicalPanel />;
     }
   };
+
+  // Animate the DiscoveryPanel's first load.
+  const introClass = isFirstLoad ? "first-load" : "";
 
   return (
     <>
@@ -103,7 +119,10 @@ const HierarchyNavigation = () => {
         <div className="pyramid-nav" />
       )}
 
+      <DiscoveryPanel introClass={introClass} activeTier={activeTier} />
+
       {isAwarenessUnlocked ? (
+        // Render the current content or a blank placeholder.
         <div className={`tier-content-container is-unlocked`}>{renderActiveContent()}</div>
       ) : (
         <div className={`tier-content-container`} />
