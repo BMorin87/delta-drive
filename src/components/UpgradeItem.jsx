@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGameStore } from "./gameStore";
-import { useUpgradeStore } from "./upgradeStore";
+import { useUpgradeStore, computeScaledCost } from "./upgradeStore";
 import "../styles/UpgradeItem.css";
 
 // Resource icons for display
@@ -14,10 +14,18 @@ const RESOURCE_ICONS = {
 const UpgradeItem = ({ upgradeId, title, description }) => {
   // Subscribe to upgrade level (triggers re-render when purchased)
   const upgradeLevel = useUpgradeStore((state) => state.upgrades[upgradeId]?.level ?? 0);
-  const cost = useUpgradeStore((state) => {
-    return state._costCache[upgradeId] || state.getUpgradeCost(upgradeId);
-  });
+
+  // Subscribe to cache and upgrades to compute cost
+  const costCache = useUpgradeStore((state) => state._costCache);
+  const upgrades = useUpgradeStore((state) => state.upgrades);
+
+  // Compute cost - use cache if available, otherwise compute locally
+  const cost = useMemo(() => {
+    return costCache[upgradeId] || computeScaledCost(upgrades[upgradeId]);
+  }, [costCache, upgrades, upgradeId]);
+
   const purchaseUpgrade = useUpgradeStore((state) => state.purchaseUpgrade);
+
   // Calculate current and next level effects for tooltips.
   const effect = useUpgradeStore((state) => state.getUpgradeEffectAtLevel(upgradeId, upgradeLevel));
   const nextEffect = useUpgradeStore((state) =>

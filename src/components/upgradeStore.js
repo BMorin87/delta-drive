@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { useGameStore } from "./gameStore";
 
 // Helper function to scale costs based on upgrade level.
-const computeScaledCost = (upgrade) => {
+export const computeScaledCost = (upgrade) => {
   if (!upgrade?.costs) return {};
 
   const multiplier = Math.pow(2, upgrade.level);
