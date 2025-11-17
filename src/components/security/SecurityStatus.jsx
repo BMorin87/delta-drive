@@ -1,5 +1,4 @@
 import { useThreatStore } from "../threatStore";
-import { useGameStore } from "../gameStore";
 
 const SecurityStatus = () => {
   const activeThreats = useThreatStore((state) => state.activeThreats);
@@ -21,11 +20,11 @@ const SecurityStatus = () => {
       case "water":
         return "💧";
       case "food":
-        return "🎃";
+        return "🍎";
       case "fibers":
-        return "🌾";
+        return "🌿";
       case "volition":
-        return "✨";
+        return "👑";
       default:
         return "";
     }
@@ -33,7 +32,6 @@ const SecurityStatus = () => {
 
   // Calculate overall health/protection status
   const calculateOverallHealth = () => {
-    const totalShelters = Object.keys(shelterConfigs).length;
     const builtShelters = Object.keys(shelters).length;
 
     if (builtShelters === 0) return 0;
