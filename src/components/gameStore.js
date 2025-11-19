@@ -70,7 +70,6 @@ export const useGameStore = create(
 
       resetGame: () => {
         useGameStore.persist.clearStorage();
-        useThreatStore.getState().resetThreats();
         set({ INITIAL_GAME_STATE, baseVolitionRate: INITIAL_BASE_VOLITION_RATE }, true);
       },
 
@@ -155,6 +154,7 @@ export const useGameStore = create(
         isNavigationUnlocked: state.isNavigationUnlocked,
         isForageUnlocked: state.isForageUnlocked,
         isUpgradePanelUnlocked: state.isUpgradePanelUnlocked,
+        isCraftingUnlocked: state.isCraftingUnlocked,
       }),
     }
   )

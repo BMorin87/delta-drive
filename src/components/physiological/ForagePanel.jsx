@@ -33,8 +33,9 @@ const ForagePanel = ({ isOpen, onClose }) => {
   const awardMaterials = useGameStore((state) => state.awardMaterials);
   const calculateVolitionCost = useStatusStore((state) => state.calculateVolitionCost);
   const startStatus = useStatusStore((state) => state.startStatus);
-  const spawnRandomThreat = useThreatStore((state) => state.spawnRandomThreat);
+  const spawnThreat = useThreatStore((state) => state.spawnThreat);
   const threatConfigs = useThreatStore((state) => state.threatConfigs);
+  const activeThreats = useThreatStore((state) => state.activeThreats);
 
   const [gameStarted, setGameStarted] = useState(false);
   const [cards, setCards] = useState([]);
@@ -121,10 +122,25 @@ const ForagePanel = ({ isOpen, onClose }) => {
       setFlippedCards([]);
       setIsChecking(false);
 
-      // Spawn a random threat
-      const threatType = spawnRandomThreat();
-      if (threatType) {
-        setEncounteredThreat(threatConfigs[threatType].name);
+      // Get available threats (ones not currently active)
+      const availableThreats = Object.keys(threatConfigs).filter(
+        (threatType) => !activeThreats[threatType]
+      );
+
+      if (availableThreats.length > 0) {
+        // Pick a random threat from available ones
+        const randomThreat = availableThreats[Math.floor(Math.random() * availableThreats.length)];
+
+        // Spawn threat at level 1 (you can make this random too if you want)
+        const level = 1;
+        const spawned = spawnThreat(randomThreat, level);
+
+        if (spawned) {
+          setEncounteredThreat(`${threatConfigs[randomThreat].name} (Level ${level})`);
+        }
+      } else {
+        // All threats are already active
+        setEncounteredThreat("Additional threat avoided (all threats active)");
       }
     }, THREAT_REVEAL_DELAY);
   };

@@ -2,20 +2,18 @@ import { useState } from "react";
 import { useGameStore } from "./gameStore";
 import { useUpgradeStore } from "./upgradeStore";
 import { useStatusStore } from "./statusStore";
+import { useThreatStore } from "./threatStore";
 import "../styles/SettingsMenu.css";
 
 const SettingsMenu = ({ isOpen, onClose }) => {
   const [importError, setImportError] = useState("");
 
   const handleReset = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to reset the game? All progress will be lost."
-      )
-    ) {
+    if (window.confirm("Are you sure you want to reset the game? All progress will be lost.")) {
       useGameStore.getState().resetGame();
       useUpgradeStore.getState().resetUpgrades();
       useStatusStore.getState().resetStatuses();
+      useThreatStore.getState().resetThreats();
       window.location.reload(true);
     }
   };
@@ -67,24 +65,16 @@ const SettingsMenu = ({ isOpen, onClose }) => {
           localStorage.setItem("game-storage", JSON.stringify(saveData.game));
         }
         if (saveData.upgrades) {
-          localStorage.setItem(
-            "upgrade-storage",
-            JSON.stringify(saveData.upgrades)
-          );
+          localStorage.setItem("upgrade-storage", JSON.stringify(saveData.upgrades));
         }
         if (saveData.statuses) {
-          localStorage.setItem(
-            "status-storage",
-            JSON.stringify(saveData.statuses)
-          );
+          localStorage.setItem("status-storage", JSON.stringify(saveData.statuses));
         }
 
         window.location.reload();
       } catch (error) {
         console.error("Import failed:", error);
-        setImportError(
-          "Failed to import save file. Please check the file format."
-        );
+        setImportError("Failed to import save file. Please check the file format.");
         setTimeout(() => setImportError(""), 3000);
       }
     };
@@ -107,29 +97,18 @@ const SettingsMenu = ({ isOpen, onClose }) => {
           <div className="settings-section">
             <h3>Save Management</h3>
             <div className="settings-actions">
-              <button
-                onClick={handleExport}
-                className="settings-action-btn export-btn"
-              >
+              <button onClick={handleExport} className="settings-action-btn export-btn">
                 💾 Export Save
               </button>
 
               <label className="settings-action-btn import-btn">
                 📂 Import Save
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleImport}
-                  className="file-input"
-                />
+                <input type="file" accept=".json" onChange={handleImport} className="file-input" />
               </label>
 
               {importError && <div className="import-error">{importError}</div>}
 
-              <button
-                onClick={handleReset}
-                className="settings-action-btn reset-btn"
-              >
+              <button onClick={handleReset} className="settings-action-btn reset-btn">
                 🔄 Reset Game
               </button>
             </div>
