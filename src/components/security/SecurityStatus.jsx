@@ -1,4 +1,5 @@
 import { useThreatStore } from "../threatStore";
+import "../../styles/security/SecurityStatus.css";
 
 const SecurityStatus = () => {
   const activeThreats = useThreatStore((state) => state.activeThreats);

@@ -1,5 +1,6 @@
 import { useThreatStore } from "../threatStore";
 import { useGameStore } from "../gameStore";
+import "../../styles/security/SecurityCrafting.css";
 
 const SecurityCrafting = () => {
   const shelter = useThreatStore((state) => state.shelter);
