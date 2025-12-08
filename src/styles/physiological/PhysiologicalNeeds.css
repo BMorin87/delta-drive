@@ -1,15 +1,22 @@
 .bars-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.bars-row {
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 1rem;
-  margin: 2rem 0;
-  flex-wrap: wrap;
+  width: 100%;
+  max-width: 480px;
 }
 
 @media (min-width: 410px) {
-  .bars-container {
+  .bars-row {
     gap: 1.5rem;
   }
 }
@@ -97,6 +104,12 @@
   .action-button {
     font-size: 12px;
   }
+}
+.volition-note {
+  width: 100%;
+  margin-top: 20px;
+  text-align: center;
+  padding: 0 10px; /* Optional: adds a little padding on the sides */
 }
 
 .forage-section {

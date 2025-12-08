@@ -13,8 +13,6 @@ const MATERIAL_ICONS = {
 };
 
 const PhysiologicalNeeds = () => {
-  // --- 1. STATE SUBSCRIPTIONS ---
-  // Game Store Slices (bar data)
   const thirst = useGameStore((state) => state.thirst);
   const hunger = useGameStore((state) => state.hunger);
   const fatigue = useGameStore((state) => state.fatigue);
@@ -24,11 +22,9 @@ const PhysiologicalNeeds = () => {
   const isAgencyUnlocked = useGameStore((state) => state.isAgencyUnlocked);
   const isForageUnlocked = useGameStore((state) => state.isForageUnlocked);
 
-  // Status Store Slices (status/cooldown data)
   const activeStatuses = useStatusStore((state) => state.activeStatuses ?? {});
   const cooldowns = useStatusStore((state) => state.cooldowns ?? {});
 
-  // Status Store Functions (Actions/Getters) - Stable References
   const startStatus = useStatusStore((state) => state.startStatus);
   const cancelStatus = useStatusStore((state) => state.cancelStatus);
   const getCostDisplay = useStatusStore((state) => state.getCostDisplay);
@@ -36,7 +32,6 @@ const PhysiologicalNeeds = () => {
 
   const [isForagePanelOpen, setIsForagePanelOpen] = useState(false);
 
-  // --- 2. MEMOIZED HELPERS (useCallback) ---
   // Create stable references for simple functions that read status/cooldown data.
   const isStatusActive = useCallback((type) => !!activeStatuses[type], [activeStatuses]);
   const getStatusDuration = useCallback(
@@ -45,7 +40,7 @@ const PhysiologicalNeeds = () => {
   );
   const getCooldownRemaining = useCallback((type) => cooldowns[type] ?? 0, [cooldowns]);
 
-  // Create a stable handler for the main button action.
+  // Create a generic click handler for the action buttons.
   const handleAction = useCallback(
     (actionType) => {
       if (isStatusActive(actionType)) {
@@ -57,7 +52,7 @@ const PhysiologicalNeeds = () => {
     [isStatusActive, cancelStatus, startStatus]
   );
 
-  // Create a stable function to compute the full button state.
+  // Compute the full button state and return button text, an isDisabled bool, and class data.
   const getButtonState = useCallback(
     (actionType) => {
       const isActive = isStatusActive(actionType);
@@ -102,20 +97,12 @@ const PhysiologicalNeeds = () => {
         };
       }
     },
-    [
-      // Dependencies needed for logic inside this function:
-      isStatusActive,
-      getStatusDuration,
-      getCooldownRemaining, // Memoized helpers (stable)
-      getCostDisplay,
-      canAfford, // Store functions (stable)
-    ]
+    [isStatusActive, getStatusDuration, getCooldownRemaining, getCostDisplay, canAfford]
   );
 
-  // --- 3. MEMOIZED RENDER DATA (useMemo) ---
-  // The needsWithMemoizedButtonState array is now clean and easy to read.
+  // Define the data and button state for each displayed need.
   const needsWithMemoizedButtonState = useMemo(() => {
-    // 1. Define the base needs data.
+    // 1. Define the "needs" data.
     const needs = [
       {
         type: "drink",
@@ -145,53 +132,49 @@ const PhysiologicalNeeds = () => {
       ...need,
       buttonState: getButtonState(need.type),
     }));
-  }, [
-    // Dependencies that affect the result: bar data (current/capacity) and the button state function.
-    thirst,
-    hunger,
-    fatigue,
-    thirstCapacity,
-    hungerCapacity,
-    fatigueCapacity,
-    getButtonState,
-  ]);
+  }, [thirst, hunger, fatigue, thirstCapacity, hungerCapacity, fatigueCapacity, getButtonState]);
 
-  // Synergy check uses the stable helper
   const hasSynergyBonus = isStatusActive("drink") && isStatusActive("eat");
 
-  // --- 4. RENDER ---
   return (
     <>
       <div className="bars-container">
-        {needsWithMemoizedButtonState.map((need) => {
-          const { buttonState } = need;
+        {/* NEW: Container for the three bars to maintain their spacing */}
+        <div className="bars-row">
+          {needsWithMemoizedButtonState.map((need) => {
+            const { buttonState } = need;
 
-          return (
-            <div key={need.type} className="bar-with-action">
-              <VerticalProgressBar
-                current={need.current}
-                max={need.capacity}
-                label={need.label}
-                colorClass={need.colorClass}
-                height={250}
-              />
+            return (
+              <div key={need.type} className="bar-with-action">
+                <VerticalProgressBar
+                  current={need.current}
+                  max={need.capacity}
+                  label={need.label}
+                  colorClass={need.colorClass}
+                  height={250}
+                />
 
-              {isAgencyUnlocked ? (
-                <div className={`action-button-wrapper is-unlocked`}>
-                  <button {...buttonState} onClick={() => handleAction(need.type)}>
-                    {buttonState.text}
-                  </button>
-                </div>
-              ) : (
-                <div className="action-button-wrapper" />
-              )}
-            </div>
-          );
-        })}
+                {isAgencyUnlocked ? (
+                  <div className={`action-button-wrapper is-unlocked`}>
+                    <button {...buttonState} onClick={() => handleAction(need.type)}>
+                      {buttonState.text}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="action-button-wrapper" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {isAgencyUnlocked && (
+          <p className="volition-note">
+            Satisfy physiological needs to generate more 👑&nbsp;Volition.
+          </p>
+        )}
       </div>
 
       <div className="tier-note">
-        <p>Satisfy physiological needs to generate more 👑&nbsp;Volition.</p>
         {hasSynergyBonus ? (
           <p className="bonus-indicator is-active">🌟 Synergy Bonus Active! +20% efficiency</p>
         ) : (
