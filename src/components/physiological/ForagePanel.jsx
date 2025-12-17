@@ -283,7 +283,7 @@ const ForagePanel = ({ isOpen, onClose }) => {
 
               <div className="forage-cost">
                 <span className="cost-label">Volition Cost: </span>
-                <span className="cost-value">{forageCost} 💪</span>
+                <span className="cost-value">{forageCost} 👑</span>
               </div>
 
               <div className="forage-actions">

@@ -45,8 +45,8 @@ const DiscoveryPanel = ({ introClass = "", activeTier }) => {
         {!isUpgradePanelUnlocked && isAwarenessUnlocked && (
           <UpgradeItem
             upgradeId="upgradePanel"
-            title="Mental Improvement"
-            description="Enhance your mental qualities."
+            title="Improvement"
+            description="Improve your mental qualities."
           />
         )}
 
@@ -61,8 +61,8 @@ const DiscoveryPanel = ({ introClass = "", activeTier }) => {
         {!isNavigationUnlocked && isThreatActive && (
           <UpgradeItem
             upgradeId="pyramidNav"
-            title="Hierarchy Navigation"
-            description="Rise to meet new challenges."
+            title="Higher Needs"
+            description="New problems require new solutions."
           />
         )}
 
