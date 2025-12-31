@@ -25,11 +25,12 @@ const DeltaGame = () => {
         setShowDebugPanel((prev) => !prev);
       }
     };
-
+    // Add the listener and clean up on unmount.
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
+  // Render the main game layout. The HierarchyNavigation controls contextual content.
   return (
     <div className="game-layout">
       <GameHeader />
@@ -40,6 +41,7 @@ const DeltaGame = () => {
   );
 };
 
+// Custom React hook to register the initial game systems with the gameEngine.
 function useRegisterGameSystem(statName, baseRateName, capacityName, upgradeRateName) {
   useEffect(() => {
     const update = createUpdateFunction(statName, baseRateName, capacityName, upgradeRateName);
